@@ -1,0 +1,37 @@
+.library-container {
+  height: 68px;
+  width: 309px;
+  border-radius: 5px;
+}
+
+.library-container:hover{
+  background-color: rgba(238, 238, 238, 1);
+}
+
+.image-library-button{
+    width: 50px;
+    height: 50px;
+}
+
+.arcai-library-button{
+    border: none;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+}
+
+.library-label {
+  position: relative;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2563eb;
+  bottom: 6px;
+  left: 50px;
+}
+
+.image-library-button{
+  position: relative;
+  border-radius: 5px;
+  top: 8.5px;
+  left: 10px;
+}

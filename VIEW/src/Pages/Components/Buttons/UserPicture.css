@@ -1,0 +1,9 @@
+
+.userButton {
+    width: 70px;
+    height: 66px;
+    border: none;
+    padding: 0;
+    background: none;
+    cursor: pointer;
+}

@@ -1,0 +1,15 @@
+.arcai-go-to-library-button:hover {
+  background-color: #1d4ed8;
+}
+
+.arcai-go-to-library-button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
