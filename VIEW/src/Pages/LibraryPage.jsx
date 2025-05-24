@@ -2,6 +2,9 @@ import Sidebar from "./Components/Sidebar"
 import UserPicture from "./Components/Buttons/UserPicture"
 import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
 import "./LibraryPage.css"
+import {createContext} from "react"
+
+export const IDContext = createContext();
 /**
  * LibraryPage is the page that is used to display the library page.
  * @returns {JSX} - The React component for the library page.
@@ -19,10 +22,12 @@ function LibraryPage() {
                 </div>
                 <hr className="library-page-line"></hr>
                 <div className="library-page-content">
-                    <div className="library-page-content-container">
+                    <div className="library-page-content-container" id = "library-page-content-container">
                         <h1 className="library-page-content-container-title">My Projects</h1>
                     </div>
-                    <Sidebar/>
+                    <IDContext.Provider value = {"library-page-content-container"}>
+                        <Sidebar/>
+                    </IDContext.Provider>
                 </div>
             </div>
         </div>

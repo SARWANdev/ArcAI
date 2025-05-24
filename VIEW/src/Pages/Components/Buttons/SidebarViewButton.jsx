@@ -1,4 +1,6 @@
 import "./SidebarViewButton.css";
+import {useContext} from "react"
+import {IDContext} from "../../LibraryPage"
 /**
  * SidebarViewButton is the component that is used to display the sidebar view button.
  * @param {string} direction - The direction of the sidebar view button.
@@ -7,7 +9,7 @@ import "./SidebarViewButton.css";
  */
 function SidebarViewButton({direction, imgsrc}) {
     let nextDirection = direction;
-
+    const id = useContext(IDContext);
     /**
      * goLeft is the function that is used to push the sidebar to the left direction.
      */
@@ -19,8 +21,15 @@ function SidebarViewButton({direction, imgsrc}) {
         sidebar.style.transform = "translateX(-80%)";
 
         const miniSideBar = document.getElementById("mini-container");
-        miniSideBar.style.display = "block";
+        miniSideBar.style.display = "flex";
+        miniSideBar.style.flexDirection = "column";
+        miniSideBar.style.gap = "20px";
         sidebarButtons.style.display = "none";
+
+        const libraryPageContentContainer = document.getElementById(id);
+        libraryPageContentContainer.style.transition = "width 2s ease";
+        libraryPageContentContainer.style.transform = "translateX(-25.8%)";
+        libraryPageContentContainer.style.width = "1250px";
     }
 
     /**
@@ -34,7 +43,13 @@ function SidebarViewButton({direction, imgsrc}) {
         sidebar.style.transform = "translateX(0%)";
         const miniSideBar = document.getElementById("mini-container");
         miniSideBar.style.display = "none";
-        sidebarButtons.style.display = "block";
+        sidebarButtons.style.display = "flex";
+        sidebarButtons.style.flexDirection = "column";
+
+        const libraryPageContentContainer = document.getElementById(id);
+        libraryPageContentContainer.style.transition = "width 2s ease";
+        libraryPageContentContainer.style.transform = "translateX(0%)";
+        libraryPageContentContainer.style.width = "911px";
     }
     
     return(

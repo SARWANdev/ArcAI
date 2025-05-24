@@ -4,6 +4,7 @@ import GuestHomePage from "./Pages/GuestHomePage.jsx"
 import HomePage from "./Pages/HomePage.jsx"
 import LibraryPage from "./Pages/LibraryPage.jsx"
 import ChatPage from './Pages/ChatPage.jsx'
+import ChatHistoryPage from './Pages/ChatHistoryPage.jsx'
 import {BrowserRouter, Route,Routes} from "react-router-dom";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
@@ -12,9 +13,11 @@ import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
-//TODO: When the side bar is clicked, accordingly change the size of the container
+//TODO: Add a search bar to the HomePage, library page, and chat page
+//TODO: Add main features of the application to the library pages
 /**
  * Main.jsx is the main file that is used to render the app.
+ * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"
  */
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -26,7 +29,8 @@ createRoot(document.getElementById('root')).render(
           <Route element = {<ProtectedRoutes/>}>
           <Route path= "/workspace" element={<HomePage />} />
           <Route path = "/workspace/library" element = {<LibraryPage/>}/>
-          <Route path = "/workspace/chat" element = {<ChatPage/>}/>
+          <Route path = "/workspace/chat-chatbot" element = {<ChatPage/>}/>
+          <Route path = "/workspace/chat-history" element = {<ChatHistoryPage/>}/>
           </Route>
 
         </Routes>
