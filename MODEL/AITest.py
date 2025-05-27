@@ -1,7 +1,8 @@
 
-
+from Test import parsed_text
 from google import genai
 from google.genai import types
+
 client = genai.Client(api_key="AIzaSyC8L5ydAyyJcis54fhiUHBCKFemsRHu6b0")
 
 inputText= '''Abstract—Remote Attestation (RA) has become a valuable security service for Internet of Things (IoT) devices, as the security
@@ -17,13 +18,17 @@ at any time. Finally, we verify our proposed protocol on three
 NVIDIA Jetson embedded devices hosting up to 15 attestation
 nodes.'''
 
+
+
 response = client.models.generate_content(
     model="gemini-2.0-flash",
-    contents=["summarize this abstarct: "+ inputText],
+    contents=["who are the authors?: "+ parsed_text],
     config=types.GenerateContentConfig(
         max_output_tokens=500,
         temperature=0.0
     )
 )
+
+
 print(response.text)
 

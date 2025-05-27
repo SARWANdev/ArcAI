@@ -26,4 +26,4 @@ def extract_text_from_pdf(pdf_path):
     return extracted_text
 
 parsed_text = extract_text_from_pdf(pdf_path)
-print(parsed_text)
+#print(parsed_text)
