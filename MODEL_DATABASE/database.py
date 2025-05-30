@@ -39,7 +39,7 @@ STRING_PROJECTS_COLUMN = ("Project_ID int auto_increment,"
                           "Created_At timestamp default current_timestamp,"
                           "foreign key (Sub) references Users(Sub) On delete cascade,"
                           "Primary key(Project_ID, Sub)")
-STRING_GET_ALL_PROJECTS_FROM_USER = "select * from PROJECTS where Sub = '"'{}'"'"
+STRING_GET_ALL_PROJECTS_FROM_USER = "select * from PROJECTS where Sub = '"'{}'"' order by Name"
 STRING_INSERT_ROW_PROJECTS = "insert into PROJECTS(Sub, Name) value ('"'{}'"', '"'{}'"')"
 
 #Strings to create the Documents table
@@ -108,16 +108,6 @@ def create_table_with_auto_increment(table_name, columns):
     else:
         print(f"Table {table_name} already exists")
 
-
-def select_table(table_name):
-    cursor.execute(STRING_SELECT_TABLE_WHOLE.format(table_name))
-
-
-def describe_table(table_name):
-    cursor.execute(STRING_DESCRIBE_TABLE.format(table_name))
-    for x in cursor:
-        print(x)
-
 def insert_row_in_table_users(sub, name, email):
     try:
         print(STRING_INSERT_ROW_USERS.format(sub, name, email))
@@ -174,17 +164,6 @@ def database_setup():
     use_database(STRING_DB_NAME)
     create_all_required_tables()
 
-# Gives the library id of the user
-def get_library_id(sub):
-    print(STRING_GET_LIBRARY_ID.format(sub))
-    cursor.execute(STRING_GET_LIBRARY_ID.format(sub))
-    library_list = cursor.fetchall()
-    print(library_list)
-    if len(library_list) == 0:
-        return None
-    library_id = library_list[0][0]
-    return library_id
-
 # Gives the number of projects of a particular user
 def number_of_projects(sub):
     cursor.execute(STRING_GET_ALL_PROJECTS_FROM_USER.format(sub))
@@ -193,14 +172,16 @@ def number_of_projects(sub):
 
 # Gives the number of projects of a particular user
 def project_list(sub):
-    cursor.execute(STRING_GET_ALL_PROJECTS_FROM_USER.format(get_library_id(sub)))
-    all_projects = cursor.fetchall()
-    print(all_projects)
-    return all_projects
+    cursor.execute(STRING_GET_ALL_PROJECTS_FROM_USER.format(sub))
+    list_projects = []
+    for project in cursor.fetchall():
+        project_dict = {'Project_ID': project[0], 'Sub': project[1], 'Name': project[2], "Created_At": project[3]}
+        list_projects.append(project_dict)
+    print(list_projects)
+    return list_projects
 
 
 use_database(STRING_DB_NAME)
-
 
 
 
