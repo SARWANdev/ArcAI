@@ -1,6 +1,4 @@
-from Container import Container
-
-class Project(Container):
+class Project():
     def _init_(self, name):
         self.name = name
 
