@@ -1,9 +1,12 @@
+from MODEL.Project import Project
+
+
 class Library:
     def __init__(self):
         pass
 
-    def create_project(self):
-        pass
+    def create_project(name):
+        return Project(name)
 
     def delete_project(self):
         pass
@@ -25,6 +28,7 @@ class Library:
         pass
 
     def search_documents(self):
+
         pass
 
     def sort_library(self):
