@@ -20,3 +20,6 @@ class Project(Container):
 
     def rename(self, name):
         self.name = name
+
+    def download():
+        pass
