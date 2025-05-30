@@ -15,6 +15,8 @@ if (!localStorage.getItem("ifLogged")) {
 }
 //TODO: Add a search bar to the HomePage, library page, and chat page
 //TODO: Add main features of the application to the library pages
+//TODO: When the side bar is opne and closed hence regulate the width of the div containers present in the library page by making it 100% or something.
+//TODO: Add a function where when a project is created then display the project on the library page
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"

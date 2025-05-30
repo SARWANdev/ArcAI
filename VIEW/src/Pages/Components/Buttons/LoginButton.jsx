@@ -23,9 +23,11 @@ function LoginButton() {
           },
         });
         const userInfo = await response.json();
-        sendUserInfo(userInfo);
-        navigate("/workspace");
-        localStorage.setItem("ifLogged", "true");
+        const backEndResponse = await sendUserInfo(userInfo);
+        if (backEndResponse.status == "success"){
+          navigate("/workspace");
+          localStorage.setItem("ifLogged", "true");
+        }
       } catch (e) {
         console.log(`An error occurred: ${e}`);
       }
@@ -39,7 +41,7 @@ function LoginButton() {
    * @returns {Promise} - The promise that is used to send the user info to the server.
    */
   const sendUserInfo = async(userInfo) => {
-    const data = {"given_name":userInfo.given_name, "family_name": userInfo.family_name, "email":userInfo.email}
+    const data = {"sub":userInfo.sub, "name": userInfo.name, "email":userInfo.email}
     const options = {
       method : ["POST"],
       headers : {"Content-Type": "application/json"},
