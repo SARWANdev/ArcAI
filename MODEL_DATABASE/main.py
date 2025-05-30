@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from config import app
 from database import (database_setup, insert_row_in_table_users, user_exists, insert_row_in_table_libraries,
-                      insert_row_in_table_projects, get_library_id, number_of_projects, project_list)
+                      insert_row_in_table_projects, number_of_projects, project_list)
 
 logged_in_user = None
 
@@ -38,7 +38,7 @@ def get_projects():
 @app.route('/create-project', methods=['POST'])
 def add_project():
     global logged_in_user
-    insert_row_in_table_projects(get_library_id(logged_in_user), None, "PROJECT" + str(number_of_projects(logged_in_user) + 1))
+    insert_row_in_table_projects(logged_in_user, "PROJECT" + str(number_of_projects(logged_in_user) + 1))
     return jsonify({"status": "success", "message": "Data received", "received": "Project created"})
 
 database_setup()
