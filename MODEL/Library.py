@@ -28,7 +28,6 @@ class Library:
         pass
 
     def search_documents(self):
-
         pass
 
     def sort_library(self):
