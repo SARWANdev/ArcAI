@@ -3,8 +3,9 @@ import UserPicture from "./Components/Buttons/UserPicture"
 import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
 import LibraryPageProjectContainer from "./Components/LibrayPageProjectContainer"
 import "./LibraryPage.css"
-import {createContext, useState} from "react"
+import {createContext} from "react"
 import CreateProject from "./Components/Buttons/CreateProject"
+import SearchBar from "./Components/Buttons/SearchBar"
 export const IDContext = createContext();
 //Add near the create Project button another div element which will eventually contain the search bar
 /**
@@ -12,7 +13,6 @@ export const IDContext = createContext();
  * @returns {JSX} - The React component for the library page.
  */
 function LibraryPage() {
-    const [projectContainer, setProjectContainer] = useState([]);
     return(
         <>
         <div className="library-page-container">
@@ -28,9 +28,10 @@ function LibraryPage() {
                     <div className="library-page-content-container" id = "library-page-content-container">
                         <h1 className="library-page-content-container-title">My Projects</h1>
                         <div className="library-page-content-container-dashboard">
-                            <CreateProject setProjectContainer = {setProjectContainer}/>
+                            <SearchBar/>
+                            <CreateProject/>
                         </div>
-                        <LibraryPageProjectContainer projectContainer = {projectContainer}/>
+                        <LibraryPageProjectContainer/>
                     </div>
                     <IDContext.Provider value = {"library-page-content-container"}>
                         <Sidebar/>

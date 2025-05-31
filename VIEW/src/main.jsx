@@ -13,9 +13,7 @@ import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
-//TODO: Add a search bar to the HomePage, library page, and chat page
-//TODO: Add main features of the application to the library pages
-//TODO: When the side bar is open and closed hence regulate the width of the div containers present in the library page by making it 100% or something.
+//TODO: Organise the search bar and the create project button in the library page and make it look good.
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"

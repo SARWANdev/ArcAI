@@ -27,9 +27,10 @@ function SidebarViewButton({direction, imgsrc}) {
         sidebarButtons.style.display = "none";
 
         const libraryPageContentContainer = document.getElementById(id);
+        libraryPageContentContainer.style.alignItems = "center";
         libraryPageContentContainer.style.transition = "width 2s ease";
-        libraryPageContentContainer.style.transform = "translateX(-25.8%)";
-        libraryPageContentContainer.style.width = "1250px";
+        libraryPageContentContainer.style.transform = "translateX(-30.8%)";
+        libraryPageContentContainer.style.width = "1170px";
     }
 
     /**
@@ -47,6 +48,7 @@ function SidebarViewButton({direction, imgsrc}) {
         sidebarButtons.style.flexDirection = "column";
 
         const libraryPageContentContainer = document.getElementById(id);
+        libraryPageContentContainer.style.alignItems = "flex-start";
         libraryPageContentContainer.style.transition = "width 2s ease";
         libraryPageContentContainer.style.transform = "translateX(0%)";
         libraryPageContentContainer.style.width = "911px";
