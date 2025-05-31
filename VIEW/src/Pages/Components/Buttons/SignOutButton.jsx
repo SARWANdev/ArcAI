@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
  * @returns {JSX} - The React component for the sign out button.
  */
 function SignOutButton() {
+    //Should come under backend
     const navigate = useNavigate()
     /**
      * signOut is the function that is used to sign out the user.

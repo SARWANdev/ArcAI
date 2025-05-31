@@ -1,5 +1,5 @@
 import "./CreateProject.css"
-export default function CreateProject() {
+export default function CreateProject({setProjectContainer}) {
     //TODO: Create a function which shows the projects on the library page
     const URL_CREATE_PROJECT = "http://127.0.0.1:5000/create-project";
     const URL_GET_PROJECTS = "http://127.0.0.1:5000/get-projects";
@@ -19,11 +19,11 @@ export default function CreateProject() {
                 const data = await response.json();
                 return data;
             }
-            const projects = await projectList();
-            console.log(projects);
+            const projects_list = await projectList();
+            setProjectContainer(projects_list.projects);
         }
-
     }
+
     return (
         <button className="create-project-button" onClick={onCreateProjectClick}><img src={"../../../images/Upload.png"} alt="upload" className="upload-icon"/>Create Project</button>
     )

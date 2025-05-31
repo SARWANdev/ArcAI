@@ -8,6 +8,7 @@ import "./LoginButton.css"
  * @returns {JSX} - The React component for the login button.
  */
 function LoginButton() {
+  // Under backend
   const URL_GET_USER_INFO = import.meta.env.VITE_GOOGLE_URL_GET_USER_INFO;
   const URL_SEND_USER_INFO = "http://127.0.0.1:5000/logged";
   const navigate = useNavigate()
