@@ -12,30 +12,7 @@ function LoginButton() {
   const URL_GET_USER_INFO = import.meta.env.VITE_GOOGLE_URL_GET_USER_INFO;
   const URL_SEND_USER_INFO = "http://127.0.0.1:5000/logged";
   const navigate = useNavigate()
-  /**
-   * login is the function that is used to login the user.
-   */
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        const response = await fetch(URL_GET_USER_INFO, {
-          headers: {
-            Authorization: `Bearer ${tokenResponse.access_token}`,
-          },
-        });
-        const userInfo = await response.json();
-        const backEndResponse = await sendUserInfo(userInfo);
-        if (backEndResponse.status == "success"){
-          navigate("/workspace");
-          localStorage.setItem("ifLogged", "true");
-        }
-      } catch (e) {
-        console.log(`An error occurred: ${e}`);
-      }
-    },
-    onError: (error) => console.log('Login Failed:', error),
-  });
-
+  //TODO: Create a function which communicates with the backend so that the backend can help in google authentication
   /**
    * sendUserInfo is the function that is used to send the user info to the server.
    * @param {Object} userInfo - The user info.

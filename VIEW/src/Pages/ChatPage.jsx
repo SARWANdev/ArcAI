@@ -1,7 +1,6 @@
 import UserPicture from "./Components/Buttons/UserPicture"
 import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
 import Sidebar from "./Components/Sidebar"
-import {createContext} from "react"
 import "./ChatPage.css"
 import { IDContext } from "./LibraryPage"
 import { useNavigate } from "react-router-dom";
