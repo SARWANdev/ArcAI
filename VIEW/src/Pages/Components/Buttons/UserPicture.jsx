@@ -7,7 +7,6 @@ import "./UserPicture.css"
  * @param {string} right - The right position of the user picture.
  */
 function UserPicture({top, bottom, left, right}) {
-    console.log(top, bottom, left, right)
     /**
      * positionImage positions the user picture.
      */

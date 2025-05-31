@@ -5,7 +5,6 @@ import { Navigate, Outlet } from "react-router-dom";
  */
 function ProtectedRoutes() {
     const user = localStorage.getItem("ifLogged");
-    console.log(user);
     return user == "true" ? <Outlet/> : <Navigate to = "/"/>
 }
 export default ProtectedRoutes

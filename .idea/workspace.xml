@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="477490d3-3591-4322-951c-1fcc3de94601" name="Changes" comment="Removed the MODEL_DATABASE">
-      <change beforePath="$PROJECT_DIR$/VIEW/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VIEW/src/Pages/Components/Buttons/LoginButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/src/Pages/Components/Buttons/LoginButton.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,7 +83,7 @@
       <workItem from="1748636928264" duration="606000" />
       <workItem from="1748637591983" duration="4250000" />
       <workItem from="1748678975866" duration="666000" />
-      <workItem from="1748688346860" duration="4275000" />
+      <workItem from="1748688346860" duration="5131000" />
     </task>
     <task id="LOCAL-00001" summary="Backend: Add login logic, set User.Sub as key for projects/documents, add required tags to documents">
       <option name="closed" value="true" />
