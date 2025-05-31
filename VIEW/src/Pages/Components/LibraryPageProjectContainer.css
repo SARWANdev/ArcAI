@@ -2,3 +2,27 @@
     width: 911px;
     height: 555px;
 }
+
+.library-page-project-title-button{
+    width: 50px;
+    height: 30px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.library-page-project-title-form{
+    display: flex;
+    flex-direction: row;
+    margin-top: 40px;
+    gap: 570px;
+}
+.library-page-project-last-accessed-button{
+    width: 180px;
+    height: 30px;
+    border: none;
+    background-color: rgb(255, 255, 255);
+    font-size: 23px;
+    cursor: pointer;
+}

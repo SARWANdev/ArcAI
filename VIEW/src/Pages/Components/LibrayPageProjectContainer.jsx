@@ -1,12 +1,11 @@
 import "./LibraryPageProjectContainer.css"
-export default function LibraryPageProjectContainer({projectContainer}){
+export default function LibraryPageProjectContainer(){
     return(
-        <div className="library-page-project-container">
-            {Array.isArray(projectContainer) && projectContainer.map((project) => (
-                <div key={project.Project_ID}>
-                    <h1>{project.Name}</h1>
-                </div>
-            ))}
+        <div className="library-page-project-title-container">
+            <div className="library-page-project-title-form">
+                <button className="library-page-project-title-button">Title</button>
+                <button className="library-page-project-last-accessed-button">Last Accessed</button>
+            </div>
         </div>
     )
 }
