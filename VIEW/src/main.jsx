@@ -14,7 +14,7 @@ if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
 //TODO: When search button is clicked, it refreshes the page which should not happen.
-//TODO: The setting button should take in a prop which then brings out different options accordingly.
+
 
 /**
  * Main.jsx is the main file that is used to render the app.
