@@ -13,7 +13,7 @@ import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
-//TODO: The search button icon's border radius is not working. Check it out.
+//TODO: When search button is clicked, it refreshes the page which should not happen.
 
 /**
  * Main.jsx is the main file that is used to render the app.
