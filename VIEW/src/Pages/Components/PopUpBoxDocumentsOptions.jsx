@@ -2,6 +2,7 @@ import DeleteButton from "./Buttons/DeleteButton"
 import RenameButton from "./Buttons/RenameButton"
 import DuplicateButton from "./Buttons/DuplicateButton"
 import ExportBibtex from "./Buttons/ExportBibtex"
+import MoveButton from "./Buttons/MoveButton"
 import "./PopUpBoxDocumentsOptions.css"
 export default function PopUpBoxDocumentsOptions() {
     return (
@@ -9,6 +10,7 @@ export default function PopUpBoxDocumentsOptions() {
             <DeleteButton/>
             <DuplicateButton/>
             <ExportBibtex/>
+            <MoveButton/>
             <RenameButton/>
         </div>
     )
