@@ -1,5 +1,6 @@
 import "./LibraryPageProjectContainer.css"
 import SettingsButton from "./Buttons/SettingsButton"
+import PopUpBoxDocumentsOptions from "./PopUpBoxDocumentsOptions"
 export default function LibraryPageProjectContainer(){
     return(
         <div className="library-page-project-title-container">
@@ -8,6 +9,7 @@ export default function LibraryPageProjectContainer(){
                 <button className="library-page-project-last-accessed-button" title="Last Accessed button">Last Accessed</button>
             </div>
             <SettingsButton/>
+            <PopUpBoxDocumentsOptions/>
         </div>
     )
 }
