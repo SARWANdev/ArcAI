@@ -1,5 +1,4 @@
 import "./SettingsButton.css"
-import PopUpBoxProjectOptions from "../PopUpBoxProjectOptions"
 export default function SettingsButton(){
     return(
         <div className="settings-button">
