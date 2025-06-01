@@ -4,7 +4,7 @@
 }
 
 .library-page-project-title-button{
-    width: 50px;
+    width: 60px;
     height: 30px;
     border: none;
     /* background-color: rgb(255, 255, 255); */
@@ -17,6 +17,8 @@
     flex-direction: row;
     margin-top: 40px;
     gap: 570px;
+    align-items: center;
+    justify-content: center;
 }
 
 .library-page-project-last-accessed-button{

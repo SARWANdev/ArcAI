@@ -40,7 +40,7 @@ function SidebarViewButton({direction, imgsrc}) {
         const sidebar = document.getElementById("side-bar-container");
         const sidebarButtons = document.getElementById("side-bar-contents");
         sidebar.style.transition = "transform 0.3s ease";
-        // Apply the transform
+        
         sidebar.style.transform = "translateX(0%)";
         const miniSideBar = document.getElementById("mini-container");
         miniSideBar.style.display = "none";

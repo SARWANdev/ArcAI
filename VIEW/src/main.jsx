@@ -13,7 +13,8 @@ import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
-//TODO: Organise the search bar and the create project button in the library page and make it look good.
+//TODO: The search button icon's border radius is not working. Check it out.
+
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"
