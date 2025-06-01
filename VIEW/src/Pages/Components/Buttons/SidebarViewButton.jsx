@@ -25,8 +25,6 @@ function SidebarViewButton({direction, imgsrc}) {
         miniSideBar.style.flexDirection = "column";
         miniSideBar.style.gap = "20px";
         sidebarButtons.style.display = "none";
-        miniSideBar.style.width = "100px";
-        miniSideBar.style.height = "100px";
 
         const libraryPageContentContainer = document.getElementById(id);
         libraryPageContentContainer.style.alignItems = "center";
