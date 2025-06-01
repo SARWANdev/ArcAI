@@ -1,0 +1,12 @@
+.pop-up-box-project-options {
+    background-color: rgb(255, 255, 255);
+    border-radius: 10%;
+    border: 1px solid black;
+    width: 125px;
+    height: 125px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+}
