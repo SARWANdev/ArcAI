@@ -36,7 +36,7 @@ function UserPicture({top, bottom, left, right}) {
     
     return(
         <>
-        <button className="userButton" id = "userButton" onClick={showSignOutPopUp} style={positionImage}>
+        <button className="userButton" id = "userButton" onClick={showSignOutPopUp} style={positionImage} title="User Picture">
             <img src = "../images/userPhoto.jpg" alt = "userPhoto" className="userImage" style={{width: "60px", height: "60px"}}></img></button>
         </>
     )

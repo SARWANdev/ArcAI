@@ -35,8 +35,8 @@ export default function ChatHistoryPage() {
                 <hr className="chat-history-page-line"></hr>
                 <div className="chat-history-page-header-content">
                     <h1 className="arcai-logo">ArcAI</h1>
-                    <button className="chat-history-page-button" id = "chat-history-page-chat-button" onClick={handleChatButtonClick}>Chat</button>
-                    <button className="chat-history-page-button" id = "chat-history-page-history-button" onClick={handleHistoryButtonClick}>History</button>
+                    <button className="chat-history-page-button" id = "chat-history-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
+                    <button className="chat-history-page-button" id = "chat-history-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
                     <UserPicture className = "chat-history-page-user-button" right = {"12.8px"}/>
                     <PopUpBoxSignOut left = {"82%"} top = {"15%"}/>
                 </div>

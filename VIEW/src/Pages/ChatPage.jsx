@@ -33,8 +33,8 @@ function ChatPage() {
                 <hr className="chat-page-line"></hr>
                 <div className="chat-page-header-content">
                     <h1 className="arcai-logo">ArcAI</h1>
-                    <button className="chat-page-button" id = "chat-page-chat-button" onClick={handleChatButtonClick}>Chat</button>
-                    <button className="chat-page-button" id = "chat-page-history-button" onClick={handleHistoryButtonClick}>History</button>
+                    <button className="chat-page-button" id = "chat-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
+                    <button className="chat-page-button" id = "chat-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
                     <UserPicture className = "chat-page-user-button" right = {"12.8px"}/>
                     <PopUpBoxSignOut left = {"82%"} top = {"15%"}/>
                 </div>

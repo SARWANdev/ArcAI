@@ -29,7 +29,7 @@ function PopUpBoxSignOut({top, bottom, left, right}) {
         <div className="pop-up-sign-out" id = "sign-out-container" style={positionStyle}>
             <SignOutButton/>
             <br/>
-            <button className="pop-up-box-cancel-button" onClick={hideSignOutPopUp}>Cancel</button>
+            <button className="pop-up-box-cancel-button" onClick={hideSignOutPopUp} title="Cancel">Cancel</button>
         </div>
     )
 }

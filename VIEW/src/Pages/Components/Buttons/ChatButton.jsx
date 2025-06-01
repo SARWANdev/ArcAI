@@ -18,7 +18,7 @@ function ChatButton({content}) {
     return (
         <div className="chat-container" style={content != "Chat" ? {height: "70px", width: "70px"} : {}}>
             <form>
-                <button className="arcai-chat-button" onClick={goToChat} id = "chat-button"><img src="../../images/chat.png" className="image-chat-button"></img></button>
+                <button className="arcai-chat-button" onClick={goToChat} id = "chat-button" title="Chat"><img src="../../images/chat.png" className="image-chat-button"></img></button>
                 <label htmlFor="chat-button" className="chat-label">{content}</label>
             </form>
         </div>

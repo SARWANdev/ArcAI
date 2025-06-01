@@ -15,7 +15,7 @@ function SignOutButton() {
         navigate("/");
     }
     return(
-        <button onClick={signOut} className = "sign-out-button">Sign out</button>
+        <button onClick={signOut} className = "sign-out-button" title="Sign out">Sign out</button>
     )
 }
 export default SignOutButton

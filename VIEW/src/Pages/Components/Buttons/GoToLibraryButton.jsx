@@ -13,7 +13,7 @@ function GoToLibraryButton() {
         navigate("/workspace/library")
     }
     return (
-        <button className="arcai-go-to-library-button" onClick={goToLibrary}>Go To Library</button>
+        <button className="arcai-go-to-library-button" onClick={goToLibrary} title="Go To Library">Go To Library</button>
     )
 }
 export default GoToLibraryButton

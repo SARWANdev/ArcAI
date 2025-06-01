@@ -17,7 +17,7 @@ function LibraryButton({content}) {
     
     return (
         <div className="library-container" style={content != "Library" ? {height: "70px", width: "70px"} : {}}>
-            <button className="arcai-library-button" onClick={goToLibrary} id = "library-button">
+            <button className="arcai-library-button" onClick={goToLibrary} id = "library-button" title="Library">
                 <img src="../../images/book.png" className="image-library-button" alt="library"/>
             </button>
             <label htmlFor="library-button" className="library-label" id="library-label">{content}</label>
