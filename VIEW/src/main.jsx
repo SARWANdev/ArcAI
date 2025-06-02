@@ -8,7 +8,7 @@ import ChatHistoryPage from './Pages/ChatHistoryPage.jsx'
 import {BrowserRouter, Route,Routes} from "react-router-dom";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
-
+import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
 // If the user is not logged in, set the ifLogged to false
 if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
@@ -30,6 +30,7 @@ createRoot(document.getElementById('root')).render(
           <Route element = {<ProtectedRoutes/>}>
           <Route path= "/workspace" element={<HomePage />} />
           <Route path = "/workspace/library" element = {<LibraryPage/>}/>
+          <Route path = "/workspace/document-viewer" element = {<DocumentViewerPage/>}/>
           <Route path = "/workspace/chat-chatbot" element = {<ChatPage/>}/>
           <Route path = "/workspace/chat-history" element = {<ChatHistoryPage/>}/>
           </Route>
