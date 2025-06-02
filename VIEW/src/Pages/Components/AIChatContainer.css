@@ -4,4 +4,6 @@
     border-radius: 5px;
     border: 1px solid hsl(0, 2%, 88%);
     padding: 10px;
+    display: flex;
+    align-items: center;
 }
