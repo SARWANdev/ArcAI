@@ -14,7 +14,7 @@ if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
 //TODO: When search button is clicked, it refreshes the page which should not happen.
-
+//TODO: The dimension of library page and chat page should be the same.
 
 /**
  * Main.jsx is the main file that is used to render the app.

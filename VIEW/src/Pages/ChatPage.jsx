@@ -4,6 +4,7 @@ import Sidebar from "./Components/Sidebar"
 import "./ChatPage.css"
 import { IDContext } from "./LibraryPage"
 import { useNavigate } from "react-router-dom";
+import AIChatContainer from "./Components/AIChatContainer"
 /**
  * ChatPage is the page that is used to display the chat page.
  * @returns {JSX} - The React component for the chat page.
@@ -42,6 +43,7 @@ function ChatPage() {
                 <div className="chat-page-content">
                     <div className="chat-page-content-container" id = "chat-page-content-container">
                         <h1 className="chat-page-content-container-title">What can I help with?</h1>
+                        <AIChatContainer/>
                     </div>
                     <IDContext.Provider value = {"chat-page-content-container"}>
                         <Sidebar/>

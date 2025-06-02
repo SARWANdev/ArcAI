@@ -27,6 +27,7 @@ function SidebarViewButton({direction, imgsrc}) {
         sidebarButtons.style.display = "none";
 
         const libraryPageContentContainer = document.getElementById(id);
+        libraryPageContentContainer.style.display = "flex";
         libraryPageContentContainer.style.alignItems = "center";
         libraryPageContentContainer.style.transition = "width 2s ease";
         libraryPageContentContainer.style.transform = "translateX(-30.8%)";
@@ -48,7 +49,8 @@ function SidebarViewButton({direction, imgsrc}) {
         sidebarButtons.style.flexDirection = "column";
 
         const libraryPageContentContainer = document.getElementById(id);
-        libraryPageContentContainer.style.alignItems = "flex-start";
+        libraryPageContentContainer.style.display = "flex";
+        libraryPageContentContainer.style.alignItems = "center";
         libraryPageContentContainer.style.transition = "width 2s ease";
         libraryPageContentContainer.style.transform = "translateX(0%)";
         libraryPageContentContainer.style.width = "911px";

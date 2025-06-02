@@ -1,0 +1,7 @@
+.ai-chat-container-input{
+    width: 800px;
+    height: 45px;
+    border-radius: 5px;
+    border: 1px solid hsl(0, 2%, 88%);
+    padding: 10px;
+}
