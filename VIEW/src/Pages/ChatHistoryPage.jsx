@@ -3,8 +3,8 @@ import UserPicture from "./Components/Buttons/UserPicture";
 import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut";
 import Sidebar from "./Components/Sidebar";
 import { IDContext } from "./LibraryPage";
-import "./ChatHistoryPage.css";
 import ClearAllButton from "./Components/Buttons/ClearAllButton";
+import "./ChatHistoryPage.css";
 /**
  * ChatHistoryPage is the page that is used to display the chat history page.
  * @returns {JSX} - The React component for the chat history page.

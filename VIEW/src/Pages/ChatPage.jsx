@@ -1,12 +1,12 @@
 import UserPicture from "./Components/Buttons/UserPicture"
 import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
 import Sidebar from "./Components/Sidebar"
-import "./ChatPage.css"
+import AIChatContainer from "./Components/AIChatContainer"
 import { IDContext } from "./LibraryPage"
 import { useNavigate } from "react-router-dom";
-import AIChatContainer from "./Components/AIChatContainer"
+import "./ChatPage.css"
 /**
- * ChatPage is the page that is used to display the chat page.
+ * ChatPage is the page that is used to display the chat with the AI.
  * @returns {JSX} - The React component for the chat page.
  */
 function ChatPage() {

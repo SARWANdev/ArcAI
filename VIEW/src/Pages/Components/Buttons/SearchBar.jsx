@@ -1,4 +1,8 @@
 import "./SearchBar.css"
+/**
+ * SearchBar is the component that is used to display the search bar in the library page.
+ * @returns {JSX} - The React component for the search bar.
+ */
 export default function SearchBar() {
     return(
         <form className="search-bar-form">

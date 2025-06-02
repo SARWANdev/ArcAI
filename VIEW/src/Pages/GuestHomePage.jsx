@@ -1,5 +1,5 @@
-import "./GuestHomePage.css"
 import LoginButton from "./Components/Buttons/LoginButton";
+import "./GuestHomePage.css"
 /**
  * GuestHomePage is the page that is used to display the home page when the user is not logged in.
  * @returns {JSX} - The React component for the home page when the user is not logged in.

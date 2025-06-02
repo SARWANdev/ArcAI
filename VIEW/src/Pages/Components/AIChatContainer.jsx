@@ -1,4 +1,8 @@
 import "./AIChatContainer.css"
+/**
+ * AIChatContainer is the component that is used to display the AI chat container in the chat page.
+ * @returns {JSX} - The React component for the AI chat container.
+ */
 export default function AIChatContainer(){
     return(
         <form className="ai-chat-container">

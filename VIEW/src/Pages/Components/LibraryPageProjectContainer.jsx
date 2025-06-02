@@ -1,4 +1,8 @@
 import "./LibraryPageProjectContainer.css"
+/**
+ * LibraryPageProjectContainer is the component that is used to display the projects in the library page.
+ * @returns {JSX} - The React component for the project container.
+ */
 export default function LibraryPageProjectContainer(){
     return(
         <div className="library-page-project-title-container">

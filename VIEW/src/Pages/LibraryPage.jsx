@@ -2,12 +2,14 @@ import Sidebar from "./Components/Sidebar"
 import UserPicture from "./Components/Buttons/UserPicture"
 import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
 import LibraryPageProjectContainer from "./Components/LibraryPageProjectContainer"
-import "./LibraryPage.css"
 import {createContext} from "react"
 import CreateProject from "./Components/Buttons/CreateProject"
 import SearchBar from "./Components/Buttons/SearchBar"
+import "./LibraryPage.css"
+/**
+ * IDContext is the ID of the container which is to be transformed forward or backward.
+ */
 export const IDContext = createContext();
-//Add near the create Project button another div element which will eventually contain the search bar
 /**
  * LibraryPage is the page that is used to display the library page.
  * @returns {JSX} - The React component for the library page.
