@@ -10,6 +10,11 @@
     background-color: transparent;
     font-size: 23px;
     cursor: pointer;
+    border-radius: 5px;
+}
+
+.library-page-project-title-button:hover{
+    background-color: #e0e0e0;
 }
 
 .library-page-project-title-form{
@@ -27,4 +32,9 @@
     background-color: transparent;
     font-size: 23px;
     cursor: pointer;
+    border-radius: 5px;
+}
+
+.library-page-project-last-accessed-button:hover{
+    background-color: #e0e0e0;
 }
