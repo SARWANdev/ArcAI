@@ -4,7 +4,7 @@ import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut";
 import Sidebar from "./Components/Sidebar";
 import { IDContext } from "./LibraryPage";
 import "./ChatHistoryPage.css";
-
+import ClearAllButton from "./Components/Buttons/ClearAllButton";
 /**
  * ChatHistoryPage is the page that is used to display the chat history page.
  * @returns {JSX} - The React component for the chat history page.
@@ -43,7 +43,7 @@ export default function ChatHistoryPage() {
                 <hr className="chat-history-page-line"></hr>
                 <div className="chat-history-page-content">
                     <div className="chat-history-page-content-container" id = "chat-history-page-content-container">
-                        <h1 className="chat-history-page-content-container-title">History</h1>
+                        <ClearAllButton/>
                     </div>
                     <IDContext.Provider value = {"chat-history-page-content-container"}>
                         <Sidebar/>

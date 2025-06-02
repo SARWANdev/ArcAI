@@ -6,10 +6,14 @@
     cursor: pointer;
     outline: none;
     font-size: 20px;
-    width: 58px;
+    width: 100px;
     height: 23px;
+    border-radius: 5px;
+    position: relative;
+    left: 30%;
 }
 
 .clear-all-button:hover{
     background-color: hsl(0, 0%, 90%);
 }
+

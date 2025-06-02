@@ -31,12 +31,13 @@
       left: 31.3%;
       width: 911px;
       height: 763px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
   }
   
   .chat-history-page-content-container-title{
       font-size: 48px;
-      position: absolute;
-      left: 10%;
   }
 
   #chat-history-page-chat-button{
