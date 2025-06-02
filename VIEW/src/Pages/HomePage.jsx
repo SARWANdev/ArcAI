@@ -1,5 +1,5 @@
 import UserPicture from "./Components/Buttons/UserPicture"
-import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
+import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
 import GoToLibraryButton from "./Components/Buttons/GoToLibraryButton"
 import "./HomePage.css"
 /**

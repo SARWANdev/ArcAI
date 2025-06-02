@@ -1,6 +1,6 @@
 import Sidebar from "./Components/Sidebar"
 import UserPicture from "./Components/Buttons/UserPicture"
-import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
+import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
 import LibraryPageProjectContainer from "./Components/LibraryPageProjectContainer"
 import {createContext} from "react"
 import CreateProject from "./Components/Buttons/CreateProject"

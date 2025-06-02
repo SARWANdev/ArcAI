@@ -1,5 +1,5 @@
 import UserPicture from "./Components/Buttons/UserPicture"
-import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut"
+import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
 import Sidebar from "./Components/Sidebar"
 import AIChatContainer from "./Components/AIChatContainer"
 import { IDContext } from "./LibraryPage"

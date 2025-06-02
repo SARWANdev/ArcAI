@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import UserPicture from "./Components/Buttons/UserPicture";
-import PopUpBoxSignOut from "./Components/Buttons/PopUpBoxSignOut";
+import PopUpBoxSignOut from "./Components/PopUpBoxSignOut";
 import Sidebar from "./Components/Sidebar";
 import { IDContext } from "./LibraryPage";
 import ClearAllButton from "./Components/Buttons/ClearAllButton";
