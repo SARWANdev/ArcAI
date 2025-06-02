@@ -45,7 +45,6 @@ export default function ChatHistoryPage() {
                 <div className="chat-history-page-content">
                     <div className="chat-history-page-content-container" id = "chat-history-page-content-container">
                         <ClearAllButton/>
-                        <PopUpBoxChatHistoryOptions/>
                     </div>
                     <IDContext.Provider value = {"chat-history-page-content-container"}>
                         <Sidebar/>
