@@ -53,7 +53,7 @@ def create_tables():
                        """)
 
         # Documents table
-        cursor.execute("""
+        cursor.execute(""" 
                        CREATE TABLE IF NOT EXISTS Document
                        (
                            document_id    INT AUTO_INCREMENT PRIMARY KEY,

@@ -6,7 +6,7 @@ class Library:
         pass
 
     def create_project(name):
-        return Project(name)
+        return Project()
 
     def delete_project(self):
         pass
