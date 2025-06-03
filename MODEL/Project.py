@@ -16,7 +16,7 @@ class Project():
         pass
 
     def delete_document(name):
-
+        
         pass
 
     def duplicate_document(self):
