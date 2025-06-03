@@ -19,15 +19,14 @@
 
 .arcai-header {
   margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .arcai-logo {
-  position: relative;
-  bottom: 10px;
-  font-size: 42px;
-  font-weight: 700;
-  color: #2563eb;
-  margin: 0;
+  width: 100px;
+  height: 100px;
 }
 
 .arcai-main-logged {

@@ -10,10 +10,10 @@ function HomePage(){
     return(
       <div className="arcai-container">
         <header className="arcai-header">
-          <h1 className="arcai-logo">ArcAI</h1>
+          <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
+          <UserPicture/>
         </header>
         <hr className = "line-ai-to-content"></hr>
-        <UserPicture left = {"90%"} bottom= {"14%"}/>
         <PopUpBoxSignOut left = {"79.5%"} top = {"10%"}/>
         <main className="arcai-main-logged">
         <div className="arcai-hero">

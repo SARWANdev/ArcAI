@@ -21,7 +21,7 @@ function LibraryPage() {
             <div className="library-page-header">
                 <hr className="library-page-line"></hr>
                 <div className="library-page-header-content">
-                    <h1 className="arcai-logo">ArcAI</h1>
+                    <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
                     <UserPicture className = "library-page-user-button" left = {"85%"} bottom= {"14%"}/>
                     <PopUpBoxSignOut left = {"82%"} top = {"15%"}/>
                 </div>

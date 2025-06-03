@@ -8,7 +8,7 @@ function GuestHomePage(){
     return (
     <div className="arcai-container">
       <header className="arcai-header">
-        <h1 className="arcai-logo">ArcAI</h1>
+        <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
       </header>
       <hr className = "line-ai-to-content"></hr>
       
