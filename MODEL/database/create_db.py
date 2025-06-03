@@ -56,13 +56,18 @@ def create_tables():
         cursor.execute("""
                        CREATE TABLE IF NOT EXISTS Document
                        (
-                           document_id INT AUTO_INCREMENT PRIMARY KEY,
-                           project_id  INT          NOT NULL,
-                           name        VARCHAR(100) NOT NULL,
-                           path        VARCHAR(255) NOT NULL,
-                           note        TEXT,
-                           created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                           updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           document_id    INT AUTO_INCREMENT PRIMARY KEY,
+                           project_id     INT          NOT NULL,
+                           name           VARCHAR(100) NOT NULL,
+                           path           VARCHAR(255) NOT NULL,
+                           note           TEXT,
+                           is_it_read     BOOLEAN   DEFAULT FALSE, 
+                           is_it_favorite BOOLEAN   DEFAULT FALSE, 
+                           journal        TEXT,                    
+                           first_author   VARCHAR(100),            
+                           tag            VARCHAR(50),             
+                           created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                            FOREIGN KEY (project_id) REFERENCES Project (project_id) ON DELETE CASCADE
                        )
                        """)
