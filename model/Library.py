@@ -1,4 +1,4 @@
-from MODEL.Project import Project
+from model.Project import Project
 
 
 class Library:
