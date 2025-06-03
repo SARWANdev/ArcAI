@@ -22,9 +22,9 @@ function LibraryPage() {
                 <hr className="library-page-line"></hr>
                 <div className="library-page-header-content">
                     <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
-                    <UserPicture className = "library-page-user-button" left = {"85%"} bottom= {"14%"}/>
-                    <PopUpBoxSignOut left = {"82%"} top = {"15%"}/>
+                    <UserPicture className = "library-page-user-button"/>
                 </div>
+                <PopUpBoxSignOut left = {"83%"} top = {"15%"}/>
                 <hr className="library-page-line"></hr>
                 <div className="library-page-content">
                     <div className="library-page-content-container" id = "library-page-content-container">

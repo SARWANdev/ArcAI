@@ -12,14 +12,7 @@
   
   .chat-page-header-content{
       display: flex;
-      padding-top: 1.5%;
-      padding-bottom: 1.5%;
       justify-content: space-between;
-  }
-  
-  .chat-page-user-button{
-      position: relative;
-      right: 50%;
   }
   
   hr{

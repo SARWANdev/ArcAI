@@ -14,7 +14,7 @@ function HomePage(){
           <UserPicture/>
         </header>
         <hr className = "line-ai-to-content"></hr>
-        <PopUpBoxSignOut left = {"79.5%"} top = {"10%"}/>
+        <PopUpBoxSignOut left = {"83%"} top = {"13%"}/>
         <main className="arcai-main-logged">
         <div className="arcai-hero">
           <h2 className="arcai-tagline">Your research,<br />supercharged by AI</h2>

@@ -12,13 +12,8 @@
 
 .library-page-header-content{
     display: flex;
-    padding-top: 1.5%;
-    padding-bottom: 1.5%;
-}
-
-.library-page-user-button{
-    position: relative;
-    right: 50%;
+    align-items: center;
+    justify-content: space-between;
 }
 
 hr{
@@ -32,18 +27,20 @@ hr{
     height: 763px;
     display: flex;
     flex-direction: column;
-    align-items: center
 }
 
 .library-page-content-container-title{
     font-size: 48px;
+    align-self: center;
 }
 
 .library-page-content-container-dashboard{
-    width: 800px;
-    height: 50px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 911px;
+    height: 50px;
 }
 
 .library-page-content-container-projects{
@@ -51,8 +48,7 @@ hr{
     height: 555px;
 }
 
-.arcai-logo {
-    width: 100px;
-    height: 100px;
+.library-page-user-button{
+    position: relative;
+    top: 50px;
 }
-  
