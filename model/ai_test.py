@@ -1,5 +1,5 @@
 
-from Test import parsed_text
+from test import parsed_text
 from google import genai
 from google.genai import types
 

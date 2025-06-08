@@ -1,4 +1,4 @@
-from model.Document import Document
+from MODEL.document import Document
 
 
 class Project():
