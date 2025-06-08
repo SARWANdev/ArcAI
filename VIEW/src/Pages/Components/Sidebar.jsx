@@ -1,4 +1,4 @@
-import SidebarViewButton from "./Buttons/SidebarViewButton"
+import SideBarToggleButton from "./Buttons/SideBarToggleButton"
 import LibraryButton from "./Buttons/LibraryButton"
 import ChatButton from "./Buttons/ChatButton"
 import MiniatureSideButtons from "./Buttons/MiniatureSideButtons"
@@ -12,7 +12,7 @@ function Sidebar() {
     return(
         <div className="side-bar-container" id="side-bar-container">
             <div id="side-bar-contents">
-                <SidebarViewButton direction = {"left"} imgsrc = "../../images/sidebar-collapse.png"/>
+                <SideBarToggleButton direction = {"left"} imgsrc = "../../images/sidebar-collapse.png"/>
                 <LibraryButton content = "Library"/>
                 <ChatButton content = "Chat"/>
             </div>

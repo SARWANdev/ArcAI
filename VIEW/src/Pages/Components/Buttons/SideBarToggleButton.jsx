@@ -1,13 +1,13 @@
-import "./SidebarViewButton.css";
+import "./SideBarToggleButton.css";
 import {useContext} from "react"
 import {IDContext} from "../../LibraryPage"
 /**
- * SidebarViewButton is the component that is used to display the sidebar view button.
+ * SideBarToggleButton is the component that is used to display the sidebar view button.
  * @param {string} direction - The direction of the sidebar view button.
  * @param {string} imgsrc - The source of the image of the sidebar view button.
  * @returns {JSX} - The React component for the sidebar view button.
  */
-function SidebarViewButton({direction, imgsrc}) {
+function SideBarToggleButton({direction, imgsrc}) {
     let nextDirection = direction;
     const id = useContext(IDContext);
     /**
@@ -60,4 +60,4 @@ function SidebarViewButton({direction, imgsrc}) {
         <button className="side-bar-button" title={nextDirection == "right" ? "Collapse sidebar view" : "Expand sidebar view"}><img className = "image-side-bar-button" src = {imgsrc} alt="collapse sidebar view" onClick={ nextDirection == "right" ? goRight : goLeft}></img></button>
     )
 }
-export default SidebarViewButton
+export default SideBarToggleButton

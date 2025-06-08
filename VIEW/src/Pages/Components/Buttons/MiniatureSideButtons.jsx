@@ -1,4 +1,4 @@
-import SidebarViewButton from "./SidebarViewButton"
+import SidebarViewButton from "./SideBarToggleButton"
 import LibraryButton from "./LibraryButton"
 import ChatButton from "./ChatButton"
 import "./MiniatureSideButtons.css"
