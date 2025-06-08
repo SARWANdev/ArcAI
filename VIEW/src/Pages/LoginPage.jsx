@@ -1,10 +1,10 @@
 import LoginButton from "./Components/Buttons/LoginButton";
-import "./GuestHomePage.css"
+import "./LoginPage.css"
 /**
  * GuestHomePage is the page that is used to display the home page when the user is not logged in.
  * @returns {JSX} - The React component for the home page when the user is not logged in.
  */
-function GuestHomePage(){
+function LoginPage(){ 
     return (
     <div className="arcai-container">
       <header className="arcai-header">
@@ -40,4 +40,4 @@ function GuestHomePage(){
     </div>
   );
 }
-export default GuestHomePage
+export default LoginPage

@@ -2,7 +2,7 @@ import { StrictMode} from 'react'
 import { createRoot } from 'react-dom/client'
 import {BrowserRouter, Route,Routes} from "react-router-dom";
 import {GoogleOAuthProvider} from "@react-oauth/google";
-import GuestHomePage from "./Pages/GuestHomePage.jsx"
+import LoginPage from "./Pages/LoginPage.jsx"
 import HomePage from "./Pages/HomePage.jsx"
 import LibraryPage from "./Pages/LibraryPage.jsx"
 import ChatPage from './Pages/ChatPage.jsx'
@@ -15,7 +15,8 @@ if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
 
-
+// Organise the pop up box for the sign out button
+// Organise the home page text which is completely different from the guest home page text  
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"
@@ -25,7 +26,7 @@ createRoot(document.getElementById('root')).render(
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <BrowserRouter>
         <Routes>
-          <Route path="/" element={<GuestHomePage />} />
+          <Route path="/" element={<LoginPage />} />
 
           <Route element = {<ProtectedRoutes/>}>
           <Route path= "/workspace" element={<HomePage />} />
