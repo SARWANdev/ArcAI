@@ -25,8 +25,5 @@ class AuthenticationService:
     def invalidate_session(self, session_id):
         pass
 
-    def refresh_token(self, refresh_token):
-        pass
-
     def validate_session(self, session_id):
         pass

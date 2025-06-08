@@ -9,12 +9,6 @@ class LibraryService:
     def move_item(self, item_id, item_type, destination_id):
         pass
 
-    def duplicate_item(self, item_id, item_type):
-        pass
-
-    def download_item(self, item_id, item_type):
-        pass
-
     def get_embeddings(self, item_ids=None):
         pass
 

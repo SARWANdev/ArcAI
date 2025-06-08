@@ -4,6 +4,7 @@ class Document:
         self.name = self.__name_assigner() # crate a method that assign a better name according to the pattern LAst name from the author,
         self.__is_document_read = False  # Private variable initialized to False
         self.tag = None
+        self.metadata = None
 
     # Optional: Getter method to access the private variable
     @property

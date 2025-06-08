@@ -29,6 +29,9 @@ class DocumentService:
     def add_to_favorites(self, document_id):
         pass
 
+    def remove_from_favorites(self, document_id):
+        pass
+
     def add_tag(self, document_id, tag):
         pass
 

@@ -1,4 +1,4 @@
-from services.user_service import UserService
+from services.authentication_service import UserService
 from services.authentication_service import AuthenticationService
 
 class UserController:

@@ -10,9 +10,6 @@ class DocumentController:
     def get_document(self, document_id):
         pass
 
-    def get_project_documents(self, project_id):
-        pass
-
     def update_document(self, document_id, name=None, note=None):
         pass
 
@@ -32,6 +29,9 @@ class DocumentController:
         pass
 
     def add_to_favorites(self, document_id):
+        pass
+
+    def remove_from_favorites(self, document_id):
         pass
 
     def add_tag(self, document_id, tag):
