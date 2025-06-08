@@ -28,6 +28,9 @@ class DocumentController:
     def mark_as_read(self, document_id):
         pass
 
+    def mark_as_unread(self, document_id):
+        pass
+
     def add_to_favorites(self, document_id):
         pass
 

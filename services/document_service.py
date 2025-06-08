@@ -23,6 +23,9 @@ class DocumentService:
     def mark_as_read(self, document_id):
         pass
 
+    def mark_as_unread(self, document_id):
+        pass
+
     def download_document(self, document_id):
         pass
 
