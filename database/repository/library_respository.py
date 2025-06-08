@@ -15,3 +15,16 @@ class Library:
             connection.commit()
             return cursor.lastrowid
         
+    @staticmethod
+    def get_by_id(library_id):
+        with database_connection() as connection:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM Library WHERE library_id = %s", (library_id,))
+            return cursor.fetchone()
+        
+    @staticmethod
+    def get_by_user(user_id):
+        with database_connection() as connection:
+            cursor = connection.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM User WHERE user_id = %s", (user_id,))
+            return cursor.fetchall()
