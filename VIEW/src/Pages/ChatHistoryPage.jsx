@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import UserPicture from "./Components/Buttons/UserPicture";
+import UserAvatar from "./Components/Buttons/UserAvatar";
 import PopUpBoxSignOut from "./Components/PopUpBoxSignOut";
 import Sidebar from "./Components/Sidebar";
 import { IDContext } from "./LibraryPage";
@@ -37,7 +37,7 @@ export default function ChatHistoryPage() {
                     <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
                     <button className="chat-history-page-button" id = "chat-history-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
                     <button className="chat-history-page-button" id = "chat-history-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
-                    <UserPicture className = "chat-history-page-user-button" top = {"20px"}/>
+                    <UserAvatar className = "chat-history-page-user-button" top = {"20px"}/>
                 </div>
                 <PopUpBoxSignOut left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-history-page-line"></hr>

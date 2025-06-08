@@ -1,4 +1,4 @@
-import UserPicture from "./Components/Buttons/UserPicture"
+import UserAvatar from "./Components/Buttons/UserAvatar"
 import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
 import GoToLibraryButton from "./Components/Buttons/GoToLibraryButton"
 import "./HomePage.css"
@@ -11,7 +11,7 @@ function HomePage(){
       <div className="arcai-container">
         <header className="arcai-header">
           <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
-          <UserPicture/>
+          <UserAvatar/>
         </header>
         <hr className = "line-ai-to-content"></hr>
         <PopUpBoxSignOut left = {"83%"} top = {"13%"}/>

@@ -1,5 +1,5 @@
 import Sidebar from "./Components/Sidebar"
-import UserPicture from "./Components/Buttons/UserPicture"
+import UserPicture from "./Components/Buttons/UserAvatar"
 import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
 import LibraryPageProjectContainer from "./Components/LibraryPageProjectContainer"
 import {createContext} from "react"

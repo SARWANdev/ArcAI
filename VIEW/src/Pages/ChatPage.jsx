@@ -1,4 +1,4 @@
-import UserPicture from "./Components/Buttons/UserPicture"
+import UserAvatar from "./Components/Buttons/UserAvatar"
 import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
 import Sidebar from "./Components/Sidebar"
 import AIChatContainer from "./Components/AIChatContainer"
@@ -36,7 +36,7 @@ function ChatPage() {
                     <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
                     <button className="chat-page-button" id = "chat-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
                     <button className="chat-page-button" id = "chat-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
-                    <UserPicture className = "chat-page-user-button" top = {"20px"}/>
+                    <UserAvatar className = "chat-page-user-button" top = {"20px"}/>
                 </div>
                 <PopUpBoxSignOut left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-page-line"></hr>

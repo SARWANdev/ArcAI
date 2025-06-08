@@ -1,12 +1,12 @@
-import "./UserPicture.css"
+import "./UserAvatar.css"
 /**
- * UserPicture is the component that is used to display the user picture.
+ * UserAvatar is the component that is used to display the user avatar.
  * @param {string} top - The top position of the user picture.
  * @param {string} bottom - The bottom position of the user picture.
  * @param {string} left - The left position of the user picture.
  * @param {string} right - The right position of the user picture.
  */
-function UserPicture({top, bottom, left, right}) {
+function UserAvatar({top, bottom, left, right}) {
     /**
      * positionImage positions the user picture.
      */
@@ -36,9 +36,9 @@ function UserPicture({top, bottom, left, right}) {
     
     return(
         <>
-        <button className="userButton" id = "userButton" onClick={showSignOutPopUp} style={positionImage} title="User Picture">
+        <button className="userButton" id = "userButton" onClick={showSignOutPopUp} style={positionImage} title="User Avatar">
             <img src = "../images/userPhoto.jpg" alt = "userPhoto" className="userImage" style={{width: "60px", height: "60px"}}></img></button>
         </>
     )
 }
-export default UserPicture
+export default UserAvatar
