@@ -3,7 +3,7 @@ import UserAvatar from "./Components/Buttons/UserAvatar"
 import UserMenu from "./Components/UserMenu"
 import LibraryPageProjectContainer from "./Components/LibraryPageProjectContainer"
 import {createContext} from "react"
-import CreateProject from "./Components/Buttons/CreateProject"
+import CreateProjectButton from "./Components/Buttons/CreateProjectButton"
 import SearchBar from "./Components/Buttons/SearchBar"
 import "./LibraryPage.css"
 /**
@@ -31,7 +31,7 @@ function LibraryPage() {
                         <h1 className="library-page-content-container-title">My Projects</h1>
                         <div className="library-page-content-container-dashboard">
                             <SearchBar/>
-                            <CreateProject/>
+                            <CreateProjectButton/>
                         </div>
                         <LibraryPageProjectContainer/>
                     </div>
