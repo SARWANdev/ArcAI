@@ -1,5 +1,5 @@
 import UserAvatar from "./Components/Buttons/UserAvatar"
-import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
+import UserMenu from "./Components/UserMenu"
 import Sidebar from "./Components/Sidebar"
 import AIChatContainer from "./Components/AIChatContainer"
 import { IDContext } from "./LibraryPage"
@@ -38,7 +38,7 @@ function ChatPage() {
                     <button className="chat-page-button" id = "chat-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
                     <UserAvatar className = "chat-page-user-button" top = {"20px"}/>
                 </div>
-                <PopUpBoxSignOut left = {"83.5%"} top = {"15%"}/>
+                <UserMenu left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-page-line"></hr>
                 <div className="chat-page-content">
                     <div className="chat-page-content-container" id = "chat-page-content-container">

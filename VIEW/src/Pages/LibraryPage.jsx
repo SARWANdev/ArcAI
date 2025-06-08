@@ -1,6 +1,6 @@
 import Sidebar from "./Components/Sidebar"
-import UserPicture from "./Components/Buttons/UserAvatar"
-import PopUpBoxSignOut from "./Components/PopUpBoxSignOut"
+import UserAvatar from "./Components/Buttons/UserAvatar"
+import UserMenu from "./Components/UserMenu"
 import LibraryPageProjectContainer from "./Components/LibraryPageProjectContainer"
 import {createContext} from "react"
 import CreateProject from "./Components/Buttons/CreateProject"
@@ -22,9 +22,9 @@ function LibraryPage() {
                 <hr className="library-page-line"></hr>
                 <div className="library-page-header-content">
                     <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
-                    <UserPicture className = "library-page-user-button"/>
+                    <UserAvatar className = "library-page-user-button"/>
                 </div>
-                <PopUpBoxSignOut left = {"83%"} top = {"15%"}/>
+                <UserMenu left = {"83%"} top = {"15%"}/>
                 <hr className="library-page-line"></hr>
                 <div className="library-page-content">
                     <div className="library-page-content-container" id = "library-page-content-container">

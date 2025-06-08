@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import UserAvatar from "./Components/Buttons/UserAvatar";
-import PopUpBoxSignOut from "./Components/PopUpBoxSignOut";
+import UserMenu from "./Components/UserMenu";
 import Sidebar from "./Components/Sidebar";
 import { IDContext } from "./LibraryPage";
 import ClearAllButton from "./Components/Buttons/ClearAllButton";
@@ -39,7 +39,7 @@ export default function ChatHistoryPage() {
                     <button className="chat-history-page-button" id = "chat-history-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
                     <UserAvatar className = "chat-history-page-user-button" top = {"20px"}/>
                 </div>
-                <PopUpBoxSignOut left = {"83.5%"} top = {"15%"}/>
+                <UserMenu left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-history-page-line"></hr>
                 <div className="chat-history-page-content">
                     <div className="chat-history-page-content-container" id = "chat-history-page-content-container">

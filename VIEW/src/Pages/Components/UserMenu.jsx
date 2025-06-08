@@ -1,4 +1,4 @@
-import "./PopUpBoxSignOut.css"
+import "./UserMenu.css"
 import SignOutButton from "./Buttons/SignOutButton";
 /**
  * PopUpBoxSignOut is the component that is used to display the sign out pop up box.
@@ -7,7 +7,7 @@ import SignOutButton from "./Buttons/SignOutButton";
  * @param {string} left - The left position of the pop up box.
  * @param {string} right - The right position of the pop up box.
  */
-function PopUpBoxSignOut({top, bottom, left, right}) {
+function UserMenu({top, bottom, left, right}) {
     /**
      * hideSignOutPopUp is the function that is used to hide the sign out pop up box.
      */
@@ -33,4 +33,4 @@ function PopUpBoxSignOut({top, bottom, left, right}) {
         </div>
     )
 }
-export default PopUpBoxSignOut
+export default UserMenu
