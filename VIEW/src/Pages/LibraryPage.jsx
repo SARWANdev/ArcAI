@@ -1,7 +1,7 @@
 import Sidebar from "./Components/Sidebar"
 import UserAvatar from "./Components/Buttons/UserAvatar"
 import UserMenu from "./Components/UserMenu"
-import LibraryPageProjectContainer from "./Components/LibraryPageProjectContainer"
+import ProjectGrid from "./Components/ProjectGrid"
 import {createContext} from "react"
 import CreateProjectButton from "./Components/Buttons/CreateProjectButton"
 import SearchBar from "./Components/Buttons/SearchBar"
@@ -33,7 +33,7 @@ function LibraryPage() {
                             <SearchBar/>
                             <CreateProjectButton/>
                         </div>
-                        <LibraryPageProjectContainer/>
+                        <ProjectGrid/>
                     </div>
                     <IDContext.Provider value = {"library-page-content-container"}>
                         <Sidebar/>

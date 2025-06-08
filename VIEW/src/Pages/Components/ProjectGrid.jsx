@@ -1,9 +1,9 @@
-import "./LibraryPageProjectContainer.css"
+import "./ProjectGrid.css"
 /**
  * LibraryPageProjectContainer is the component that is used to display the projects in the library page.
  * @returns {JSX} - The React component for the project container.
  */
-export default function LibraryPageProjectContainer(){
+export default function ProjectGrid(){
     return(
         <div className="library-page-project-title-container">
             <div className="library-page-project-title-form">
