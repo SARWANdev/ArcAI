@@ -1,6 +1,6 @@
 import UserAvatar from "./Components/Buttons/UserAvatar"
 import UserMenu from "./Components/UserMenu"
-import GoToLibraryButton from "./Components/Buttons/GoToLibraryButton"
+import LibraryLinkButton from "./Components/Buttons/LibraryLinkButton"
 import "./HomePage.css"
 /**
  * HomePage is the page that is used to display the home page when the user is logged in.
@@ -38,7 +38,7 @@ function HomePage(){
             </label>
           </div>
         </div>
-        <GoToLibraryButton/>
+        <LibraryLinkButton/>
       </main>
     </div>
     )
