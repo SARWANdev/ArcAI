@@ -5,7 +5,7 @@ class Project():
     def _init_(self, name):
         self.name = name
 
-    def upload_document(name):
+    def upload_document(self, document):
 
         Document()
 
