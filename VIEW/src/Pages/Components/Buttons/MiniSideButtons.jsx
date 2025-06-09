@@ -1,4 +1,4 @@
-import SidebarViewButton from "./SideBarToggleButton"
+import SidebarToggleButton from "./SideBarToggleButton"
 import LibraryButton from "./LibraryButton"
 import ChatButton from "./ChatButton"
 import "./MiniSideButtons.css"
@@ -9,7 +9,7 @@ import "./MiniSideButtons.css"
 function MiniSideButtons() {
     return(
         <div className="mini-side-buttons-container" id = "mini-side-buttons-container">
-            <SidebarViewButton direction = {"right"} imgsrc = "../../images/sidebar-expand.png" className = "side-bar-open-button"/>
+            <SidebarToggleButton direction = {"right"} imgsrc = "../../images/sidebar-expand.png" className = "side-bar-open-button"/>
             <LibraryButton className = "mini-library-button"/>
             <ChatButton className = "mini-chat-button"/>
         </div>

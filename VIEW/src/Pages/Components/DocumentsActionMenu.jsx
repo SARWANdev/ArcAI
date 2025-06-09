@@ -1,7 +1,7 @@
 import DeleteButton from "./Buttons/DeleteButton"
 import RenameButton from "./Buttons/RenameButton"
 import DuplicateButton from "./Buttons/DuplicateButton"
-import ExportBibtex from "./Buttons/ExportBibtex"
+import ExportBibtexButton from "./Buttons/ExportBibtexButton"
 import MoveButton from "./Buttons/MoveButton"
 import "./DocumentsActionMenu.css"
 /**
@@ -13,7 +13,7 @@ export default function DocumentsActionMenu() {
         <div className="documents-action-menu" id = "documents-action-menu-container">
             <DeleteButton/>
             <DuplicateButton/>
-            <ExportBibtex/>
+            <ExportBibtexButton/>
             <MoveButton/>
             <RenameButton/>
         </div>
