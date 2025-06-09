@@ -10,7 +10,7 @@ function LibraryLinkButton() {
      * goToLibrary is the function that is used to navigate to the library page.
      */
     function goToLibrary() {
-        navigate("/workspace/library")
+        navigate("/home/library")   //TODO: Change to /library
     }
     return (
         <button className="library-link-button" onClick={goToLibrary} title="Go To Library">Go To Library</button>

@@ -12,7 +12,7 @@ function LibraryButton({content}) {
      */
     function goToLibrary(e) {
         if (e) e.preventDefault();
-        navigate("/workspace/library", { replace: true });
+        navigate("/home/library", { replace: true });   //TODO: Change to /library
     }
     
     return (

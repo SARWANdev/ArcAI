@@ -10,7 +10,7 @@ function LoginButton() {
   window.localStorage.setItem("ifLogged", "true");
   
   return(
-        <button className="arcai-login-button" onClick={() => navigate("/workspace")} title="Log in">Log in</button>
+        <button className="arcai-login-button" onClick={() => navigate("/home")} title="Log in">Log in</button>
     )
 }
 export default LoginButton

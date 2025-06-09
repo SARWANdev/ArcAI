@@ -1,13 +1,13 @@
 import DeleteButton from "./Buttons/DeleteButton";
 import RenameButton from "./Buttons/RenameButton";
-import "./PopUpBoxChatHistoryOptions.css"
+import "./ChatHistoryActionMenu.css"
 /**
  * PopUpBoxChatHistoryOptions is the component that is used to display the pop up box for the chat history options.
  * @returns {JSX} - The React component for the pop up box for the chat history options.
  */
-export default function PopUpBoxChatHistoryOptions(){
+export default function ChatHistoryActionMenu(){
     return(
-        <div className="pop-up-box-chat-history-options">
+        <div className="chat-history-action-menu">
             <DeleteButton/>
             <RenameButton/>
         </div>

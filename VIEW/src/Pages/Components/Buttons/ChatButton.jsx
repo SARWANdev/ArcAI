@@ -13,7 +13,7 @@ function ChatButton({content}) {
      */
     function goToChat(e) {
         if (e) e.preventDefault();
-        navigate("/workspace/chat-chatbot", { replace: true });
+        navigate("/home/chat-chatbot", { replace: true });
     }
     return (
         <div className="chat-container" style={content != "Chat" ? {height: "70px", width: "70px"} : {}}>

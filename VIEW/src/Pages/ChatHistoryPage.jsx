@@ -17,7 +17,7 @@ export default function ChatHistoryPage() {
      */
     function handleChatButtonClick(e){
         if (e) e.preventDefault();
-        navigate("/workspace/chat-chatbot", { replace: true });
+        navigate("/home/chat-chatbot", { replace: true });
     }
     /**
      * handleHistoryButtonClick is the function that is used to navigate to the chat history page.
@@ -25,7 +25,7 @@ export default function ChatHistoryPage() {
      */
     function handleHistoryButtonClick(e){
         if (e) e.preventDefault();
-        navigate("/workspace/chat-history", { replace: true });
+        navigate("/home/chat-history", { replace: true });
     }
     
     return(

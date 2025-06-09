@@ -29,11 +29,11 @@ createRoot(document.getElementById('root')).render(
           <Route path="/" element={<LoginPage />} />
 
           <Route element = {<ProtectedRoutes/>}>
-          <Route path= "/workspace" element={<HomePage />} />
-          <Route path = "/workspace/library" element = {<LibraryPage/>}/>
-          <Route path = "/workspace/document-viewer" element = {<DocumentViewerPage/>}/>
-          <Route path = "/workspace/chat-chatbot" element = {<ChatPage/>}/>
-          <Route path = "/workspace/chat-history" element = {<ChatHistoryPage/>}/>
+          <Route path= "/home" element={<HomePage />} />
+          <Route path = "/home/library" element = {<LibraryPage/>}/>
+          <Route path = "/home/library/document-viewer" element = {<DocumentViewerPage/>}/>
+          <Route path = "/home/chat-chatbot" element = {<ChatPage/>}/>
+          <Route path = "/home/chat-history" element = {<ChatHistoryPage/>}/>
           </Route>
 
         </Routes>
