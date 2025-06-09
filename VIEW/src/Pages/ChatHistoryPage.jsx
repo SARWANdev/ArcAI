@@ -3,7 +3,7 @@ import UserAvatar from "./Components/Buttons/UserAvatar";
 import UserMenu from "./Components/UserMenu";
 import Sidebar from "./Components/Sidebar";
 import { IDContext } from "./LibraryPage";
-import ClearAllButton from "./Components/Buttons/ClearAllButton";
+import ClearAllChatsButton from "./Components/Buttons/ClearAllChatsButton";
 import "./ChatHistoryPage.css";
 /**
  * ChatHistoryPage is the page that is used to display the chat history page.
@@ -43,7 +43,7 @@ export default function ChatHistoryPage() {
                 <hr className="chat-history-page-line"></hr>
                 <div className="chat-history-page-content">
                     <div className="chat-history-page-content-container" id = "chat-history-page-content-container">
-                        <ClearAllButton/>
+                        <ClearAllChatsButton/>
                     </div>
                     <IDContext.Provider value = {"chat-history-page-content-container"}>
                         <Sidebar/>

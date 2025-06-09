@@ -22,13 +22,13 @@ function UserAvatar({top, bottom, left, right}) {
      * showSignOutPopUp is the function that is used to show the sign out pop up.
      */
     const showSignOutPopUp = () => {
-        document.getElementById("sign-out-container").style.display = "flex";
+        document.getElementById("user-menu-container").style.display = "flex";
     }
     /**
      * To hide the sign out pop up when the user clicks outside of it.
      */
     document.addEventListener('mouseup', function(e) {
-    var container = document.getElementById("sign-out-container");
+    var container = document.getElementById("user-menu-container");
     if (!container.contains(e.target)) {
         container.style.display = 'none';
     }

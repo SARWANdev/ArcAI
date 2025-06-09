@@ -12,7 +12,7 @@ function UserMenu({top, bottom, left, right}) {
      * hideSignOutPopUp is the function that is used to hide the sign out pop up box.
      */
     const hideSignOutPopUp = () => {
-        document.getElementById("sign-out-container").style.display = "";
+        document.getElementById("user-menu-container").style.display = "";
     }
     /**
      * positionStyle is the style of the pop up box.
@@ -26,7 +26,7 @@ function UserMenu({top, bottom, left, right}) {
   };
   
     return(
-        <div className="user-menu" id = "sign-out-container" style={positionStyle}>
+        <div className="user-menu" id = "user-menu-container" style={positionStyle}>
             <SignOutButton/>
             <br/>
             <button className="user-menu-cancel-button" onClick={hideSignOutPopUp} title="Cancel">Cancel</button>

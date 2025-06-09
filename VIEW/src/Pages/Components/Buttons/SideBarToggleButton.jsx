@@ -20,7 +20,7 @@ function SideBarToggleButton({direction, imgsrc}) {
         // Apply the transform
         sidebar.style.transform = "translateX(-80%)";
 
-        const miniSideBar = document.getElementById("mini-container");
+        const miniSideBar = document.getElementById("mini-side-buttons-container");
         miniSideBar.style.display = "flex";
         miniSideBar.style.flexDirection = "column";
         miniSideBar.style.gap = "20px";
@@ -43,7 +43,7 @@ function SideBarToggleButton({direction, imgsrc}) {
         sidebar.style.transition = "transform 0.3s ease";
         
         sidebar.style.transform = "translateX(0%)";
-        const miniSideBar = document.getElementById("mini-container");
+        const miniSideBar = document.getElementById("mini-side-buttons-container");
         miniSideBar.style.display = "none";
         sidebarButtons.style.display = "flex";
         sidebarButtons.style.flexDirection = "column";

@@ -1,4 +1,4 @@
-.clear-all-button{
+.clear-all-chats-button{
     background: none;
     border: none;
     padding: 0;
@@ -13,7 +13,7 @@
     left: 30%;
 }
 
-.clear-all-button:hover{
+.clear-all-chats-button:hover{
     background-color: hsl(0, 0%, 90%);
 }
 
