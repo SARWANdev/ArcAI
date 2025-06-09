@@ -8,7 +8,7 @@ import "./MiniSideButtons.css"
  */
 function MiniSideButtons() {
     return(
-        <div className="mini-container" id = "mini-container">
+        <div className="mini-side-buttons-container" id = "mini-side-buttons-container">
             <SidebarViewButton direction = {"right"} imgsrc = "../../images/sidebar-expand.png" className = "side-bar-open-button"/>
             <LibraryButton className = "mini-library-button"/>
             <ChatButton className = "mini-chat-button"/>
