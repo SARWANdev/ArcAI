@@ -1,7 +1,7 @@
 import SideBarToggleButton from "./Buttons/SideBarToggleButton"
 import LibraryButton from "./Buttons/LibraryButton"
 import ChatButton from "./Buttons/ChatButton"
-import MiniatureSideButtons from "./Buttons/MiniatureSideButtons"
+import MiniSideButtons from "./Buttons/MiniSideButtons"
 import "./Sidebar.css"
 
 /**
@@ -16,7 +16,7 @@ function Sidebar() {
                 <LibraryButton content = "Library"/>
                 <ChatButton content = "Chat"/>
             </div>
-            <MiniatureSideButtons/>
+            <MiniSideButtons/>
         </div>
     )
 }

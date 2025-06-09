@@ -1,12 +1,12 @@
 import SidebarViewButton from "./SideBarToggleButton"
 import LibraryButton from "./LibraryButton"
 import ChatButton from "./ChatButton"
-import "./MiniatureSideButtons.css"
+import "./MiniSideButtons.css"
 /**
- * MiniatureSideButtons is the component that is used to display the miniature side buttons.
+ * MiniSideButtons is the component that is used to display the miniature side buttons.
  * @returns {JSX} - The React component for the miniature side buttons.
  */
-function MiniatureSideButtons() {
+function MiniSideButtons() {
     return(
         <div className="mini-container" id = "mini-container">
             <SidebarViewButton direction = {"right"} imgsrc = "../../images/sidebar-expand.png" className = "side-bar-open-button"/>
@@ -15,4 +15,4 @@ function MiniatureSideButtons() {
         </div>
     )
 }
-export default MiniatureSideButtons
+export default MiniSideButtons
