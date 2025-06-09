@@ -57,7 +57,7 @@ function SideBarToggleButton({direction, imgsrc}) {
     }
     
     return(
-        <button className="side-bar-button" title={nextDirection == "right" ? "Collapse sidebar view" : "Expand sidebar view"}><img className = "image-side-bar-button" src = {imgsrc} alt="collapse sidebar view" onClick={ nextDirection == "right" ? goRight : goLeft}></img></button>
+        <button className="side-bar-toggle-button" title={nextDirection == "right" ? "Collapse sidebar view" : "Expand sidebar view"}><img className = "image-side-bar-toggle-button" src = {imgsrc} alt="collapse sidebar view" onClick={ nextDirection == "right" ? goRight : goLeft}></img></button>
     )
 }
 export default SideBarToggleButton

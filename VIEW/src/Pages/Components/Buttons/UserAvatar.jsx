@@ -36,8 +36,8 @@ function UserAvatar({top, bottom, left, right}) {
     
     return(
         <>
-        <button className="userButton" id = "userButton" onClick={showSignOutPopUp} style={positionImage} title="User Avatar">
-            <img src = "../images/userPhoto.jpg" alt = "userPhoto" className="userImage" style={{width: "60px", height: "60px"}}></img></button>
+        <button className="user-avatar" id = "user-avatar" onClick={showSignOutPopUp} style={positionImage} title="User Avatar">
+            <img src = "../images/userPhoto.jpg" alt = "userPhoto" className="user-avatar-image" style={{width: "60px", height: "60px"}}></img></button>
         </>
     )
 }

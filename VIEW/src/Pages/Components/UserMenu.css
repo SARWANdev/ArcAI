@@ -1,4 +1,4 @@
-.pop-up-sign-out {
+.user-menu {
     background-color: rgb(255, 255, 255);
     border-radius: 10%;
     border: 1px solid black;
@@ -11,7 +11,7 @@
     z-index: 1000; 
 }
 
-.pop-up-box-cancel-button {
+.user-menu-cancel-button {
     font-size: 23px;
     background: transparent;
     border: none !important;

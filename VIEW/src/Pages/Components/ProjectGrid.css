@@ -1,9 +1,9 @@
-.library-page-project-container{
+.project-grid-container{
     width: 911px;
     height: 555px;
 }
 
-.library-page-project-title-button{
+.project-grid-title-button{
     width: 60px;
     height: 30px;
     border: none;
@@ -15,11 +15,11 @@
     left: 10px;
 }
 
-.library-page-project-title-button:hover{
+.project-grid-title-button:hover{
     background-color: #e0e0e0;
 }
 
-.library-page-project-title-form{
+.project-grid-title-form{
     display: flex;
     flex-direction: row;
     margin-top: 40px;
@@ -28,7 +28,7 @@
     justify-content: space-around;
 }
 
-.library-page-project-last-accessed-button{
+.project-grid-last-accessed-button{
     width: 180px;
     height: 30px;
     border: none;
@@ -40,6 +40,6 @@
     right: 10px;
 }
 
-.library-page-project-last-accessed-button:hover{
+.project-grid-last-accessed-button:hover{
     background-color: #e0e0e0;
 }

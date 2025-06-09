@@ -5,10 +5,10 @@ import "./ProjectGrid.css"
  */
 export default function ProjectGrid(){
     return(
-        <div className="library-page-project-title-container">
-            <div className="library-page-project-title-form">
-                <button className="library-page-project-title-button" title="Title button">Title</button>
-                <button className="library-page-project-last-accessed-button" title="Last Accessed button">Last Accessed</button>
+        <div className="project-grid-container">
+            <div className="project-grid-title-form">
+                <button className="project-grid-title-button" title="Title button">Title</button>
+                <button className="project-grid-last-accessed-button" title="Last Accessed button">Last Accessed</button>
             </div>
         </div>
     )

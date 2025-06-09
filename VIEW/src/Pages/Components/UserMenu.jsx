@@ -26,10 +26,10 @@ function UserMenu({top, bottom, left, right}) {
   };
   
     return(
-        <div className="pop-up-sign-out" id = "sign-out-container" style={positionStyle}>
+        <div className="user-menu" id = "sign-out-container" style={positionStyle}>
             <SignOutButton/>
             <br/>
-            <button className="pop-up-box-cancel-button" onClick={hideSignOutPopUp} title="Cancel">Cancel</button>
+            <button className="user-menu-cancel-button" onClick={hideSignOutPopUp} title="Cancel">Cancel</button>
         </div>
     )
 }

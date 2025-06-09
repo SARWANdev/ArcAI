@@ -1,4 +1,4 @@
-.image-side-bar-button{
+.image-side-bar-toggle-button{
     position: relative;
     width: 30px;
     height: 30px;
@@ -7,7 +7,7 @@
     align-items: center;
 }
 
-.side-bar-button {
+.side-bar-toggle-button {
     position: relative;
     border: none;
     padding: 0;
@@ -19,6 +19,6 @@
     left: 10px;
 }
 
-.side-bar-button:hover{
+.side-bar-toggle-button:hover{
     background-color: rgba(238, 238, 238, 1);
 }

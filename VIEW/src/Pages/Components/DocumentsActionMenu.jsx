@@ -10,7 +10,7 @@ import "./DocumentsActionMenu.css"
  */
 export default function DocumentsActionMenu() {
     return (
-        <div className="pop-up-box-documents-options" id = "documents-options-container">
+        <div className="documents-action-menu" id = "documents-action-menu-container">
             <DeleteButton/>
             <DuplicateButton/>
             <ExportBibtex/>

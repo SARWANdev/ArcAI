@@ -9,7 +9,7 @@ import RenameButton from "./Buttons/RenameButton"
  */
 export default function ProjectsActionMenu() {
     return (
-        <div className="pop-up-box-project-options" id = "project-options-container">
+        <div className="projects-action-menu" id = "projects-action-menu">
             <DeleteButton/>
             <DownloadButton/>
             <UploadButton/>
