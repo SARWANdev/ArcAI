@@ -28,9 +28,8 @@ function UserAvatar({top, bottom, left, right}) {
      * To hide the sign out pop up when the user clicks outside of it.
      */
     document.addEventListener('mouseup', function(e) {
-    var container = document.getElementById("user-menu-container");
-    if (!container.contains(e.target)) {
-        container.style.display = 'none';
+    if (!document.getElementById("user-menu-container").contains(e.target)) {
+        document.getElementById("user-menu-container").style.display = 'none';
     }
     });
     
