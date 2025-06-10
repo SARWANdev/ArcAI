@@ -4,9 +4,6 @@ class LibraryController:
     def __init__(self):
         self.library_service = LibraryService()
 
-    def move_item(self, item_id, item_type, destination_id):
-        pass
-
     def get_embeddings(self, item_ids=None):
         pass
 
