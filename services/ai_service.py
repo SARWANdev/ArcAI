@@ -2,15 +2,32 @@
 # from model.chat import Chat as ConversationModel
 
 class AIService:
-    def __init__(self):
+
+    __ollama_url:str
+    __llm_name:str
+    __embedding_model_name: str
+
+    def __init__(self, ollama_url:str, llm_name:str, embedding_model_name:str):
         self.conversation_repository = ConversationRepository
+        self.__ollama_url = ollama_url
+        self.__llm_name = llm_name
+        self.__embedding_model_name = embedding_model_name
+
+    def set_ollama_url(self, ollama_url:str):
+        self.__ollama_url = ollama_url
+
+    def set_llm_name(self, llm_name:str):
+        self.__llm_name = llm_name
+
+    def set_embedding_model_name(self, embedding_model_name:str):
+        self.__embedding_model_name = embedding_model_name
 
     def query(self, user_id, prompt, document_ids=None):
-        # TODO: Send prompt to LLM (e.g., GPT/Claude), possibly with doc context
+        # TODO: Send prompt to LLM (e.g., GPT/Claude), possibly with doc context returns json
         pass
 
     def summarize(self, document_id):
-        # TODO: Extract document text and return a summary
+        # TODO: Extract document text and return a summary string
         pass
 
     def follow_up(self, chat_id, prompt):
@@ -28,3 +45,10 @@ class AIService:
     def delete_chat(self, chat_id):
         # TODO: Hard-delete or soft-delete the chat session
         pass
+
+    def embed(self, text_chunks:list[str]): 
+        # TODO: FAISSfromTEXTChunks() returns FAISS
+        pass
+
+    
+
