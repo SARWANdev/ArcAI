@@ -3,18 +3,18 @@
 
 class AIService:
 
-    __ollama_url:str
+    __ollama_api_url:str
     __llm_name:str
     __embedding_model_name: str
 
     def __init__(self, ollama_url:str, llm_name:str, embedding_model_name:str):
         self.conversation_repository = ConversationRepository
-        self.__ollama_url = ollama_url
+        self.__ollama_api_url = ollama_url
         self.__llm_name = llm_name
         self.__embedding_model_name = embedding_model_name
 
     def set_ollama_url(self, ollama_url:str):
-        self.__ollama_url = ollama_url
+        self.__ollama_api_url = ollama_url
 
     def set_llm_name(self, llm_name:str):
         self.__llm_name = llm_name
@@ -23,7 +23,7 @@ class AIService:
         self.__embedding_model_name = embedding_model_name
 
     def query(self, user_id, prompt):
-        # TODO: Send prompt to LLM (e.g., GPT/Claude) prompt optionally contains context returns json
+        # TODO: Send prompt to LLM (e.g., GPT/Claude) prompt optionally contains context returns response object that can be streamed
         pass
 
     def summarize(self, document_id, user_id):
@@ -51,7 +51,7 @@ class AIService:
         # TODO: FAISSfromTEXTChunks() returns FAISS
         pass
 
-    def perform_similarity_search(self, query, vectorstore):
+    def perform_similarity_search(self, query, vectorstore, top_k):
         pass
 
     
