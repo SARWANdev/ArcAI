@@ -6,7 +6,6 @@ class UserController:
         self.user_service = UserService()
         self.auth_service = AuthenticationService()
 
-
     def login(self, email, password):
         pass
 

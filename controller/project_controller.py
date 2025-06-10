@@ -6,22 +6,28 @@ class ProjectController:
         self.project_service = ProjectService()
         self.document_service = DocumentService()
 
-    def create_project(self, user_id, name, description=None, note=None):
-        pass
-
-    def get_project(self, project_id):
-        pass
-
     def get_user_projects(self, user_id):
         pass
 
     def update_project(self, project_id, name=None, description=None, note=None):
         pass
 
-    def delete_project(self, project_id):
+    def get_document(self, document_id):
         pass
 
-    def download_project(self, project_id):
+    def duplicate_document(self, project_id, document_id):
+        pass
+
+    def delete_document(self, document_id):
+        pass
+
+    def upload_document(self, project_id, file_path, name=None):
+        pass
+
+    def download_document(self, document_id):
+        pass
+
+    def rename_document(self, document_id, name):
         pass
 
     def get_project_documents(self, project_id):
@@ -40,4 +46,25 @@ class ProjectController:
         pass
 
     def search_project_documents(self, project_id, query):
+        pass
+
+    def mark_as_read(self, document_id):
+        pass
+
+    def mark_as_unread(self, document_id):
+        pass
+
+    def add_to_favorites(self, document_id):
+        pass
+
+    def remove_from_favorites(self, document_id):
+        pass
+
+    def add_tag(self, document_id, tag):
+        pass
+
+    def remove_tag(self, document_id):
+        pass
+
+    def get_document_metadata(self, document_id):
         pass

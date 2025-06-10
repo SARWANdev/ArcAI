@@ -4,43 +4,10 @@ class DocumentController:
     def __init__(self):
         self.document_service = DocumentService()
 
-    def create_document(self, project_id, name, path, note=None):
-        pass
-
-    def get_document(self, document_id):
-        pass
-
-    def update_document(self, document_id, name=None, note=None):
-        pass
-
-    def delete_document(self, document_id):
-        pass
-
-    def upload_document(self, project_id, file_path, name=None):
-        pass
-
     def download_document(self, document_id):
         pass
 
-    def duplicate_document(self, project_id, document_id):
-        pass
-
-    def mark_as_read(self, document_id):
-        pass
-
-    def mark_as_unread(self, document_id):
-        pass
-
-    def add_to_favorites(self, document_id):
-        pass
-
-    def remove_from_favorites(self, document_id):
-        pass
-
-    def add_tag(self, document_id, tag):
-        pass
-
-    def remove_tag(self, document_id):
+    def download_notebook(self, notebook_id):
         pass
 
     def get_document_tags(self, document_id):
@@ -52,8 +19,11 @@ class DocumentController:
     def get_document_metadata(self, document_id):
         pass
 
-    def extract_text_from_document(self, document_id):
+    def get_document_summary(self, document_id):
         pass
 
-    def get_document_summary(self, document_id):
+    def get_chat(self, chat_id):
+        pass
+
+    def follow_up(self, chat_id, prompt):
         pass

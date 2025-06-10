@@ -7,16 +7,28 @@ class LibraryController:
     def get_embeddings(self, item_ids=None):
         pass
 
+    def get_project(self, project_id):
+        pass
+
     def search_documents(self, query, filters=None):
         pass
 
-    def sort_library(self, sort_by, sort_order):
+    def download_project(self, project_id):
+       pass
+
+    def delete_project(self, project_id):
         pass
 
-    def filter_library(self, filters):
+    def create_project(self, user_id, name, description=None, note=None):
         pass
 
-    def get_library_structure(self):
+    def rename_project(self, project_id, name):
+        pass
+
+    def sort_projects(self, sort_by, sort_order):
+        pass
+
+    def filter_projects(self, filters):
         pass
 
     def get_item_metadata(self, item_id, item_type):

@@ -46,6 +46,10 @@ class AIService:
         # TODO: Hard-delete or soft-delete the chat session
         pass
 
+    def delete_all_chats(self, user_id):
+        # TODO: Delete all chat sessions for the user
+        pass
+
 
     def embed(self, text_chunks:list[str]): 
         # TODO: FAISSfromTEXTChunks() returns FAISS
