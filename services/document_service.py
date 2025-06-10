@@ -42,7 +42,7 @@ class DocumentService:
     def remove_tag(self, document_id):
         pass
 
-    def get_document_tags(self, document_id):
+    def get_document_tag(self, document_id):
         pass
 
     def highlight_document(self, document_id, text):
@@ -62,4 +62,3 @@ class DocumentService:
 
     def download_bibtex(self, document_id):
         pass
-    
