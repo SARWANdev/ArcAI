@@ -22,8 +22,8 @@ class AIService:
     def set_embedding_model_name(self, embedding_model_name:str):
         self.__embedding_model_name = embedding_model_name
 
-    def query(self, user_id, prompt, document_ids=None):
-        # TODO: Send prompt to LLM (e.g., GPT/Claude), possibly with doc context returns json
+    def query(self, user_id, prompt):
+        # TODO: Send prompt to LLM (e.g., GPT/Claude) prompt optionally contains context returns json
         pass
 
     def summarize(self, document_id):
