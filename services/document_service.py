@@ -1,5 +1,5 @@
 from database.repository.document_repository import Document as DocumentRepository
-from model.document import Document as DocumentModel
+from model.document_reader.document import Document as DocumentModel
 
 class DocumentService:
     def __init__(self):

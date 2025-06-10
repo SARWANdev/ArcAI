@@ -1,5 +1,5 @@
 from database.repository.notebook_repository import Notebook as NotebookRepository
-from model.notebook import Notebook as NotebookModel
+from model.document_reader.notebook import Notebook as NotebookModel
 
 class NotebookService:
     def __init__(self):

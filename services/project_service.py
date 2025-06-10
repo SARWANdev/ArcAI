@@ -1,5 +1,5 @@
 from database.repository.project_repository import Project as ProjectRepository
-from model.project import Project as ProjectModel
+from model.document_reader.project import Project as ProjectModel
 
 class ProjectService:
     def __init__(self):
