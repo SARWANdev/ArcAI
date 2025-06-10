@@ -55,3 +55,6 @@ class DocumentService:
 
     def extract_text_from_document(self, document_id):
         pass
+
+    def get_text_chunks_from_document(self, document_id):
+        pass
