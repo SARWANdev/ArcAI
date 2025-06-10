@@ -1,4 +1,4 @@
-from MODEL.document_reader.project import Project
+from model.document_reader.project import Project
 
 
 class Library:
