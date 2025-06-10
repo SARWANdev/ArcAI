@@ -14,7 +14,7 @@ class DocumentController:
     def download_notebook(self, notebook_id):
         pass
 
-    def get_document_tags(self, document_id):
+    def edit_notebook(self, notebook_id, prompt):
         pass
 
     def highlight_document(self, document_id, text):

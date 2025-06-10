@@ -66,5 +66,5 @@ class ProjectController:
     def remove_tag(self, document_id):
         pass
 
-    def get_document_metadata(self, document_id):
+    def get_document_bibtex(self, document_id):
         pass

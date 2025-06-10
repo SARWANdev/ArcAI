@@ -38,6 +38,10 @@ class AIService:
         # TODO: Fetch all chat sessions for the user
         pass
 
+    def get_conversation(self, chat_id):
+        # TODO: Fetch the conversation for the chat
+        pass
+
     def rename_chat(self, chat_id, new_title):
         # TODO: Rename the chat in DB
         pass

@@ -16,7 +16,7 @@ class ChatController:
     def get_chat_history(self, user_id):
         pass
 
-    def get_chat(self, chat_id):
+    def get_conversation(self, chat_id):
         pass
 
     def rename_chat(self, chat_id, new_title):

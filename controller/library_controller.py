@@ -17,13 +17,13 @@ class LibraryController:
     def search_documents(self, query, filters=None):
         pass
 
+    def create_project(self, user_id, name, description=None, note=None):
+        pass
+
     def download_project(self, project_id):
        pass
 
     def delete_project(self, project_id):
-        pass
-
-    def create_project(self, user_id, name, description=None, note=None):
         pass
 
     def rename_project(self, project_id, name):
