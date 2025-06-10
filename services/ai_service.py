@@ -46,9 +46,12 @@ class AIService:
         # TODO: Hard-delete or soft-delete the chat session
         pass
 
-        
+
     def embed(self, text_chunks:list[str]): 
         # TODO: FAISSfromTEXTChunks() returns FAISS
+        pass
+
+    def perform_similarity_search(self, query, vectorstore):
         pass
 
     
