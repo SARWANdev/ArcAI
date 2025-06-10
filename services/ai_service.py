@@ -26,8 +26,8 @@ class AIService:
         # TODO: Send prompt to LLM (e.g., GPT/Claude) prompt optionally contains context returns json
         pass
 
-    def summarize(self, document_id):
-        # TODO: Extract document text and return a summary string
+    def summarize(self, document_id, user_id):
+        # TODO: Extract important points from document text with a similarity search and return a summary string
         pass
 
     def follow_up(self, chat_id, prompt):
