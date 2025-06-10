@@ -35,3 +35,6 @@ class ProjectController:
 
     def filter_project_documents(self, project_id, filters):
         pass
+
+    def search_project_documents(self, project_id, query):
+        pass

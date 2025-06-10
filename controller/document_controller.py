@@ -54,3 +54,6 @@ class DocumentController:
 
     def extract_text_from_document(self, document_id):
         pass
+
+    def get_document_summary(self, document_id):
+        pass
