@@ -1,8 +1,12 @@
 from services.library_service import LibraryService
+from services.project_service import ProjectService
+from services.document_service import DocumentService
 
 class LibraryController:
     def __init__(self):
         self.library_service = LibraryService()
+        self.project_service = ProjectService()
+        self.document_service = DocumentService()
 
     def get_embeddings(self, item_ids=None):
         pass

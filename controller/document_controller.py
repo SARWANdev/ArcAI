@@ -1,8 +1,12 @@
 from services.document_service import DocumentService
+from services.notebook_service import NotebookService
+from services.ai_service import AIService
 
 class DocumentController:
     def __init__(self):
         self.document_service = DocumentService()
+        self.notebook_service = NotebookService()
+        self.ai_service = AIService()
 
     def download_document(self, document_id):
         pass
