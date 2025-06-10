@@ -30,6 +30,9 @@ class ProjectController:
     def get_project_embeddings(self, project_id, document_ids=None):
         pass
 
+    def move_documents(self, item_id, destination_id):
+        pass
+
     def sort_project_documents(self, project_id, sort_by, sort_order):
         pass
 
