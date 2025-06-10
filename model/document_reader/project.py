@@ -1,8 +1,8 @@
-from MODEL.document_reader.document import Document
+from model.document_reader.document import Document
 
 
 class Project():
-    def _init_(self, name):
+    def __init__(self, name):
         self.name = name
 
     def upload_document(self, document):
