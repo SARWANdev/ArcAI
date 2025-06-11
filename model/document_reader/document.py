@@ -5,6 +5,7 @@ class Document:
         self.read = False  # Private variable initialized to False
         self.tag = None
         self.metadata = None
+        self.vector_store = None
 
     # Optional: Getter method to access the private variable
     @property
