@@ -66,7 +66,8 @@ def create_tables():
                            is_it_favorite BOOLEAN   DEFAULT FALSE, 
                            journal        TEXT,                    
                            first_author   VARCHAR(100),            
-                           tag            VARCHAR(50),             
+                           tag            VARCHAR(50),
+                           tag_color      VARCHAR(7)   DEFAULT NULL,-- Stores hex colors like '#FF5733'
                            created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                            updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                            FOREIGN KEY (project_id) REFERENCES Project (project_id) ON DELETE CASCADE
