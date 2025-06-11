@@ -53,3 +53,5 @@ class User:
             cursor.execute("UPDATE User SET last_name = %s WHERE user_id = %s", (new_last_name, user_id,))
             connection.commit()
             return cursor.lastrowid
+
+
