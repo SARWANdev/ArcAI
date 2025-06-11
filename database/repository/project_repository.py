@@ -8,7 +8,7 @@ class Project:
         self.description = description
         self.note = note
 
-    def save(self):
+    def new_project(self):
         with database_connection() as connection:
             cursor = connection.cursor()
             cursor.execute("""

@@ -17,12 +17,6 @@ class User:
             connection.commit()
             return cursor.lastrowid
 
-    @staticmethod
-    def get_by_id(user_id):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM User WHERE user_id = %s", (user_id,))
-            return cursor.fetchone()
 
     @staticmethod
     def get_all():
@@ -53,5 +47,9 @@ class User:
             cursor.execute("UPDATE User SET last_name = %s WHERE user_id = %s", (new_last_name, user_id,))
             connection.commit()
             return cursor.lastrowid
+
+    @staticmethod
+    def update_view_mode(user_id):
+        pass
 
 

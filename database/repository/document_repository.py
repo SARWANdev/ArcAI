@@ -26,8 +26,30 @@ class Document:
             return cursor.fetchall()
 
     @staticmethod
-    def get_by_id(document_id):
+    def get_by_document_id(document_id):
         with database_connection() as connection:
             cursor = connection.cursor(dictionary=True)
             cursor.execute("SELECT * FROM Document WHERE document_id = %s", (document_id,))
             return cursor.fetchone()
+
+    @staticmethod
+    def update_document_name(document_id, name):
+        with database_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute("UPDATE Document SET name = %s WHERE document_id = %s", (name, document_id,))
+            connection.commit()
+            return cursor.lastrowid
+    @staticmethod
+    def update_path(document_id, path):
+        with database_connection() as connection:
+            cursor = connection.cursor()
+            cursor.execute("UPDATE Document SET path = %s WHERE document_id = %s", (path, document_id,))
+            connection.commit()
+            return cursor.lastrowid
+
+    @staticmethod
+    def get_bibtex_by_document_id(document_id):
+        pass
+    @staticmethod
+    def update_bibtex(document_id, bibtex):
+        pass

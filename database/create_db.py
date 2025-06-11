@@ -33,6 +33,7 @@ def create_tables():
                            first_name VARCHAR(50)  NOT NULL,
                            last_name  VARCHAR(50)  NOT NULL,
                            email      VARCHAR(100) NOT NULL UNIQUE,
+                           view_mode  BOOLEAN   DEFAULT TRUE, -- TRUE is lightmode and FALSE is darkmode. 
                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                        )
@@ -70,6 +71,7 @@ def create_tables():
                            tag_color      VARCHAR(7)   DEFAULT NULL,-- Stores hex colors like '#FF5733'
                            created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                            updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           bibtex         TEXT, -- it can be as well a JSON FILE
                            FOREIGN KEY (project_id) REFERENCES Project (project_id) ON DELETE CASCADE
                        )
                        """)
