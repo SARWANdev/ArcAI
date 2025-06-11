@@ -3,6 +3,3 @@ class Notebook:
         self.title = title
         self.notes = []
 
-    def download_note(self):
-        pass
-    
