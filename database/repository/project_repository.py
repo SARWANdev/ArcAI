@@ -39,6 +39,7 @@ class Project:
             cursor.execute("SELECT * FROM Project WHERE name = %s", (name,))
             return cursor.fetchall()
 
+    @staticmethod
     def update_name(project_id, name):
         with database_connection() as connection:
             cursor = connection.cursor()
@@ -50,6 +51,7 @@ class Project:
             connection.commit()
             return cursor.rowcount # Returns 1 if updated, 0 if no project found
 
+    @staticmethod
     def update_description(project_id, description):
         with database_connection() as connection:
             cursor = connection.cursor()
@@ -61,14 +63,5 @@ class Project:
             connection.commit()
             return cursor.rowcount # Returns 1 if updated, 0 if no project found
 
-    def update_note(project_id, note):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("""
-                           UPDATE Project
-                           SET note = %s
-                           WHERE project_id = %s
-                           """, (note, project_id))
-            connection.commit()
-            return cursor.rowcount
+
 
