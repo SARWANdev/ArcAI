@@ -1,7 +1,8 @@
-from .utils.db_connector import database_connection
+from database.faiss_manager import FaissManager
+from database.utils.db_connector import database_connection
 import mysql.connector
 from mysql.connector import Error
-from .utils.configuration import DB_CONFIG
+from database.utils.configuration import DB_CONFIG
 
 
 def create_database():
@@ -72,7 +73,12 @@ def create_tables():
                        )
                        """)
 
-        print("Tables created successfully")
+        # Initialize FAISS
+        faiss_manager = FaissManager()
+        faiss_manager.initialize_index()
+        faiss_manager.save_index()
+
+        print("Database and vector index created successfully")
 
 
 if __name__ == "__main__":

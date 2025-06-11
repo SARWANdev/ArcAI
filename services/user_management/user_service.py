@@ -23,3 +23,9 @@ class UserService:
     def get_user_projects(self, user_id):
         # Return list of projects associated with this user
         pass
+
+    def get_user_library(self, user_id):
+        #return the user's library
+        pass
+
+    
