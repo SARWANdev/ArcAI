@@ -15,26 +15,16 @@ class Document:
     @property
     def read(self):
         return self.read
-    
 
     def mark_document_as_read(self):
         self.read = True
 
-    def __name_assigner(self):
-        #takes the pdf information from the Bibtex and assign a name possibly athorLastName-first3Wordsof the tittle and date
-        return str()
-
-    def rename_document(self, name):
+    def set_name(self, name):
         self.name = name
 
-    def add_tag(self, tag):
+    def set_tag(self, tag):
         self.tag = tag
-
-    def remove_tag(self):
-        self.tag = None
 
     def get_tag(self):
         return self.tag
 
-    def highlight(self):
-        pass

@@ -61,3 +61,7 @@ class DocumentService:
 
     def download_bibtex(self, document_id):
         pass
+
+    def name_assigner(self):
+        #takes the pdf information from the Bibtex and assign a name possibly athorLastName-first3Wordsof the tittle and date
+        return str()

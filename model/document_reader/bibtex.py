@@ -14,3 +14,11 @@ class Bibtex:
 
     def get_year(self):
         pass
+
+    def get_journal(self):
+        pass
+
+    def get_pages(self):
+        pass
+
+
