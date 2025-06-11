@@ -3,7 +3,7 @@ class Conversation:
         self.id = id
         self.name = name
         self.context = context
-        self.vectors = vectors
+        self.vector_store = None
 
     def rename(self, name):
         self.name = name

@@ -1,17 +1,21 @@
-# from database.repository.conversation_repository import Chat as ConversationRepository
-# from model.chat import Chat as ConversationModel
+from database.repository.conversation_repository import ConversationRepository
+#from model.chat import Chat as ConversationModel
 
 class AIService:
 
     __ollama_api_url:str
     __llm_name:str
     __embedding_model_name: str
+    __DEFAULT_URL = "http://127.0.0.1:11435"
+    __DEFAULT_EMBEDDING_MODEL_NAME = "nomic-embed-text"
+    __DEFAULT_LLM_NAME = "gemma3"
+    __GENERATE_PATH = "/model/generate"
 
-    def __init__(self, ollama_url:str, llm_name:str, embedding_model_name:str):
+    def __init__(self, ollama_url:str|None = None, llm_name:str|None = None, embedding_model_name:str|None = None):
         self.conversation_repository = ConversationRepository
-        self.__ollama_api_url = ollama_url
-        self.__llm_name = llm_name
-        self.__embedding_model_name = embedding_model_name
+        self.__ollama_api_url = ollama_url if ollama_url else self.__DEFAULT_URL
+        self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
+        self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
 
     def set_ollama_url(self, ollama_url:str):
         self.__ollama_api_url = ollama_url
