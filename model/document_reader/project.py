@@ -5,6 +5,7 @@ class Project():
     def __init__(self, name):
         self.name = name
         self.documents = []
+        self.id = None
 
     def rename(self, name):
         self.name = name

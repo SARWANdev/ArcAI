@@ -10,6 +10,7 @@ class Document:
         self.year = None
         self.journal = None
         self.pages = None
+        self.id = None
 
     # Optional: Getter method to access the private variable
     @property
@@ -27,4 +28,11 @@ class Document:
 
     def get_tag(self):
         return self.tag
+    
+    def favorite(self):
+        return self.favorite
+
+    def set_favorite(self, favorite):
+        self.favorite = favorite
+
 
