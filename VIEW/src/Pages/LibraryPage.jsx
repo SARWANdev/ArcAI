@@ -4,8 +4,8 @@ import ProjectGrid from "./Components/ProjectGrid"
 import {createContext} from "react"
 import CreateProjectButton from "./Components/Buttons/CreateProjectButton"
 import SearchBar from "./Components/Buttons/SearchBar"
+import { Sidebar } from "./Components/Sidebar"
 import "./LibraryPage.css"
-import { NewSidebar } from "./Components/NewSideBar"
 /**
  * IDContext is the ID of the container which is to be transformed forward or backward.
  */
@@ -27,7 +27,7 @@ function LibraryPage() {
                 <UserMenu left = {"83%"} top = {"15%"}/>
                 <hr className="library-page-line"></hr>
                 <div className="library-page-content">
-                    <NewSidebar/>
+                    <Sidebar/>
                     <div className="library-page-content-container" id = "library-page-content-container">
                         <h1 className="library-page-content-container-title">My Projects</h1>
                         <div className="library-page-content-container-dashboard">

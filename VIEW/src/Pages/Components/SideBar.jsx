@@ -3,10 +3,10 @@ import { FaBook, FaComments } from 'react-icons/fa'; // Font Awesome for expande
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 /**
- * NewSideBar is a trial component which I am experimenting it to make the code more compact
+ * SideBar is a trial component which I am experimenting it to make the code more compact
  * @returns 
  */
-export const NewSidebar = () => {
+export const Sidebar = () => {
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(true);
 

@@ -2,8 +2,8 @@ import { useNavigate } from "react-router-dom";
 import UserAvatar from "./Components/Buttons/UserAvatar";
 import UserMenu from "./Components/UserMenu";
 import ClearAllChatsButton from "./Components/Buttons/ClearAllChatsButton";
+import { Sidebar } from "./Components/Sidebar";
 import "./ChatHistoryPage.css";
-import { NewSidebar } from "./Components/NewSideBar";
 /**
  * ChatHistoryPage is the page that is used to display the chat history page.
  * @returns {JSX} - The React component for the chat history page.
@@ -41,7 +41,7 @@ export default function ChatHistoryPage() {
                 <UserMenu left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-history-page-line"></hr>
                 <div className="chat-history-page-content">
-                    <NewSidebar/>
+                    <Sidebar/>
                     <div className="chat-history-page-content-container" id = "chat-history-page-content-container">
                         <ClearAllChatsButton/>
                     </div>
