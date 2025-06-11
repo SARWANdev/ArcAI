@@ -5,7 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="477490d3-3591-4322-951c-1fcc3de94601" name="Changes" comment="Removed the MODEL_DATABASE">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VIEW/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VIEW/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VIEW/src/Pages/Components/Buttons/SideBarToggleButton.css" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/src/Pages/Components/Buttons/SideBarToggleButton.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VIEW/src/Pages/LibraryPage.css" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/src/Pages/LibraryPage.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/VIEW/src/Pages/LibraryPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/src/Pages/LibraryPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/VIEW/src/main.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/VIEW/src/main.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules/.package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules/.package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,8 +73,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.24807.21" />
-        <option value="bundled-python-sdk-00717045f1d3-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.24807.21" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.26775.22" />
+        <option value="bundled-python-sdk-9f73701ac511-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.26775.22" />
       </set>
     </attachedChunks>
   </component>
@@ -84,6 +94,8 @@
       <workItem from="1748678975866" duration="666000" />
       <workItem from="1748688346860" duration="5131000" />
       <workItem from="1749114454780" duration="35000" />
+      <workItem from="1749572314470" duration="129000" />
+      <workItem from="1749572644625" duration="1188000" />
     </task>
     <task id="LOCAL-00001" summary="Backend: Add login logic, set User.Sub as key for projects/documents, add required tags to documents">
       <option name="closed" value="true" />

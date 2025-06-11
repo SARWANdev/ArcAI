@@ -22,10 +22,12 @@
   .chat-page-content-container{
     font-size: 24px;
   }
+
+  .chat-page-content{
+    display: flex;
+  }
    
   .chat-page-content-container{
-      position: relative;
-      left: 31.3%;
       width: 911px;
       height: 763px;
       display: flex;

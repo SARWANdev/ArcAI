@@ -1,7 +1,6 @@
 import { StrictMode} from 'react'
 import { createRoot } from 'react-dom/client'
 import {BrowserRouter, Route,Routes} from "react-router-dom";
-import {GoogleOAuthProvider} from "@react-oauth/google";
 import LoginPage from "./Pages/LoginPage.jsx"
 import HomePage from "./Pages/HomePage.jsx"
 import LibraryPage from "./Pages/LibraryPage.jsx"
@@ -23,7 +22,6 @@ if (!localStorage.getItem("ifLogged")) {
  */
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />} />
@@ -38,6 +36,5 @@ createRoot(document.getElementById('root')).render(
 
         </Routes>
     </BrowserRouter>
-    </GoogleOAuthProvider>
   </StrictMode>,
 )

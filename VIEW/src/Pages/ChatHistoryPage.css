@@ -19,8 +19,10 @@
       border: 1px #E1E0E0 solid;
   }
    
+  .chat-history-page-content{
+    display: flex;
+  }
   .chat-history-page-content-container{
-      position: relative;
       left: 31.3%;
       width: 911px;
       height: 763px;

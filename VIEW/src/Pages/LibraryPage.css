@@ -22,7 +22,6 @@ hr{
  
 .library-page-content-container{
     position: relative;
-    left: 31.3%;
     width: 911px;
     height: 763px;
     display: flex;
@@ -51,4 +50,7 @@ hr{
 .library-page-user-button{
     position: relative;
     top: 50px;
+}
+.library-page-content{
+    display: flex;
 }

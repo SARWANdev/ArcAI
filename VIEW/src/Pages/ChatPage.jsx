@@ -1,10 +1,9 @@
 import UserAvatar from "./Components/Buttons/UserAvatar"
 import UserMenu from "./Components/UserMenu"
-import Sidebar from "./Components/Sidebar"
 import AIChatContainer from "./Components/AIChatContainer"
-import { IDContext } from "./LibraryPage"
 import { useNavigate } from "react-router-dom";
 import "./ChatPage.css"
+import { NewSidebar } from "./Components/NewSideBar"
 /**
  * ChatPage is the page that is used to display the chat with the AI.
  * @returns {JSX} - The React component for the chat page.
@@ -41,13 +40,14 @@ function ChatPage() {
                 <UserMenu left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-page-line"></hr>
                 <div className="chat-page-content">
+                    <NewSidebar/>
                     <div className="chat-page-content-container" id = "chat-page-content-container">
                         <h1 className="chat-page-content-container-title">What can I help with?</h1>
                         <AIChatContainer/>
                     </div>
-                    <IDContext.Provider value = {"chat-page-content-container"}>
+                    {/* <IDContext.Provider value = {"chat-page-content-container"}>
                         <Sidebar/>
-                    </IDContext.Provider>
+                    </IDContext.Provider> */}
                 </div>
             </div>
         </div>
