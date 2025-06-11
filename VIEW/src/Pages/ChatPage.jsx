@@ -1,5 +1,4 @@
-import UserAvatar from "./Components/Buttons/UserAvatar"
-import UserMenu from "./Components/UserMenu"
+import UserMenu from "./Components/Buttons/UserMenu";
 import AIChatContainer from "./Components/AIChatContainer"
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "./Components/Sidebar";
@@ -35,9 +34,8 @@ function ChatPage() {
                     <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
                     <button className="chat-page-button" id = "chat-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
                     <button className="chat-page-button" id = "chat-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
-                    <UserAvatar className = "chat-page-user-button" top = {"20px"}/>
+                    <UserMenu className = "chat-page-user-button" top = {"20px"} leftMenu = {"83.5%"} topMenu = {"15%"}/>
                 </div>
-                <UserMenu left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-page-line"></hr>
                 <div className="chat-page-content">
                     <Sidebar/>
@@ -45,9 +43,6 @@ function ChatPage() {
                         <h1 className="chat-page-content-container-title">What can I help with?</h1>
                         <AIChatContainer/>
                     </div>
-                    {/* <IDContext.Provider value = {"chat-page-content-container"}>
-                        <Sidebar/>
-                    </IDContext.Provider> */}
                 </div>
             </div>
         </div>

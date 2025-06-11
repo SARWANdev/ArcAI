@@ -1,12 +1,14 @@
-import "./UserAvatar.css"
+import SignOutButton from "./SignOutButton";
+import "./UserMenu.css"
 /**
- * UserAvatar is the component that is used to display the user avatar.
+ * UserMenu is the component that is used to display the user picture which acts as a button and when clicked opens a pop up box
+ * for the user, if the user wants to sign out or click close button.
  * @param {string} top - The top position of the user picture.
  * @param {string} bottom - The bottom position of the user picture.
  * @param {string} left - The left position of the user picture.
  * @param {string} right - The right position of the user picture.
  */
-function UserAvatar({top, bottom, left, right}) {
+export default function UserMenu({top, bottom, left, right, topMenu, bottomMenu, leftMenu, rightMenu}) {
     /**
      * positionImage positions the user picture.
      */
@@ -32,12 +34,32 @@ function UserAvatar({top, bottom, left, right}) {
         document.getElementById("user-menu-container").style.display = 'none';
     }
     });
-    
+
+
+    const hideSignOutPopUp = () => {
+        document.getElementById("user-menu-container").style.display = "";
+    }
+    /**
+     * positionStyle is the style of the pop up box.
+     */
+    const positionStyle = {
+        position: "absolute",
+        ...(topMenu && { top: topMenu }),
+        ...(bottomMenu && { bottom: bottomMenu }),
+        ...(leftMenu && { left: leftMenu }),
+        ...(rightMenu && { right: rightMenu }),
+      };
+    console.log(leftMenu)
+    console.log(topMenu)
     return(
         <>
         <button className="user-avatar" id = "user-avatar" onClick={showSignOutPopUp} style={positionImage} title="User Avatar">
             <img src = "../images/userPhoto.jpg" alt = "userPhoto" className="user-avatar-image" style={{width: "60px", height: "60px"}}></img></button>
+        <div className="user-menu" id = "user-menu-container" style={positionStyle}>
+            <SignOutButton/>
+            <br/>
+            <button className="user-menu-cancel-button" onClick={hideSignOutPopUp} title="Cancel">Cancel</button>
+        </div>
         </>
     )
 }
-export default UserAvatar

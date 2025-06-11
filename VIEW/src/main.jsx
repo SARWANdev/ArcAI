@@ -13,9 +13,7 @@ import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
 if (!localStorage.getItem("ifLogged")) {
     localStorage.setItem("ifLogged", "false"); 
 }
-
-// Organise the pop up box for the sign out button
-// Organise the home page text which is completely different from the guest home page text  
+//Add Project Viewer Page
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"

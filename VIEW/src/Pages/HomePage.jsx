@@ -1,5 +1,4 @@
-import UserAvatar from "./Components/Buttons/UserAvatar"
-import UserMenu from "./Components/UserMenu"
+import UserMenu from "./Components/Buttons/UserMenu"
 import LibraryLinkButton from "./Components/Buttons/LibraryLinkButton"
 import "./HomePage.css"
 /**
@@ -11,10 +10,9 @@ function HomePage(){
       <div className="arcai-container">
         <header className="arcai-header">
           <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
-          <UserAvatar/>
+          <UserMenu leftMenu = {"83%"} topMenu = {"13%"}/>
         </header>
         <hr className = "line-ai-to-content"></hr>
-        <UserMenu left = {"83%"} top = {"13%"}/>
         <main className="arcai-main-logged">
         <div className="arcai-hero">
           <h2 className="arcai-tagline">Your research,<br />supercharged by AI</h2>

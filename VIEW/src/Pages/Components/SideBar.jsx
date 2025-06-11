@@ -3,13 +3,12 @@ import { FaBook, FaComments } from 'react-icons/fa'; // Font Awesome for expande
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 /**
- * SideBar is a trial component which I am experimenting it to make the code more compact
- * @returns 
+ * SideBar is a component which is used to display the sidebar.
+ * @returns {JSX} - The React component for the sidebar.
  */
 export const Sidebar = () => {
   const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(true);
-
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded);
   };
@@ -64,7 +63,6 @@ export const Sidebar = () => {
   );
 };
 
-// Styled Components (unchanged from your previous version)
 const SidebarContainer = styled.div`
   width: ${({ isExpanded }) => (isExpanded ? '200px' : '90px')};
   height: 725px;

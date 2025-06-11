@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import UserAvatar from "./Components/Buttons/UserAvatar";
-import UserMenu from "./Components/UserMenu";
+import UserMenu from "./Components/Buttons/UserMenu";
 import ClearAllChatsButton from "./Components/Buttons/ClearAllChatsButton";
 import { Sidebar } from "./Components/Sidebar";
 import "./ChatHistoryPage.css";
@@ -36,18 +35,14 @@ export default function ChatHistoryPage() {
                     <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
                     <button className="chat-history-page-button" id = "chat-history-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
                     <button className="chat-history-page-button" id = "chat-history-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
-                    <UserAvatar className = "chat-history-page-user-button" top = {"20px"}/>
+                    <UserMenu className = "chat-history-page-user-button" top = {"20px"} leftMenu = {"83.5%"} topMenu = {"15%"}/>
                 </div>
-                <UserMenu left = {"83.5%"} top = {"15%"}/>
                 <hr className="chat-history-page-line"></hr>
                 <div className="chat-history-page-content">
                     <Sidebar/>
                     <div className="chat-history-page-content-container" id = "chat-history-page-content-container">
                         <ClearAllChatsButton/>
                     </div>
-                    {/* <IDContext.Provider value = {"chat-history-page-content-container"}>
-                        <Sidebar/>
-                    </IDContext.Provider> */}
                 </div>
             </div>
         </div>
