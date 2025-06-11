@@ -11,10 +11,10 @@ class NotebookService:
     def get_notebook(self, notebook_id):
         pass
 
-    def update_notebook(self, notebook_id, title=None, content=None):
+    def delete_notebook(self, notebook_id):
         pass
 
-    def delete_notebook(self, notebook_id):
+    def edit_notebook(self, notebook_id, prompt):
         pass
 
     def download_notebook(self, notebook_id):

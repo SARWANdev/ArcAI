@@ -14,9 +14,6 @@ class ProjectService:
     def get_user_projects(self, user_id):
         pass
 
-    def update_project(self, project_id, name=None, description=None, note=None):
-        pass
-
     def delete_project(self, project_id):
         pass
 

@@ -1,10 +1,12 @@
 from database.repository.document_repository import Document as DocumentRepository
-from model.document_reader.document import Document as DocumentModel
+from database.repository.tag_repository import Tag as TagRepository
+# from model.document_reader.document import Document as DocumentModel
 
 class DocumentService:
    
     def __init__(self):
         self.document_repository = DocumentRepository
+        self.tag_repository = TagRepository
 
     def create_document(self, project_id, name, path, note=None):
         pass
@@ -13,9 +15,6 @@ class DocumentService:
         pass
 
     def get_project_documents(self, project_id):
-        pass
-
-    def update_document(self, document_id, name=None, note=None):
         pass
 
     def delete_document(self, document_id):

@@ -1,5 +1,5 @@
-from services.authentication_service import UserService
-from services.authentication_service import AuthenticationService
+from services.user_management.authentication_service import UserService
+from services.user_management.authentication_service import AuthenticationService
 
 class UserController:
     def __init__(self):
