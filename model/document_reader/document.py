@@ -6,11 +6,16 @@ class Document:
         self.tag = None
         self.metadata = None
         self.vector_store = None
+        self.author = None
+        self.year = None
+        self.journal = None
+        self.pages = None
 
     # Optional: Getter method to access the private variable
     @property
     def read(self):
         return self.read
+    
 
     def mark_document_as_read(self):
         self.read = True
