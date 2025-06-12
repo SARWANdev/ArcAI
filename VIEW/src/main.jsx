@@ -10,10 +10,6 @@ import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
 import { AuthProvider } from './Pages/Components/AuthContext.jsx';
 
-// If the user is not logged in, set the ifLogged to false
-if (!localStorage.getItem("ifLogged")) {
-    localStorage.setItem("ifLogged", "false"); 
-}
 //Add Project Viewer Page
 /**
  * Main.jsx is the main file that is used to render the app.
