@@ -1,6 +1,6 @@
 from ..utils.db_connector import database_connection
 
-class Tag:
+class DocumentPropertiesRepository:
     @staticmethod
     def mark_as_favorite(project_id):
         with database_connection() as connection:

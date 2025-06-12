@@ -1,5 +1,5 @@
 from database.repository.document_repository import Document as DocumentRepository
-from database.repository.tag_repository import Tag as TagRepository
+from database.repository.document_properties_repository import Tag as TagRepository
 # from model.document_reader.document import Document as DocumentModel
 
 class DocumentService:
