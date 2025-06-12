@@ -75,6 +75,24 @@ def create_tables():
                            FOREIGN KEY (project_id) REFERENCES Project (project_id) ON DELETE CASCADE
                        )
                        """)
+        
+        # Conversations table
+        cursor.execute("""
+                       CREATE TABLE IF NOT EXISTS Conversation
+                       (
+                           conversation_id   INT AUTO_INCREMENT PRIMARY KEY,
+                           user_id           INT NOT NULL,
+                           name              VARCHAR(100) NOT NULL,
+                           list_of_documents TEXT, -- JSON string of document IDs
+                           human_messages    TEXT, -- JSON string of messages
+                           ai_messages       TEXT, -- JSON string of AI messages
+                           last_opened       DATETIME,
+                           created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                           updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                           FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE
+                       )
+                       """)
+
 
         # Initialize FAISS
         faiss_manager = FaissManager()
