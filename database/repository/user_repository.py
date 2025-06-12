@@ -7,7 +7,7 @@ class User:
         self.last_name = last_name
         self.email = email
 
-    def save(self):
+    def new_user(self):
         with database_connection() as connection:
             cursor = connection.cursor()
             cursor.execute("""

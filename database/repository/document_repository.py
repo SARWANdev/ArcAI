@@ -8,7 +8,7 @@ class Document:
         self.path = path
         self.note = note
 
-    def save(self):
+    def new_document(self):
         with database_connection() as connection:
             cursor = connection.cursor()
             cursor.execute("""
