@@ -2,19 +2,20 @@ from ..utils.db_connector import database_connection
 
 
 class Document:
-    def __init__(self, project_id, name, path, note=None):
+    def __init__(self, project_id, name, path, embeddings_path, note=None):
         self.project_id = project_id
         self.name = name
         self.path = path
+        self.embeddings_path = embeddings_path
         self.note = note
 
     def new_document(self):
         with database_connection() as connection:
             cursor = connection.cursor()
             cursor.execute("""
-                           INSERT INTO Document (project_id, name, path, note)
-                           VALUES (%s, %s, %s, %s)
-                           """, (self.project_id, self.name, self.path, self.note))
+                           INSERT INTO Document (project_id, name, path, embeddings_path, note)
+                           VALUES (%s, %s, %s, %s, %s)
+                           """, (self.project_id, self.name, self.path, self.embeddings_path, self.note))
             connection.commit()
             return cursor.lastrowid
 
@@ -46,7 +47,10 @@ class Document:
             cursor.execute("UPDATE Document SET path = %s WHERE document_id = %s", (path, document_id,))
             connection.commit()
             return cursor.lastrowid
-
+        
+    @staticmethod
+    def update_embeddings_path(document_id, embeddings_path):
+        pass
     @staticmethod
     def get_bibtex_by_document_id(document_id):
         pass

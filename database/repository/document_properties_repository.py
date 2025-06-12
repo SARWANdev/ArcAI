@@ -1,6 +1,8 @@
 from ..utils.db_connector import database_connection
 
 class DocumentPropertiesRepository:
+
+    
     @staticmethod
     def mark_as_favorite(project_id):
         with database_connection() as connection:
@@ -19,7 +21,7 @@ class DocumentPropertiesRepository:
 
 
     @staticmethod
-    def mark_as_read( project_id):
+    def mark_as_read(project_id):
         with database_connection() as connection:
             cursor = connection.cursor()
             cursor.execute("UPDATE Document SET is_it_read = 1 WHERE project_id = %s", (project_id,))
