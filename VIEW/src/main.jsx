@@ -8,6 +8,7 @@ import ChatPage from './Pages/ChatPage.jsx'
 import ChatHistoryPage from './Pages/ChatHistoryPage.jsx'
 import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
+import { AuthProvider } from './Pages/Components/AuthContext.jsx';
 
 // If the user is not logged in, set the ifLogged to false
 if (!localStorage.getItem("ifLogged")) {
@@ -20,19 +21,21 @@ if (!localStorage.getItem("ifLogged")) {
  */
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
+    <AuthProvider>
+      <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
 
-          <Route element = {<ProtectedRoutes/>}>
-          <Route path= "/home" element={<HomePage />} />
-          <Route path = "/home/library" element = {<LibraryPage/>}/>
-          <Route path = "/home/library/document-viewer" element = {<DocumentViewerPage/>}/>
-          <Route path = "/home/chat-chatbot" element = {<ChatPage/>}/>
-          <Route path = "/home/chat-history" element = {<ChatHistoryPage/>}/>
-          </Route>
+            <Route element = {<ProtectedRoutes/>}>
+            <Route path= "/home" element={<HomePage />} />
+            <Route path = "/home/library" element = {<LibraryPage/>}/>
+            <Route path = "/home/library/document-viewer" element = {<DocumentViewerPage/>}/>
+            <Route path = "/home/chat-chatbot" element = {<ChatPage/>}/>
+            <Route path = "/home/chat-history" element = {<ChatHistoryPage/>}/>
+            </Route>
 
-        </Routes>
-    </BrowserRouter>
+          </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>,
 )
