@@ -1,6 +1,9 @@
 import LoginButton from "./Components/Buttons/LoginButton";
-import "bootstrap/dist/css/bootstrap.min.css"; // Keep this only if you're using some custom styles
-
+import "bootstrap/dist/css/bootstrap.min.css";
+/**
+ * LoginPage is the page that is used to display the login page of the application
+ * @returns {JSX} - The React component for the Login page.
+ */
 function LoginPage() {
   return (
     <div className="container-fluid py-2">
@@ -54,7 +57,6 @@ function LoginPage() {
             </div>
           </div>
         </div>
-
         <LoginButton />
       </main>
     </div>
