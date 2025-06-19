@@ -1,43 +1,64 @@
 import LoginButton from "./Components/Buttons/LoginButton";
-import "./LoginPage.css"
-/**
- * LoginPage is the page that is used to display when the user is not logged in
- * @returns {JSX} - The React component for the page when the user is not logged in
- */
-function LoginPage(){ 
-    return (
-    <div className="arcai-container">
-      <header className="arcai-header">
-        <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
+import "bootstrap/dist/css/bootstrap.min.css"; // Keep this only if you're using some custom styles
+
+function LoginPage() {
+  return (
+    <div className="container-fluid py-2">
+      <header className="mb-4">
+        <img
+          src="../images/arcai-logo.png"
+          alt="logo"
+          className="img-fluid"
+          style={{ maxWidth: "115px" }}
+        />
       </header>
-      <hr className = "line-ai-to-content"></hr>
-      
-      <main className="arcai-main">
-        <div className="arcai-hero">
-          <h2 className="arcai-tagline">Your research,<br />supercharged by AI</h2>
-          <p className="arcai-subtagline">Upload. Chat. Write. Cite.</p>
+
+      <hr className="mb-5 w-100" />
+
+      <main className="text-center">
+        <div className="mb-5">
+          <h2 className="fw-bold display-3">
+            Your research,<br />supercharged by AI
+          </h2>
+          <p className="text-muted fs-1 fw-bold">Upload. Chat. Write. Cite.</p>
         </div>
-        
-        <div className="arcai-features">
-          <div className="arcai-feature-item">
-            <label htmlFor="library">
-              <img src = "../images/book.png" alt = "book" className="image-in-box"></img>
-              <span className="arcai-feature-title">My Library</span>
-              <span className="arcai-feature-desc">Organize and browse your PDFs</span>
-            </label>
+
+        <div className="row justify-content-center g-4 mb-5">
+          <div className="col-12 col-md-6 col-lg-5" style={{height : 150}}>
+            <div className="d-flex align-items-center border rounded p-3 h-100">
+              <img
+                src="../images/book.png"
+                alt="book"
+                className="img-fluid me-3"
+                style={{ width: "68px", height: "68px" }}
+              />
+              <div className="text-start">
+                <h5 className="mb-1 fw-bold fs-2">My Library</h5>
+                <p className="mb-0 text-muted fs-4">Organize and browse your PDFs</p>
+              </div>
+            </div>
           </div>
-          
-          <div className="arcai-feature-item">
-            <label htmlFor="chat">
-              <img src = "../images/chat.png" alt = "chat" className="image-in-box"></img>
-              <span className="arcai-feature-title">Chat</span>
-              <span className="arcai-feature-desc">Ask Questions & summarize papers</span>
-            </label>
+
+          <div className="col-12 col-md-6 col-lg-5">
+            <div className="d-flex align-items-center border rounded p-3 h-100">
+              <img
+                src="../images/chat.png"
+                alt="chat"
+                className="img-fluid me-3"
+                style={{ width: "68px", height: "68px" }}
+              />
+              <div className="text-start">
+                <h5 className="mb-1 fw-bold fs-2">Chat</h5>
+                <p className="mb-0 text-muted fs-4">Ask Questions & summarize papers</p>
+              </div>
+            </div>
           </div>
         </div>
-        <LoginButton/>
+
+        <LoginButton />
       </main>
     </div>
   );
 }
-export default LoginPage
+
+export default LoginPage;
