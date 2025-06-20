@@ -12,7 +12,7 @@ function LoginPage() {
           src="../images/arcai-logo.png"
           alt="logo"
           className="img-fluid"
-          style={{ maxWidth: "115px" }}
+          style={{ maxWidth: "120px", position: "relative", left: "7.5%"  }}
         />
       </header>
 

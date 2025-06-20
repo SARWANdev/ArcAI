@@ -1,33 +1,10 @@
-.user-avatar {
-    width: 60px;
-    height: 60px;
-    border: none;
-    padding: 0;
-    background: none;
-    cursor: pointer;
-}
-
-.user-menu {
-    background-color: rgb(255, 255, 255);
-    border-radius: 10%;
-    border: 1px solid black;
-    width: 125px;
-    height: 125px;
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; 
-}
-
-.user-menu-cancel-button {
-    font-size: 23px;
-    background: transparent;
-    border: none !important;
-    cursor: pointer;
+.dropdown-item-custom {
+    color: #212529;
+    transition: background-color 0.2s ease;
+  }
+  
+  .dropdown-item-custom:hover {
+    background-color: #f0f0f0; /* Light gray background on hover */
+    color: #000;               /* Optional: darker text on hover */
     border-radius: 5px;
-}
-
-.user-menu-cancel-button:hover{
-    background-color: rgba(238, 238, 238, 1);
-}
+  }
