@@ -25,7 +25,7 @@ function HomePage(){
           <UserMenu/>
         </div>
 
-      <hr className="mb-5 w-100" />
+        <hr className="mb-5 w-100" />
 
         <main className="text-center">
           <div className="mb-5">
