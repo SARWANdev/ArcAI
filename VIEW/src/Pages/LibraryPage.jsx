@@ -11,7 +11,7 @@ import "./LibraryPage.css"
 function LibraryPage() {
     return(
         <>
-        <div className="library-page-container">
+        {/* <div className="library-page-container">
             <div className="library-page-header">
                 <hr className="library-page-line"></hr>
                 <div className="library-page-header-content">
@@ -31,7 +31,8 @@ function LibraryPage() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div> */}
+        
         </>
     )
 }

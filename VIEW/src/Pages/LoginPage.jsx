@@ -7,14 +7,12 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function LoginPage() {
   return (
     <div className="container-fluid py-2">
-      <header className="mb-4">
-        <img
+      <img
           src="../images/arcai-logo.png"
           alt="logo"
-          className="img-fluid"
-          style={{ maxWidth: "120px", position: "relative", left: "7.5%"  }}
+          className="img-fluid mb-4"
+          style={{ width: "115px", height: "128px", position: "relative", left: "7.5%"}}
         />
-      </header>
 
       <hr className="mb-5 w-100" />
 
