@@ -32,7 +32,16 @@ function LibraryPage() {
                 </div>
             </div>
         </div> */}
-        
+        <div className="container-fluid py-2">
+            <div className="row justify-content-between align-items-center">
+                <img src="../images/arcai-logo.png" alt="logo" className="img-fluid mb-4 p-0" style={{ width: "115px", height: "128px", position: "relative", left: "8.6%" }} />
+                <UserMenu/>
+            </div>
+            <hr className="w-100" />
+            <main className="text-center">
+                <Sidebar/>
+            </main>
+        </div>
         </>
     )
 }
