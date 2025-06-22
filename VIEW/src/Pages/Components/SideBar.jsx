@@ -22,7 +22,7 @@ export const Sidebar = () => {
 
   return (
     <div 
-      className={`d-flex flex-column bg-white border-end position-relative`}
+      className={`d-flex flex-column bg-white border-end position-relative me-5`}
       style={{
         width: isExpanded ? '200px' : '90px',
         height: '725px',

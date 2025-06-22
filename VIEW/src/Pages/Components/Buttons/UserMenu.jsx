@@ -1,4 +1,3 @@
-import "./UserMenu.css"
 import { useAuth } from "../AuthContext";
 import { Collapse } from "bootstrap/dist/js/bootstrap.bundle.min";
 import { useRef, useEffect } from "react";
@@ -34,7 +33,9 @@ export default function UserMenu() {
           !toggleBtnEl.contains(event.target)
         ) {
           const instance = Collapse.getInstance(collapseEl);
-          instance.hide();
+          if (instance != null) {
+            instance.hide();
+          }
         }
       };
   
