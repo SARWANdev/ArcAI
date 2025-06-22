@@ -33,7 +33,7 @@ export default function UserMenu() {
           toggleBtnEl &&
           !toggleBtnEl.contains(event.target)
         ) {
-          const instance = Collapse.getOrCreateInstance(collapseEl);
+          const instance = Collapse.getInstance(collapseEl);
           instance.hide();
         }
       };
