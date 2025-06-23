@@ -4,17 +4,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
  * LoginPage is the page that is used to display the login page of the application
  * @returns {JSX} - The React component for the Login page.
  */
-function LoginPage() {
+export default function LoginPage() {
   return (
     <div className="container-fluid py-2">
-      <img
-          src="../images/arcai-logo.png"
-          alt="logo"
-          className="img-fluid mb-4"
-          style={{ width: "115px", height: "128px", position: "relative", left: "7.5%"}}
-        />
+        <div className="col-auto">
+            <img src="../images/arcai-logo.png" alt="logo" className="img-fluid" style={{ width: "115px", height: "128px"}} />
+        </div>
 
-      <hr className="mb-5 w-100" />
+      <hr className="mb-5" />
 
       <main className="text-center">
         <div className="mb-5">
@@ -60,5 +57,3 @@ function LoginPage() {
     </div>
   );
 }
-
-export default LoginPage;

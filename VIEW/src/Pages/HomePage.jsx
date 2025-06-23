@@ -9,7 +9,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
  * HomePage is the page that is used to display the home page when the user is logged in.
  * @returns {JSX} - The React component for the home page when the user is logged in.
  */
-function HomePage(){
+export default function HomePage(){
     const navigate = useNavigate()
     /**
      * goToLibrary is the function that is used to navigate to the library page.
@@ -21,11 +21,13 @@ function HomePage(){
     return(
       <div className="container-fluid py-2">
         <div className="row justify-content-between align-items-center">
-          <img src="../images/arcai-logo.png" alt="logo" className="img-fluid mb-4 p-0" style={{ width: "115px", height: "128px", position: "relative", left: "8.6%" }} />
-          <UserMenu/>
+          <div className="col-auto">
+            <img src="../images/arcai-logo.png" alt="logo" className="img-fluid" style={{ width: "115px", height: "128px"}} />
+          </div>
+          <UserMenu right={7.5}/>
         </div>
 
-        <hr className="mb-5 w-100" />
+        <hr className="mb-5" />
 
         <main className="text-center">
           <div className="mb-5">
@@ -71,4 +73,3 @@ function HomePage(){
       </div>
     )
 }
-export default HomePage

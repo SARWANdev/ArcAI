@@ -8,11 +8,11 @@ import ProjectGrid from "./Components/ProjectGrid";
  * LibraryPage is the page that is used to display the library page.
  * @returns {JSX} - The React component for the library page.
  */
-function LibraryPage() {
+export default function LibraryPage() {
     return (
         <div className="container-fluid py-2">
             {/* Header: Logo and User Menu */}
-            <div className="row justify-content-between align-items-center px-3">
+            <div className="row justify-content-between align-items-center">
                 <div className="col-auto">
                     <img
                         src="../images/arcai-logo.png"
@@ -21,12 +21,10 @@ function LibraryPage() {
                         style={{ width: "115px", height: "128px" }}
                     />
                 </div>
-                <div className="col-auto">
-                    <UserMenu />
-                </div>
+                <UserMenu right={7.5}/>
             </div>
 
-            <hr className="w-100 mb-0" />
+            <hr className="mb-0" style={{marginTop: "16px"}}/>
 
             {/* Main Layout: Sidebar and Content */}
             <div className="row flex-nowrap">
@@ -53,5 +51,3 @@ function LibraryPage() {
         </div>
     );
 }
-
-export default LibraryPage;

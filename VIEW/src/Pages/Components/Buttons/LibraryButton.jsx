@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
  * @param {string} content - The content of the library button.
  * @returns {JSX} - The React component for the library button.
  */
-function LibraryButton({content}) {
+export default function LibraryButton({content}) {
     const navigate = useNavigate()
     /**
      * goToLibrary is the function that is used to navigate to the library page.
@@ -24,4 +24,3 @@ function LibraryButton({content}) {
         </div>
     )
 }
-export default LibraryButton

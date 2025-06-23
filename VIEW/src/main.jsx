@@ -11,6 +11,7 @@ import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
 import { AuthProvider } from './Pages/Components/AuthContext.jsx';
 
 //Add Project Viewer Page
+// Add a user profile when logged in
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"

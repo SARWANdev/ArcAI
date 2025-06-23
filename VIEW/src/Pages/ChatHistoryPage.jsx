@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import UserMenu from "./Components/Buttons/UserMenu";
 import ClearAllChatsButton from "./Components/Buttons/ClearAllChatsButton";
 import { Sidebar } from "./Components/Sidebar";
-import "./ChatHistoryPage.css";
+import { Button } from "react-bootstrap";
 /**
  * ChatHistoryPage is the page that is used to display the chat history page.
  * @returns {JSX} - The React component for the chat history page.
@@ -28,19 +28,36 @@ export default function ChatHistoryPage() {
     
     return(
         <>
-        <div className="chat-history-page-container">
-            <div className="chat-history-page-header">
-                <hr className="chat-history-page-line"></hr>
-                <div className="chat-history-page-header-content">
-                    <img src = "../images/arcai-logo.png" alt = "logo" className = "arcai-logo"/>
-                    <button className="chat-history-page-button" id = "chat-history-page-chat-button" onClick={handleChatButtonClick} title="Chat">Chat</button>
-                    <button className="chat-history-page-button" id = "chat-history-page-history-button" onClick={handleHistoryButtonClick} title="History">History</button>
-                    <UserMenu className = "chat-history-page-user-button" top = {"20px"} leftMenu = {"83.5%"} topMenu = {"15%"}/>
+        <div className="container-fluid py-2">
+            {/* Header: Logo and User Menu */}
+            <div className="row justify-content-between align-items-center px-3">
+                <div className="col-auto">
+                    <img
+                        src="../images/arcai-logo.png"
+                        alt="logo"
+                        className="img-fluid"
+                        style={{ width: "115px", height: "128px", position: "relative", right: "16px" }}
+                    />
                 </div>
-                <hr className="chat-history-page-line"></hr>
-                <div className="chat-history-page-content">
-                    <Sidebar/>
-                    <div className="chat-history-page-content-container" id = "chat-history-page-content-container">
+                <div className="col-auto">
+                    <Button className="fs-1 fw-bold" style={{backgroundColor: "white", color: "grey" , border: "none"}} onClick={handleChatButtonClick}>Chat</Button>
+                </div>
+                <div className="col-auto">
+                    <Button className="fs-1 fw-bold" style={{backgroundColor: "white", color: "black", border: "none"}} onClick={handleHistoryButtonClick}>History</Button>
+                </div>
+                <UserMenu right = {7.5}/>
+            </div>
+
+            <hr className="mb-0" style={{marginTop: "16px"}}/>
+
+            {/* Main Layout: Sidebar and Content */}
+            <div className="row flex-nowrap">
+                <div className="col-auto">
+                    <Sidebar />
+                </div>
+
+                <div className="col px-4">
+                    <div className="d-flex justify-content-end mt-4">
                         <ClearAllChatsButton/>
                     </div>
                 </div>
