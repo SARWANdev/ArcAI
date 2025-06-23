@@ -44,7 +44,7 @@ export default function ChatPage() {
                 <div className="col-auto">
                     <Button className="fs-1 fw-bold" style={{backgroundColor: "white", color: "grey", border: "none"}} onClick={handleHistoryButtonClick}>History</Button>
                 </div>
-                <UserMenu right = {7.5}/>
+                <UserMenu right = {6.67}/>
             </div>
 
             <hr className="mb-0" style={{marginTop: "16px"}}/>
