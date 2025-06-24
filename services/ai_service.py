@@ -49,31 +49,49 @@ class AIService:
                 return response
         except Exception as e:
             print(f"Exception: {e}")
+
+    def send_chat_message(self, chat:Messages, message):
+        # TODO: Replace Messages with id after database exists
+        chat_url = f"{self.__DEFAULT_BASE_URL}{self.__CHAT_PATH}"
+        payload = {"model": self.__llm_name,
+                    "messages": chat.get_messages()}
+        response = requests.post(url=chat_url, json=payload, stream=True)
+        return response
+        pass
+        
             
-    def output_response_stream(self, response, output_function: Callable):
+            
+    def output_generate_response(self, response, output_function: Callable):
         response_text = ""
         if isinstance(response, Response):
             for chunk in response.iter_lines():
                 chunk_content = json.loads(chunk)["response"]
                 response_text += chunk_content
                 output_function(response_text + "▌")
+        output_function(response_text)
+        return response_text
+    
+    def output_chat_response(self, response, output_function: Callable):
+        response_text = ""
+        if isinstance(response, Response):
+            for chunk in response.iter_lines():
+                data = json.loads(chunk)
+                chunk_content = data.get("message", {}).get("content", "")
+                response_text += chunk_content
+                output_function(response_text + "▌")  # typing effect
+        output_function(response_text)
         return response_text
 
 
 
     def summarize(self, vector_store:FAISS):
         similarity_search_prompt = "Most relevant parts of this text"
-        relevant_chunks = self.perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=20)
-        response = self.generate(f"Summarise the following in under 50 words: {relevant_chunks}")
+        relevant_chunks = self.perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=5)
+        response = self.generate(f"Give me an objective summary of the following in 50 words: {relevant_chunks}")
         return response
         pass
 
-    def send_chat_message(self, messages:Messages, message):
-        # TODO: Replace Messages with id after database exists
-        messages.add_user_message(message=message)
-        chat_url = f"{self.__DEFAULT_BASE_URL}{self.__CHAT_PATH}"
-        response = requests.post(url=chat_url, json=messages.get_messages())
-        pass
+    
 
    
 
