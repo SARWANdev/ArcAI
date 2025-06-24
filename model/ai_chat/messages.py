@@ -18,8 +18,8 @@ class Messages:
         self.__messages.append({"role": "system",
                                 "content": message})
         
-    def get_messages(self, most_recent_k_messages:int):
-        return Messages
+    def get_messages(self):
+        return self.__messages
 
 
         

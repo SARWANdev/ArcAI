@@ -6,7 +6,7 @@ import json
 from typing import Callable
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OllamaEmbeddings
-from model.ai_chat.conversation import Conversation
+from model.ai_chat.messages import Messages
 
 class AIService:
 
@@ -59,12 +59,18 @@ class AIService:
 
 
 
-    def summarize(self, document_id, user_id):
-        # TODO: Extract important points from document text with a similarity search and return a summary string
+    def summarize(self, vector_store:FAISS):
+        similarity_search_prompt = "Most relevant parts of this text"
+        relevant_chunks = self.perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=20)
+        response = self.generate(f"Summarise the following in under 50 words: {relevant_chunks}")
+        return response
         pass
 
-    def chat(self, conversation_id:str|None = None):
-        # TODO: Replace Chat with chat_id after database exists.
+    def send_chat_message(self, messages:Messages, message):
+        # TODO: Replace Messages with id after database exists
+        messages.add_user_message(message=message)
+        chat_url = f"{self.__DEFAULT_BASE_URL}{self.__CHAT_PATH}"
+        response = requests.post(url=chat_url, json=messages.get_messages())
         pass
 
     def get_chat_history(self, user_id):
