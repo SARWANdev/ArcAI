@@ -3,9 +3,10 @@ import { Collapse } from "bootstrap/dist/js/bootstrap.bundle.min";
 import { useRef, useEffect } from "react";
 
 export default function UserMenu({ left = null, right = null }) {
-  const { setIsAuthenticated } = useAuth();
+  const { setIsAuthenticated, user } = useAuth();
   const collapseRef = useRef(null);
   const toggleButtonRef = useRef(null);
+  const profilePicture = user?.picture || "../images/default-avatar.png";
 
   function signOut() {
     window.location.href = "http://localhost:3000/logout";
@@ -59,7 +60,7 @@ export default function UserMenu({ left = null, right = null }) {
         style={toggleButtonStyle}
       >
         <img
-          src="../images/userPhoto.jpg"
+          src={profilePicture}
           alt="userPhoto"
           className="img-fluid"
           style={{
