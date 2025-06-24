@@ -50,12 +50,14 @@ class AIService:
         except Exception as e:
             print(f"Exception: {e}")
             
-    def output_response_stream(self, response: Response, output_function: Callable):
+    def output_response_stream(self, response, output_function: Callable):
         response_text = ""
-        for chunk in response.iter_lines():
-            chunk_content = json.loads(chunk)["response"]
-            response_text += chunk_content
-            output_function(response_text + "▌")
+        if isinstance(response, Response):
+            for chunk in response.iter_lines():
+                chunk_content = json.loads(chunk)["response"]
+                response_text += chunk_content
+                output_function(response_text + "▌")
+        return response_text
 
 
 
@@ -72,6 +74,8 @@ class AIService:
         chat_url = f"{self.__DEFAULT_BASE_URL}{self.__CHAT_PATH}"
         response = requests.post(url=chat_url, json=messages.get_messages())
         pass
+
+   
 
     def get_chat_history(self, user_id):
         # TODO: Fetch all chat sessions for the user
@@ -95,7 +99,7 @@ class AIService:
 
 
     def get_vector_store(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
-        embeddings = OllamaEmbeddings(base_url=self.__DEFAULT_BASE_URL, model=self.__embedding_model_name)
+        embeddings = OllamaEmbeddings(base_url=self.__DEFAULT_BASE_URL, model=self.__embedding_model_name, show_progress=True)
         vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
         if embedding_path:
             vector_store.save_local(embedding_path)
