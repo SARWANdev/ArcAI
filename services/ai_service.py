@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from database.repository.conversation_repository import ConversationRepository
-=======
 #from database.repository.ai_repository.conversation_repository import ConversationRepository
->>>>>>> f5a3a9f392863da5ca203dcbe707a477e5f1dd9d
 #from model.chat import Chat as ConversationModel
 import requests
 from requests import Response
