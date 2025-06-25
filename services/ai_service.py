@@ -1,4 +1,4 @@
-from database.repository.ai_repository.conversation_repository import ConversationRepository
+from database.repository.conversation_repository import ConversationRepository
 #from model.chat import Chat as ConversationModel
 
 class AIService:

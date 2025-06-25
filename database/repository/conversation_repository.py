@@ -1,4 +1,4 @@
-from ...utils.db_connector import database_connection
+from ..utils.db_connector import database_connection
 
 
 class ConversationRepository:
@@ -8,7 +8,6 @@ class ConversationRepository:
         self.list_of_documents = []       # List of document IDs or paths
         self.human_messages = []          # List of strings
         self.ai_messages = []  
-        self.last_opened = last_opened
 
     def new_conversation(self):
         with database_connection() as connection:
@@ -64,7 +63,4 @@ class ConversationRepository:
     def update_ai_messages(conversation_id, ai_messages):
         pass
 
-    @staticmethod
-    def update_last_opened(conversation_id, last_opened):
-        pass
 

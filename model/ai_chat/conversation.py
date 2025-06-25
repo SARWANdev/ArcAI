@@ -7,7 +7,6 @@ class Conversation:
         self.ai_messages = []
         self.list_of_documents = []
         self.human_messages = []
-        self.last_opened = None
 
     def rename(self, name):
         self.name = name
