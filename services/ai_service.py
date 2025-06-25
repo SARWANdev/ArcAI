@@ -1,19 +1,31 @@
+<<<<<<< HEAD
 from database.repository.conversation_repository import ConversationRepository
+=======
+#from database.repository.ai_repository.conversation_repository import ConversationRepository
+>>>>>>> f5a3a9f392863da5ca203dcbe707a477e5f1dd9d
 #from model.chat import Chat as ConversationModel
+import requests
+from requests import Response
+import json
+from typing import Callable
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings import OllamaEmbeddings
+from model.ai_chat.messages import Messages
 
 class AIService:
 
     __ollama_api_url:str
     __llm_name:str
     __embedding_model_name: str
-    __DEFAULT_URL = "http://127.0.0.1:11435"
+    __DEFAULT_BASE_URL = "http://127.0.0.1:11435"
     __DEFAULT_EMBEDDING_MODEL_NAME = "nomic-embed-text"
     __DEFAULT_LLM_NAME = "gemma3"
-    __GENERATE_PATH = "/model/generate"
+    __GENERATE_PATH = "/api/generate"
+    __CHAT_PATH = "/api/chat"
 
     def __init__(self, ollama_url:str|None = None, llm_name:str|None = None, embedding_model_name:str|None = None):
-        self.conversation_repository = ConversationRepository
-        self.__ollama_api_url = ollama_url if ollama_url else self.__DEFAULT_URL
+        #self.conversation_repository = ConversationRepository
+        self.__ollama_api_url = ollama_url if ollama_url else self.__DEFAULT_BASE_URL
         self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
         self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
 
@@ -26,31 +38,80 @@ class AIService:
     def set_embedding_model_name(self, embedding_model_name:str):
         self.__embedding_model_name = embedding_model_name
 
-    def query(self, user_id, prompt):
-        # TODO: Send prompt to LLM (e.g., GPT/Claude) prompt optionally contains context returns response object that can be streamed
+    def generate(self, prompt: str,  user_id= None) -> Response|None:
+        #TODO: specific error messages for each possible error
+        generate_url = f"{self.__DEFAULT_BASE_URL}{self.__GENERATE_PATH}"
+        payload = {"model": self.__llm_name,
+                    "prompt": prompt}
+        try:
+            response = requests.post(url=generate_url, json=payload, stream=True)
+            if response.status_code != 200:
+                print(f"Error: {response.status_code}")
+                print(response.text)
+            else:
+
+                return response
+        except Exception as e:
+            print(f"Exception: {e}")
+
+    def send_chat_message(self, chat:Messages, message):
+        # TODO: Replace Messages with id after database exists
+        chat_url = f"{self.__DEFAULT_BASE_URL}{self.__CHAT_PATH}"
+        payload = {"model": self.__llm_name,
+                    "messages": chat.get_messages()}
+        response = requests.post(url=chat_url, json=payload, stream=True)
+        return response
+        pass
+        
+            
+            
+    def output_generate_response(self, response, output_function: Callable):
+        response_text = ""
+        if isinstance(response, Response):
+            for chunk in response.iter_lines():
+                chunk_content = json.loads(chunk)["response"]
+                response_text += chunk_content
+                output_function(response_text + "▌")
+        output_function(response_text)
+        return response_text
+    
+    def output_chat_response(self, response, output_function: Callable):
+        response_text = ""
+        if isinstance(response, Response):
+            for chunk in response.iter_lines():
+                data = json.loads(chunk)
+                chunk_content = data.get("message", {}).get("content", "")
+                response_text += chunk_content
+                output_function(response_text + "▌")  # typing effect
+        output_function(response_text)
+        return response_text
+
+
+
+    def summarize(self, vector_store:FAISS):
+        similarity_search_prompt = "Most relevant parts of this text"
+        relevant_chunks = self.perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=5)
+        response = self.generate(f"Give me an objective summary of the following in 50 words: {relevant_chunks}")
+        return response
         pass
 
-    def summarize(self, document_id, user_id):
-        # TODO: Extract important points from document text with a similarity search and return a summary string
-        pass
+    
 
-    def follow_up(self, chat_id, prompt):
-        # TODO: Continue previous chat session with new prompt
-        pass
+   
 
     def get_chat_history(self, user_id):
         # TODO: Fetch all chat sessions for the user
         pass
 
-    def get_conversation(self, chat_id):
+    def get_chat(self, conversation_id):
         # TODO: Fetch the conversation for the chat
         pass
 
-    def rename_chat(self, chat_id, new_title):
+    def rename_chat(self, conversation_id, new_title):
         # TODO: Rename the chat in DB
         pass
 
-    def delete_chat(self, chat_id):
+    def delete_chat(self, cconversation_id):
         # TODO: Hard-delete or soft-delete the chat session
         pass
 
@@ -59,12 +120,18 @@ class AIService:
         pass
 
 
-    def embed(self, text_chunks:list[str]): 
-        # TODO: FAISSfromTEXTChunks() returns FAISS
-        pass
+    def get_vector_store(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
+        embeddings = OllamaEmbeddings(base_url=self.__DEFAULT_BASE_URL, model=self.__embedding_model_name, show_progress=True)
+        vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+        if embedding_path:
+            vector_store.save_local(embedding_path)
+        return vector_store
 
-    def perform_similarity_search(self, query, vectorstore, top_k):
-        pass
+
+    def perform_similarity_search(self, query:str, vector_store:FAISS, top_k: int)->str:
+        relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
+        context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
+        return context
 
     
 
