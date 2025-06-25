@@ -22,12 +22,14 @@ export const Sidebar = () => {
 
   return (
     <div 
-      className={`d-flex flex-column bg-white border-end position-relative me-5`}
+      className={`d-flex flex-column border-end position-relative me-5`}
       style={{
         width: isExpanded ? '200px' : '90px',
-        height: '725px',
+        height: '782px',
         transition: 'width 0.3s ease',
-        padding: '20px 0'
+        padding: '20px 0',
+        backgroundColor: "var(--bg-color)",
+        transition: "background 0.3s ease, color 0.3s ease"
       }}
     >
       <button 
@@ -60,7 +62,8 @@ export const Sidebar = () => {
           style={{
             borderRadius: '4px',
             margin: '0 10px',
-            transition: 'all 0.2s ease'
+            transition: 'all 0.2s ease',
+            color: "var(--text-color)"
           }}
         >
           <FaBook style={{ minWidth: '32px', minHeight: '32px' }} />
@@ -75,7 +78,8 @@ export const Sidebar = () => {
           style={{
             borderRadius: '4px',
             margin: '0 10px',
-            transition: 'all 0.2s ease'
+            transition: 'all 0.2s ease',
+            color: "var(--text-color)"
           }}
         >
           <FaComments style={{ minWidth: '32px', minHeight: '32px' }} />

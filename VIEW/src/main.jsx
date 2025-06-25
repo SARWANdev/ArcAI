@@ -9,9 +9,11 @@ import ChatHistoryPage from './Pages/ChatHistoryPage.jsx'
 import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
 import { AuthProvider } from './Pages/Components/AuthContext.jsx';
+import "./main.css"
 
 //Add Project Viewer Page
-// Add a user profile when logged in
+// Make the taking of data so that from backend we get if email is verified and the link of the user picture
+
 /**
  * Main.jsx is the main file that is used to render the app.
  * To Run the frontend go to the VIEW folder in the terminal and run "npm run dev"

@@ -1,12 +1,16 @@
 import { useAuth } from "../AuthContext";
 import { Collapse } from "bootstrap/dist/js/bootstrap.bundle.min";
 import { useRef, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import ThemeToggle from "./ThemeToggle"
+import "./UserMenu.css"
 
 export default function UserMenu({ left = null, right = null }) {
   const { setIsAuthenticated, user } = useAuth();
   const collapseRef = useRef(null);
   const toggleButtonRef = useRef(null);
   const profilePicture = user?.picture || "../images/default-avatar.png";
+  const userName = user?.given_name || "User"
 
   function signOut() {
     window.location.href = "http://localhost:3000/logout";
@@ -73,11 +77,12 @@ export default function UserMenu({ left = null, right = null }) {
       </button>
 
       <div className="collapse" id="userMenu" ref={collapseRef}>
-        <div className="card card-body" style={{width:"115px", position: "absolute", left :"87.2%", zIndex: 1000}}>
-          <a href="#" className="dropdown-item dropdown-item-custom" style={{cursor: "pointer"}}>Dark mode</a>
-          <a href="#" className="dropdown-item dropdown-item-custom" style={{cursor: "pointer"}} onClick={hideSignOutPopUp}>Cancel</a>
+        <div className="card card-body" style={{width:"300px", height: "300px", position: "absolute", left :"80.2%", zIndex: 1000, backgroundColor: "var(--bg-button-color)", transition: "background 0.3s ease, color 0.3s ease"}}>
+          <h1 className="text-center p-3">Hi, {userName}!</h1>
+          <ThemeToggle/>
+          <Button className="fw-bold wb-1 p-2" id = "sign-out-button" onClick={signOut}>Sign out</Button>
           <hr></hr>
-          <a href="#" className="dropdown-item dropdown-item-custom" style={{cursor: "pointer"}} onClick={signOut}>Sign out</a>
+          <Button className="fw-bold wb-1 p-2" id = "delete-button" style={{border: "none", color: "red"}}>Delete</Button>
         </div>
       </div>
     </>

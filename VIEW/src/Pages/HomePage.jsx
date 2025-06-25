@@ -34,7 +34,7 @@ export default function HomePage(){
             <h2 className="fw-bold display-3">
               Your research,<br />supercharged by AI
             </h2>
-            <p className="text-muted fs-1 fw-bold">Upload. Chat. Write. Cite.</p>
+            <p className="fs-1 fw-bold" style={{color: "var(--text-secondary-color)"}}>Upload. Chat. Write. Cite.</p>
           </div>
 
           <div className="row justify-content-center g-4 mb-5">
@@ -48,7 +48,7 @@ export default function HomePage(){
                 />
                 <div className="text-start">
                   <h5 className="mb-1 fw-bold fs-2">My Library</h5>
-                  <p className="mb-0 text-muted fs-4">Organize and browse your PDFs</p>
+                  <p className="mb-0 fs-4" style={{color: "var(--text-secondary-color)"}}>Organize and browse your PDFs</p>
                 </div>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function HomePage(){
                 />
                 <div className="text-start">
                   <h5 className="mb-1 fw-bold fs-2">Chat</h5>
-                  <p className="mb-0 text-muted fs-4">Ask Questions & summarize papers</p>
+                  <p className="mb-0 fs-4" style={{color: "var(--text-secondary-color)"}}>Ask Questions & summarize papers</p>
                 </div>
               </div>
             </div>

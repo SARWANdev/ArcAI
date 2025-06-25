@@ -39,10 +39,10 @@ export default function ChatPage() {
                     />
                 </div>
                 <div className="col-auto">
-                    <Button className="fs-1 fw-bold" style={{backgroundColor: "white", color: "black" , border: "none"}} onClick={handleChatButtonClick}>Chat</Button>
+                    <Button className="fs-1 fw-bold" id = "chat-button" style={{backgroundColor: "var(--bg-color)", color: "var(--text-color)" , border: "none", transition: "background 0.3s ease, color 0.3s ease"}} onClick={handleChatButtonClick}>Chat</Button>
                 </div>
                 <div className="col-auto">
-                    <Button className="fs-1 fw-bold" style={{backgroundColor: "white", color: "grey", border: "none"}} onClick={handleHistoryButtonClick}>History</Button>
+                    <Button className="fs-1 fw-bold" id = "history-button" style={{backgroundColor: "var(--bg-color)", color: "var(--text-secondary-color)", border: "none", transition: "background 0.3s ease, color 0.3s ease"}} onClick={handleHistoryButtonClick}>History</Button>
                 </div>
                 <UserMenu right = {6.67}/>
             </div>
