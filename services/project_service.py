@@ -5,6 +5,9 @@ class ProjectService:
     def __init__(self):
         self.project_repository = ProjectRepository
 
+    #TODO: When the user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
+    #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
+    #TODO: We might not allow the project to have a same name as another project.
     def create_project(self, user_id, name):
         # 1. Create a domain object (model) for internal use
         project_model = ProjectModel(
