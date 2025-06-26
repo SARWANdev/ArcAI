@@ -29,7 +29,18 @@ class ProjectService:
 
 
     def get_project(self, project_id):
-        pass
+        # Fetch project data from repository
+        project_data = self.project_repository.get_by_id(project_id)
+        if not project_data:
+            return None
+        # Map DB fields to ProjectModel
+        project_model = ProjectModel(
+            project_id=project_data.get('project_id'),
+            name=project_data.get('name'),
+            user_id=project_data.get('user_id')
+        )
+        project_model.note = project_data.get('note')
+        return project_model
 
     def get_user_projects(self, user_id):
         pass
@@ -38,7 +49,8 @@ class ProjectService:
         pass
 
     def rename_project(self, project_id, name):
-        self.project_repository.update_name(project_id, name)
+        result = self.project_repository.update_name(project_id, name)
+        return result == 1  # True if updated, False otherwise
 
     def download_project(self, project_id):
         pass
