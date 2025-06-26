@@ -1,4 +1,4 @@
-from ..utils.db_connector import database_connection
+from ..utils.db_setup import database_connection
 
 class Library:
     @staticmethod

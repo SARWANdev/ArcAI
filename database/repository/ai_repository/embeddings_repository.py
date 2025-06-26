@@ -1,6 +1,6 @@
 import numpy as np
 
-from database.utils.db_connector import database_connection
+from database.utils.db_setup import database_connection
 from database.faiss_manager import FaissManager
 from typing import List, Optional
 
