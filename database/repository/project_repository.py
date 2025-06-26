@@ -2,19 +2,18 @@ from ..utils.db_setup import database_connection
 
 
 class Project:
-    def __init__(self, user_id, name, description=None, note=None):
+    def __init__(self, user_id, name, note=None):
         self.user_id = user_id
         self.name = name
-        self.description = description
         self.note = note
 
     def new_project(self):
         with database_connection() as connection:
             cursor = connection.cursor()
             cursor.execute("""
-                           INSERT INTO Project (user_id, name, description, note)
+                           INSERT INTO Project (user_id, name, note)
                            VALUES (%s, %s, %s, %s)
-                           """, (self.user_id, self.name, self.description, self.note))
+                           """, (self.user_id, self.name, self.note))
             connection.commit()
             return cursor.lastrowid
 
@@ -48,18 +47,6 @@ class Project:
                            SET name = %s
                            WHERE project_id = %s
                            """, (name, project_id))
-            connection.commit()
-            return cursor.rowcount # Returns 1 if updated, 0 if no project found
-
-    @staticmethod
-    def update_description(project_id, description):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("""
-                           UPDATE Project
-                           SET description = %s
-                           WHERE project_id = %s
-                           """, (description, project_id))
             connection.commit()
             return cursor.rowcount # Returns 1 if updated, 0 if no project found
 
