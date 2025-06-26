@@ -7,6 +7,7 @@ class DocumentService:
     def __init__(self):
         self.document_repository = DocumentRepository
         self.tag_repository = TagRepository
+        self.document_repository = DocumentRepository()
 
     def create_document(self, project_id, name, path, note=None):
         pass

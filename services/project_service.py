@@ -17,6 +17,9 @@ class ProjectService:
     def delete_project(self, project_id):
         pass
 
+    def rename_project(self, project_id, name):
+        self.project_repository.update_name(project_id, name)
+
     def download_project(self, project_id):
         pass
 
