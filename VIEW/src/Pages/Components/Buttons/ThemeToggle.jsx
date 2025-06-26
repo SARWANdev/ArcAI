@@ -18,6 +18,6 @@ export default function ThemeToggle() {
   };
 
   return (
-    <Button className = "fw-bold wb-1 p-2" id = "theme-toggle-button" onClick={toggleTheme}>Toggle</Button>
+    <Button className = "fw-bold wb-1 p-2" id = "theme-toggle-button" style = {{transition: "background 0.3s ease, color 0.3s ease"}}onClick={toggleTheme}>{theme === "dark" ? "Light mode☀️" : "Dark mode🌙"}</Button>
   );
 }

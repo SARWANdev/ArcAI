@@ -25,16 +25,16 @@ export const Sidebar = () => {
       className={`d-flex flex-column border-end position-relative me-5`}
       style={{
         width: isExpanded ? '200px' : '90px',
-        height: '782px',
+        height: '781px',
         transition: 'width 0.3s ease',
         padding: '20px 0',
-        backgroundColor: "var(--bg-color)",
+        backgroundColor: "var(--bg-sidebar-color)",
         transition: "background 0.3s ease, color 0.3s ease"
       }}
     >
       <button 
         onClick={toggleSidebar}
-        className="position-absolute bg-white border rounded-circle p-0"
+        className="position-absolute border rounded-circle p-0"
         style={{
           top: '10px',
           right: '-15px',
@@ -44,7 +44,9 @@ export const Sidebar = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 0 5px rgba(0, 0, 0, 0)'
+          backgroundColor: "var(--bg-sidebar-color)",
+          boxShadow: '0 0 5px rgba(0, 0, 0, 0)',
+          transition: "background 0.3s ease, color 0.3s ease"
         }}
       >
         {isExpanded ? '◀' : '▶'}

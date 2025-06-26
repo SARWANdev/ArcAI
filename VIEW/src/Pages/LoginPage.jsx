@@ -6,12 +6,19 @@ import "bootstrap/dist/css/bootstrap.min.css";
  */
 export default function LoginPage() {
   return (
-    <div className="container-fluid py-2">
+    <div className="container-fluid vh-100 d-flex flex-column p-0 overflow-hidden">
+      <div className="row justify-content-between align-items-center mx-0 px-4 py-3">
         <div className="col-auto">
-            <img src="../images/arcai-logo.png" alt="logo" className="img-fluid" style={{ width: "115px", height: "128px"}} />
+          <img
+            src="../images/arcai-logo-light-theme.png"
+            alt="logo"
+            className="img-fluid"
+            style={{ width: "115px", height: "128px" }}
+          />
         </div>
+      </div>
 
-      <hr className="mb-5" />
+      <hr className="my-0" />
 
       <main className="text-center">
         <div className="mb-5">

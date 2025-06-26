@@ -28,15 +28,15 @@ export default function ChatHistoryPage() {
     
     return(
         <>
-        <div className="container-fluid py-2">
+        <div className="container-fluid vh-100 d-flex flex-column py-2 px-0 overflow-hidden">
             {/* Header: Logo and User Menu */}
-            <div className="row justify-content-between align-items-center px-3">
+            <div className="row justify-content-between align-items-center mx-0 px-4 py-2">
                 <div className="col-auto">
                     <img
-                        src="../images/arcai-logo.png"
+                        src="../images/arcai-logo-light-theme.png"
                         alt="logo"
                         className="img-fluid"
-                        style={{ width: "115px", height: "128px", position: "relative", right: "16px" }}
+                        style={{ width: "115px", height: "128px"}}
                     />
                 </div>
                 <div className="col-auto">
@@ -45,10 +45,10 @@ export default function ChatHistoryPage() {
                 <div className="col-auto">
                     <Button className="fs-1 fw-bold" style={{backgroundColor: "var(--bg-color)", color: "var(--text-color)", border: "none", transition: "background 0.3s ease, color 0.3s ease"}} onClick={handleHistoryButtonClick}>History</Button>
                 </div>
-                <UserMenu right = {6.67}/>
+                <UserMenu right = {1.03}/>
             </div>
 
-            <hr className="mb-0" style={{marginTop: "16px"}}/>
+            <hr className="mb-0" style={{marginTop: "8px"}}/>
 
             {/* Main Layout: Sidebar and Content */}
             <div className="row flex-nowrap">

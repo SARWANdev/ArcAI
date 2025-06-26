@@ -7,7 +7,7 @@ export default function SearchBar() {
                 id = "input-text"
                 placeholder="Search Library"
                 className="form-control border-0 text-secondary fs-5"
-                style={{ width: '500px' , backgroundColor: "var(--bg-button-color)"}}
+                style={{ width: '500px' , backgroundColor: "var(--bg-button-color)", transition: "background 0.3s ease, color 0.3s ease"}}
             />
             <button
                 type="submit"
@@ -17,7 +17,7 @@ export default function SearchBar() {
                 <img
                     src="../../../images/search-icon.png"
                     alt="search"
-                    style={{ width: '37px', height: '37px' }}
+                    style={{ width: '37px', height: '37px', transition: "background 0.3s ease, color 0.3s ease" }}
                 />
             </button>
         </form>

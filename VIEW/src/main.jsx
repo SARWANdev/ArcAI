@@ -13,6 +13,7 @@ import "./main.css"
 
 //Add Project Viewer Page
 // Make the taking of data so that from backend we get if email is verified and the link of the user picture
+// Position the arcai image and the user menu and hide the overflown content arc-ai and change the color of the toggle button
 
 /**
  * Main.jsx is the main file that is used to render the app.

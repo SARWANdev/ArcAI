@@ -10,32 +10,35 @@ import ProjectGrid from "./Components/ProjectGrid";
  */
 export default function LibraryPage() {
     return (
-        <div className="container-fluid py-2">
+        <div className="container-fluid vh-100 d-flex flex-column p-0 overflow-hidden">
             {/* Header: Logo and User Menu */}
-            <div className="row justify-content-between align-items-center">
+            <div className="row justify-content-between align-items-center mx-0 px-4 py-3">
                 <div className="col-auto">
                     <img
-                        src="../images/arcai-logo.png"
+                        src="../images/arcai-logo-light-theme.png"
                         alt="logo"
                         className="img-fluid"
                         style={{ width: "115px", height: "128px" }}
                     />
                 </div>
-                <UserMenu right={7.5}/>
+                <div className="col-auto">
+                    <UserMenu right={7.5} />
+                </div>
             </div>
 
-            <hr className="mb-0" style={{marginTop: "16px"}}/>
+            <hr className="my-0" />  {/* Kept your original divider */}
 
             {/* Main Layout: Sidebar and Content */}
-            <div className="row flex-nowrap">
-                <div className="col-auto">
+            <div className="row flex-grow-1 g-0 mx-0">
+                {/* Sidebar - Fixed width, full height */}
+                <div className="col-auto h-100" style={{ minWidth: "250px" }}>
                     <Sidebar />
                 </div>
 
-                <div className="col px-4">
+                {/* Content Area - Flexible width, scrollable, with original spacing */}
+                <div className="col h-100 overflow-auto px-4 py-3">
                     <h1 className="fs-1 fw-bold mb-4">My Projects</h1>
 
-                    {/* Search and Create Button Row */}
                     <div className="row g-2 align-items-center mb-4">
                         <div className="col-md-auto">
                             <SearchBar />

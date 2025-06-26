@@ -17,12 +17,6 @@ export default function UserMenu({ left = null, right = null }) {
     setIsAuthenticated(false);
   }
 
-  const hideSignOutPopUp = () => {
-    const collapseElement = document.getElementById("userMenu");
-    const collapseInstance = Collapse.getOrCreateInstance(collapseElement);
-    collapseInstance.hide();
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       const collapseEl = collapseRef.current;
@@ -80,9 +74,9 @@ export default function UserMenu({ left = null, right = null }) {
         <div className="card card-body" style={{width:"300px", height: "300px", position: "absolute", left :"80.2%", zIndex: 1000, backgroundColor: "var(--bg-button-color)", transition: "background 0.3s ease, color 0.3s ease"}}>
           <h1 className="text-center p-3">Hi, {userName}!</h1>
           <ThemeToggle/>
-          <Button className="fw-bold wb-1 p-2" id = "sign-out-button" onClick={signOut}>Sign out</Button>
+          <Button className="fw-bold wb-1 p-2" id = "sign-out-button" style = {{transition: "background 0.3s ease, color 0.3s ease"}}onClick={signOut}>Sign out</Button>
           <hr></hr>
-          <Button className="fw-bold wb-1 p-2" id = "delete-button" style={{border: "none", color: "red"}}>Delete</Button>
+          <Button className="fw-bold wb-1 p-2" id = "delete-button" style={{border: "none", color: "red", transition: "background 0.3s ease, color 0.3s ease"}}>Delete</Button>
         </div>
       </div>
     </>
