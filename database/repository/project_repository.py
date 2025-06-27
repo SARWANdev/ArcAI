@@ -13,7 +13,7 @@ class Project:
         self.updated_at = self.created_at
 
     def new_project(self):
-        with mongo_connection as db:
+        with mongo_connection() as db:
             project_data = {
                 "user_id": self.user_id,  # Google's unique 'sub'
                 "name": self.name,
@@ -21,6 +21,8 @@ class Project:
                 "created_at": self.created_at,  # ISO 8601 UTC
                 "updated_at": self.updated_at
             }
+            result = db.projects.insert_one(project_data)
+            return str(result.inserted_id)
 
     @staticmethod
     def get_project_by_user_id(user_id: str) -> dict:
