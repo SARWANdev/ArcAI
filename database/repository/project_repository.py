@@ -1,5 +1,3 @@
-from pymongo.errors import DuplicateKeyError
-
 from database.utils.mongo_connector import mongo_connection
 from datetime import datetime
 
@@ -15,18 +13,14 @@ class Project:
         self.updated_at = self.created_at
 
     def new_project(self):
-        project_data = {
-            "user_id": self.user_id,  # Google's unique 'sub'
-            "project_name": self.project_name,
-            "note": self.note,
-            "created_at": self.created_at,  # ISO 8601 UTC
-            "updated_at": self.updated_at
-        }
         with mongo_connection as db:
-            try:
-                db.projects.insert_one(project_data)
-            except DuplicateKeyError:
-                raise
+            project_data = {
+                "user_id": self.user_id,  # Google's unique 'sub'
+                "project_name": self.project_name,
+                "note": self.note,
+                "created_at": self.created_at,  # ISO 8601 UTC
+                "updated_at": self.updated_at
+            }
 
     @staticmethod
     def get_project_by_user_id(user_id: str) -> dict:
