@@ -8,7 +8,7 @@ def init_mongo():
         # --------------------
         # USERS collection
         # --------------------
-        db.users.create_index([("email", ASCENDING)], unique=True)y
+        db.users.create_index([("email", ASCENDING)], unique=True)
 
         # --------------------
         # PROJECTS collection

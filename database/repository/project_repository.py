@@ -2,9 +2,9 @@ from ..utils.db_setup import database_connection
 
 
 class Project:
-    def __init__(self, user_id, name, note=None):
+    def __init__(self, user_id, project_name, note=None):
         self.user_id = user_id
-        self.name = name
+        self.project_name = project_name
         self.note = note
 
     def new_project(self):

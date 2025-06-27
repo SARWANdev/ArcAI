@@ -2,6 +2,8 @@ import pymongo
 from pymongo.errors import DuplicateKeyError
 from database.utils.mongo_connector import mongo_connection
 from typing import List, Dict
+from datetime import datetime
+import pytz
 
 
 class User:
@@ -13,6 +15,9 @@ class User:
         self.view_mode = True
         self.is_an_active_account = True
 
+        self.created_at = datetime.utcnow().isoformat() + "Z"  # ISO 8601 with Zulu time
+        self.updated_at = self.created_at
+
     def new_user(self):
         if not self.sub_id:
             raise ValueError("Google 'sub' ID is required")
@@ -23,7 +28,9 @@ class User:
             "last_name": self.last_name,
             "email": self.email,
             "view_mode": self.view_mode,  # Defaults to True
-            "is_an_active_account": self.is_an_active_account  # Defaults to True
+            "is_an_active_account": self.is_an_active_account,  # Defaults to True
+            "created_at": self.created_at,  # ISO 8601 UTC
+            "updated_at": self.updated_at
         }
 
         with mongo_connection() as database_connection:
@@ -60,6 +67,7 @@ class User:
                     {'_id': user_id},
                     {'$set': {
                         'first_name': new_name,
+                        "updated_at": datetime.utcnow().isoformat() + "Z",
                     }}
                 )
                 return result.modified_count > 0
@@ -75,6 +83,7 @@ class User:
                     {'_id': user_id},
                     {'$set': {
                         'last_name': new_last_name,
+                        "updated_at": datetime.utcnow().isoformat() + "Z",
                     }}
                 )
                 return result.modified_count > 0
@@ -83,7 +92,7 @@ class User:
             return False
 
     @staticmethod
-    def update_view_mode(user_id):
+    def update_view_mode(user_id: str, view_mode: bool) -> bool:
         pass
 
 
