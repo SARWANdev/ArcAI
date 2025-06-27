@@ -4,25 +4,25 @@ from datetime import datetime
 
 
 class Project:
-    def __init__(self, user_id, name, note=None):
+    def __init__(self, user_id, project_name, note=None):
         self.user_id = user_id
-        self.name = name
+        self.project_name = project_name
         self.note = note
 
         self.created_at = datetime.utcnow().isoformat() + "Z"  # ISO 8601 with Zulu time
         self.updated_at = self.created_at
 
     def new_project(self):
-        with mongo_connection() as db:
+        with mongo_connection as db:
             project_data = {
                 "user_id": self.user_id,  # Google's unique 'sub'
-                "name": self.name,
+                "project_name": self.project_name,
                 "note": self.note,
                 "created_at": self.created_at,  # ISO 8601 UTC
                 "updated_at": self.updated_at
             }
-            result = db.projects.insert_one(project_data)
-            return str(result.inserted_id)
+            db.projects.insert_one(project_data)
+
 
     @staticmethod
     def get_project_by_user_id(user_id: str) -> dict:
