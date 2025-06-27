@@ -15,11 +15,11 @@ class TestProjectService(unittest.TestCase):
         self.mock_repo.new_project.return_value = 1
 
         # Act
-        result = self.service.create_project(user_id=101, name="Test Project")
+        result = self.service.create_project(user_id=101, project_name="Test Project")
 
         # Assert
         self.assertIsInstance(result, Project)
-        self.assertEqual(result.name, "Test Project")
+        self.assertEqual(result.project_name, "Test Project")
         self.assertEqual(result.user_id, 101)
         self.assertEqual(result.id, 1)
         self.mock_repo.new_project.assert_called_once()
@@ -28,7 +28,7 @@ class TestProjectService(unittest.TestCase):
         # Arrange
         self.mock_repo.get_by_id.return_value = {
             'project_id': 1,
-            'name': 'My Project',
+            'project_name': 'My Project',
             'user_id': 101,
             'note': 'Test note'
         }
@@ -37,7 +37,7 @@ class TestProjectService(unittest.TestCase):
         result = self.service.get_project(project_id=1)
 
         # Assert
-        self.assertEqual(result.name, 'My Project')
+        self.assertEqual(result.project_name, 'My Project')
         self.assertEqual(result.id, 1)
         self.assertEqual(result.user_id, 101)
         self.assertEqual(result.note, 'Test note')
@@ -49,12 +49,12 @@ class TestProjectService(unittest.TestCase):
 
     def test_rename_project_success(self):
         self.mock_repo.update_name.return_value = 1
-        result = self.service.rename_project(project_id=1, name="Renamed")
+        result = self.service.rename_project(project_id=1, project_name="Renamed")
         self.assertTrue(result)
 
     def test_rename_project_fail(self):
         self.mock_repo.update_name.return_value = 0
-        result = self.service.rename_project(project_id=1, name="Renamed")
+        result = self.service.rename_project(project_id=1, project_name="Renamed")
         self.assertFalse(result)
 
 

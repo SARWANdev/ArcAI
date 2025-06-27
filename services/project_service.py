@@ -8,17 +8,17 @@ class ProjectService:
     #TODO: When the user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
     #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
     #TODO: We might not allow the project to have a same name as another project.
-    def create_project(self, user_id, name):
+    def create_project(self, user_id, project_name):
         # 1. Create a domain object (model) for internal use
         project_model = ProjectModel(
-            name=name,
+            project_name=project_name,
             user_id=user_id,
         )
 
         # 2. Create a database object (repository) for persistence
         project_repo = ProjectRepository(
             user_id=user_id,
-            name=name,
+            project_name=project_name,
         )
 
         # 3. Insert into DB and retrieve the generated ID
@@ -36,7 +36,7 @@ class ProjectService:
         # Map DB fields to ProjectModel
         project_model = ProjectModel(
             project_id=project_data.get('project_id'),
-            name=project_data.get('name'),
+            project_name=project_data.get('project_name'),
             user_id=project_data.get('user_id')
         )
         project_model.note = project_data.get('note')
@@ -48,8 +48,8 @@ class ProjectService:
     def delete_project(self, project_id):
         pass
 
-    def rename_project(self, project_id, name):
-        result = self.project_repository.update_name(project_id, name)
+    def rename_project(self, project_id, project_name):
+        result = self.project_repository.update_name(project_id, project_name)
         return result == 1  # True if updated, False otherwise
 
     def download_project(self, project_id):
