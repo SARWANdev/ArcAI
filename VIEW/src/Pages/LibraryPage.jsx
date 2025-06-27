@@ -6,10 +6,6 @@ import { ThemeContext } from "./Components/ThemeContext";
 import CreateProjectButton from "./Components/Buttons/CreateProjectButton";
 import ProjectGrid from "./Components/ProjectGrid";
 
-/**
- * LibraryPage is the page that is used to display the library page.
- * @returns {JSX} - The React component for the library page.
- */
 export default function LibraryPage() {
     const { theme } = useContext(ThemeContext);
     return (
@@ -29,17 +25,21 @@ export default function LibraryPage() {
                 </div>
             </div>
 
-            <hr className="my-0" />  {/* Kept your original divider */}
+            <hr className="my-0" />
 
             {/* Main Layout: Sidebar and Content */}
-            <div className="row flex-grow-1 g-0 mx-0">
-                {/* Sidebar - Fixed width, full height */}
-                <div className="col-auto h-100" style={{ minWidth: "250px" }}>
+            <div className="row flex-grow-1 g-0 mx-0" style={{ overflow: 'hidden' }}>
+                {/* Sidebar - Will adjust width automatically */}
+                <div className="col-auto h-100" style={{ overflow: 'hidden' }}>
                     <Sidebar />
                 </div>
 
-                {/* Content Area - Flexible width, scrollable, with original spacing */}
-                <div className="col h-100 overflow-auto px-4 py-3">
+                {/* Content Area - Will adjust to sidebar width changes */}
+                <div className="col h-100 overflow-auto px-4 py-3" 
+                     style={{ 
+                         transition: 'margin-left 0.3s ease',
+                         marginLeft: '0' // Will be adjusted by sidebar width
+                     }}>
                     <h1 className="fs-1 fw-bold mb-4">My Projects</h1>
 
                     <div className="row g-2 align-items-center mb-4">

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { FaBook, FaComments } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from "react";
+import { ThemeContext } from './ThemeContext';
 
 export const Sidebar = () => {
+  const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(true);
   
@@ -22,55 +25,66 @@ export const Sidebar = () => {
 
   return (
     <div 
-      className={`d-flex flex-column border-end position-relative me-5`}
+      className="d-flex flex-column border-end position-relative"
       style={{
         width: isExpanded ? '200px' : '90px',
-        height: '781px',
+        height: '100vh',
         transition: 'width 0.3s ease',
         padding: '20px 0',
         backgroundColor: "var(--bg-sidebar-color)",
-        transition: "background 0.3s ease, color 0.3s ease"
+        flexShrink: 0 // Prevents the sidebar from shrinking
       }}
     >
-      <button 
-        onClick={toggleSidebar}
-        className="position-absolute border rounded-circle p-0"
-        style={{
-          top: '10px',
-          right: '-15px',
-          width: '30px',
-          height: '30px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: "var(--bg-sidebar-color)",
-          boxShadow: '0 0 5px rgba(0, 0, 0, 0)',
-          transition: "background 0.3s ease, color 0.3s ease"
-        }}
-      >
-        {isExpanded ? '◀' : '▶'}
-      </button>
-      
       <div 
         className="d-flex flex-column mt-5 gap-4"
         style={{
-          alignItems: isExpanded ? 'flex-start' : 'center'
+          alignItems: isExpanded ? 'flex-start' : 'center',
+          paddingLeft: isExpanded ? '15px' : '0'
         }}
       >
+        <button 
+          onClick={toggleSidebar}
+          className="d-flex align-items-center bg-transparent border-0 p-2"
+          style={{
+            borderRadius: '4px',
+            transition: 'all 0.2s ease',
+            color: "var(--text-color)",
+            width: '100%',
+            justifyContent: isExpanded ? 'flex-start' : 'center'
+          }}
+        >
+          {isExpanded ? (
+            <>
+              <img 
+                src={theme === "dark" ? '../../images/sidebar-left-dark-theme.png' : '../../images/sidebar-left-light-theme.png'} 
+                alt="Collapse sidebar"
+                style={{width: "35px", height: "35px"}}
+              />
+              <span className="ms-3" style={{ fontSize: '1rem' }}>Collapse</span>
+            </>
+          ) : (
+            <img 
+              src={theme === "dark" ? '../../images/sidebar-right-dark-theme.png' : '../../images/sidebar-right-light-theme.png'} 
+              alt="Expand sidebar"
+              style={{width: "35px", height: "35px"}}
+            />
+          )}
+        </button>
+
         <button 
           onClick={goToLibrary}
           className="d-flex align-items-center bg-transparent border-0 p-2"
           style={{
             borderRadius: '4px',
-            margin: '0 10px',
             transition: 'all 0.2s ease',
-            color: "var(--text-color)"
+            color: "var(--text-color)",
+            width: '100%',
+            justifyContent: isExpanded ? 'flex-start' : 'center'
           }}
         >
-          <FaBook style={{ minWidth: '32px', minHeight: '32px' }} />
+          <FaBook style={{ width: '32px', height: '32px' }} />
           {isExpanded && (
-            <span className="ms-3" style={{ fontSize: '32px' }}>Library</span>
+            <span className="ms-3" style={{ fontSize: '1rem' }}>Library</span>
           )}
         </button>
 
@@ -79,14 +93,15 @@ export const Sidebar = () => {
           className="d-flex align-items-center bg-transparent border-0 p-2"
           style={{
             borderRadius: '4px',
-            margin: '0 10px',
             transition: 'all 0.2s ease',
-            color: "var(--text-color)"
+            color: "var(--text-color)",
+            width: '100%',
+            justifyContent: isExpanded ? 'flex-start' : 'center'
           }}
         >
-          <FaComments style={{ minWidth: '32px', minHeight: '32px' }} />
+          <FaComments style={{ width: '32px', height: '32px' }} />
           {isExpanded && (
-            <span className="ms-3" style={{ fontSize: '32px' }}>Chat</span>
+            <span className="ms-3" style={{ fontSize: '1rem' }}>Chat</span>
           )}
         </button>
       </div>
