@@ -1,4 +1,6 @@
-from ..utils.db_setup import database_connection
+from database.utils.mongo_connector import mongo_connection
+from datetime import datetime
+
 
 
 class Project:
@@ -7,48 +9,53 @@ class Project:
         self.project_name = project_name
         self.note = note
 
+        self.created_at = datetime.utcnow().isoformat() + "Z"  # ISO 8601 with Zulu time
+        self.updated_at = self.created_at
+
     def new_project(self):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("""
-                           INSERT INTO Project (user_id, name, note)
-                           VALUES (%s, %s, %s, %s)
-                           """, (self.user_id, self.name, self.note))
-            connection.commit()
-            return cursor.lastrowid
+        with mongo_connection as db:
+            project_data = {
+                "user_id": self.user_id,  # Google's unique 'sub'
+                "project_name": self.project_name,
+                "note": self.note,
+                "created_at": self.created_at,  # ISO 8601 UTC
+                "updated_at": self.updated_at
+            }
 
     @staticmethod
-    def get_by_user(user_id):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM Project WHERE user_id = %s", (user_id,))
-            return cursor.fetchall()
+    def get_project_by_user_id(user_id: str) -> dict:
+        try:
+            with mongo_connection as db:
+                return db.projects.find_one({"user_id": user_id})
+        except Exception as e:
+            print(e)
+            raise
+
 
     @staticmethod
-    def get_by_id(project_id):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM Project WHERE project_id = %s", (project_id,))
-            return cursor.fetchone()
+    def get_project_by_id(project_id: str) -> dict:
+        try:
+            with mongo_connection as db:
+                return db.projects.find_one({"_id": project_id})
+        except Exception as e:
+            print(e)
+            raise
 
     @staticmethod
-    def get_by_name(name):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM Project WHERE name = %s", (name,))
-            return cursor.fetchall()
+    def get_project_by_name(project_name: str) -> dict:
+        try:
+            with mongo_connection as db:
+                return db.projects.find_one({"project_name": project_name})
+        except Exception as e:
+            raise
 
     @staticmethod
-    def update_name(project_id, name):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("""
-                           UPDATE Project
-                           SET name = %s
-                           WHERE project_id = %s
-                           """, (name, project_id))
-            connection.commit()
-            return cursor.rowcount # Returns 1 if updated, 0 if no project found
+    def update_name(project_id, new_name):
+        try:
+            with mongo_connection as db:
+                db.projects.update_one({"_id": project_id}, {"$set": {"name": new_name}})
+        except Exception as e:
+            print(e)
 
 
 
