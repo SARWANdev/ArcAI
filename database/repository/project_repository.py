@@ -4,9 +4,9 @@ from datetime import datetime
 
 
 class Project:
-    def __init__(self, user_id, project_name, note=None):
+    def __init__(self, user_id, name, note=None):
         self.user_id = user_id
-        self.project_name = project_name
+        self.name = name
         self.note = note
 
         self.created_at = datetime.utcnow().isoformat() + "Z"  # ISO 8601 with Zulu time
@@ -16,7 +16,7 @@ class Project:
         with mongo_connection as db:
             project_data = {
                 "user_id": self.user_id,  # Google's unique 'sub'
-                "project_name": self.project_name,
+                "name": self.name,
                 "note": self.note,
                 "created_at": self.created_at,  # ISO 8601 UTC
                 "updated_at": self.updated_at
