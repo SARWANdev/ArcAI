@@ -21,6 +21,8 @@ class Project:
                 "created_at": self.created_at,  # ISO 8601 UTC
                 "updated_at": self.updated_at
             }
+            db.projects.insert_one(project_data)
+
 
     @staticmethod
     def get_project_by_user_id(user_id: str) -> dict:
