@@ -48,6 +48,15 @@ class User:
             return users
 
     @staticmethod
+    def get_user_by_id(user_id: str) -> dict:
+        try:
+            with mongo_connection() as db:
+                return db.users.find_one({"_id": user_id})
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            raise
+
+    @staticmethod
     def get_user_by_email(email: str) -> dict:
         if not email or "@" not in email:
             raise ValueError("Invalid email format")
