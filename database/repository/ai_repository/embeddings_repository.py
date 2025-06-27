@@ -1,13 +1,12 @@
 import numpy as np
 
 from database.utils.db_setup import database_connection
-from database.faiss_manager import FaissManager
 from typing import List, Optional
 
 
 class DocumentService:
     def __init__(self):
-        self.faiss = FaissManager()
+
 
     def add_document(self, project_id: int, name: str, path: str,
                      embeddings: np.ndarray, text_chunks: List[str],
