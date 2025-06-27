@@ -3,12 +3,15 @@ import AIChatContainer from "./Components/AIChatContainer"
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { Sidebar } from "./Components/Sidebar";
+import { useContext } from "react";
+import { ThemeContext } from "./Components/ThemeContext";
 /**
  * ChatPage is the page that is used to display the chat with the AI.
  * @returns {JSX} - The React component for the chat page.
  */
 export default function ChatPage() {
     const navigate = useNavigate();
+    const { theme } = useContext(ThemeContext);
     /**
      * handleChatButtonClick is the function that is used to navigate to the chat page.
      * @param {*} e 
@@ -32,7 +35,7 @@ export default function ChatPage() {
             <div className="row justify-content-between align-items-center mx-0 px-4 py-2">
                 <div className="col-auto">
                     <img
-                        src="../images/arcai-logo-light-theme.png"
+                        src={theme === "dark" ? "../images/b0e06.png" : "../images/arcai-logo-light-theme.png"}
                         alt="logo"
                         className="img-fluid"
                         style={{ width: "115px", height: "128px"}}

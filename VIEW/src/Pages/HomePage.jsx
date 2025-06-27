@@ -2,14 +2,18 @@ import UserMenu from "./Components/Buttons/UserMenu"
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from 'react-router-dom';
 import { Button } from "react-bootstrap"
+import { useContext } from "react";
+import { ThemeContext } from "./Components/ThemeContext";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "./HomePage.css"
 // Create a drop down button which will contain the required commands
 /**
  * HomePage is the page that is used to display the home page when the user is logged in.
  * @returns {JSX} - The React component for the home page when the user is logged in.
  */
 export default function HomePage(){
+    const { theme } = useContext(ThemeContext);
     const navigate = useNavigate()
     /**
      * goToLibrary is the function that is used to navigate to the library page.
@@ -23,7 +27,7 @@ export default function HomePage(){
         <div className="row justify-content-between align-items-center mx-0 px-4 py-3">
                 <div className="col-auto">
                     <img
-                        src="../images/arcai-logo-light-theme.png"
+                        src={theme === "dark" ? "../images/b0e06.png" : "../images/arcai-logo-light-theme.png"}
                         alt="logo"
                         className="img-fluid"
                         style={{ width: "115px", height: "128px" }}
@@ -48,10 +52,10 @@ export default function HomePage(){
             <div className="col-12 col-md-6 col-lg-5" style={{height : 150}}>
               <div className="d-flex align-items-center border rounded p-3 h-100">
                 <img
-                  src="../images/book.png"
+                  src={theme === "dark" ? "../images/library-dark-theme.png" : "../images/library-light-theme.png"}
                   alt="book"
                   className="img-fluid me-3"
-                  style={{ width: "68px", height: "68px" }}
+                  style={{ width: "68px", height: "68px", transition: "background 0.3s ease, color 0.3s ease"}}
                 />
                 <div className="text-start">
                   <h5 className="mb-1 fw-bold fs-2">My Library</h5>
@@ -63,10 +67,10 @@ export default function HomePage(){
             <div className="col-12 col-md-6 col-lg-5">
               <div className="d-flex align-items-center border rounded p-3 h-100">
                 <img
-                  src="../images/chat.png"
+                  src={theme === "dark" ? "../images/chat-dark-theme.png" : "../images/chat-light-theme.png"}
                   alt="chat"
                   className="img-fluid me-3"
-                  style={{ width: "68px", height: "68px" }}
+                  style={{ width: "68px", height: "68px", transition: "background 0.3s ease, color 0.3s ease"}}
                 />
                 <div className="text-start">
                   <h5 className="mb-1 fw-bold fs-2">Chat</h5>
@@ -75,7 +79,7 @@ export default function HomePage(){
               </div>
             </div>
           </div>
-          <Button className="fs-2 fw-bold" style={{width : 250, height: 70}} onClick={goToLibrary}>Go to Library</Button>
+          <Button className="fs-2 fw-bold" id = "go-to-library-button" onClick={goToLibrary}>Go to Library</Button>
         </main>
       </div>
     )

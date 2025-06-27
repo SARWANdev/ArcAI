@@ -1,0 +1,10 @@
+#go-to-library-button {
+    width : 250px;
+    height: 70px;
+    background-color: var(--bg-login-button-color);
+    transition: "background 0.3s ease, color 0.3s ease"
+}
+
+#go-to-library-button:hover {
+    background-color: var(--bg-login-button-hover-color);
+}

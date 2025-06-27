@@ -3,12 +3,15 @@ import UserMenu from "./Components/Buttons/UserMenu";
 import ClearAllChatsButton from "./Components/Buttons/ClearAllChatsButton";
 import { Sidebar } from "./Components/Sidebar";
 import { Button } from "react-bootstrap";
+import { useContext } from "react";
+import { ThemeContext } from "./Components/ThemeContext";
 /**
  * ChatHistoryPage is the page that is used to display the chat history page.
  * @returns {JSX} - The React component for the chat history page.
  */
 export default function ChatHistoryPage() {
     const navigate = useNavigate();
+    const { theme } = useContext(ThemeContext);
     /**
      * handleChatButtonClick is the function that is used to navigate to the chat page.
      * @param {*} e - The event object.
@@ -33,7 +36,7 @@ export default function ChatHistoryPage() {
             <div className="row justify-content-between align-items-center mx-0 px-4 py-2">
                 <div className="col-auto">
                     <img
-                        src="../images/arcai-logo-light-theme.png"
+                        src={theme === "dark" ? "../images/b0e06.png" : "../images/arcai-logo-light-theme.png"}
                         alt="logo"
                         className="img-fluid"
                         style={{ width: "115px", height: "128px"}}

@@ -9,6 +9,7 @@ import ChatHistoryPage from './Pages/ChatHistoryPage.jsx'
 import ProtectedRoutes from './Pages/Components/ProtectedRoutes.jsx'
 import DocumentViewerPage from './Pages/DocumentViewerPage.jsx'
 import { AuthProvider } from './Pages/Components/AuthContext.jsx';
+import { ThemeProvider} from './Pages/Components/ThemeContext.jsx';
 import "./main.css"
 
 //Add Project Viewer Page
@@ -23,18 +24,20 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
       <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LoginPage />} />
+        <ThemeProvider>
+            <Routes>
+              <Route path="/" element={<LoginPage />} />
 
-            <Route element = {<ProtectedRoutes/>}>
-            <Route path= "/home" element={<HomePage />} />
-            <Route path = "/home/library" element = {<LibraryPage/>}/>
-            <Route path = "/home/library/document-viewer" element = {<DocumentViewerPage/>}/>
-            <Route path = "/home/chat-chatbot" element = {<ChatPage/>}/>
-            <Route path = "/home/chat-history" element = {<ChatHistoryPage/>}/>
-            </Route>
+              <Route element = {<ProtectedRoutes/>}>
+              <Route path= "/home" element={<HomePage />} />
+              <Route path = "/home/library" element = {<LibraryPage/>}/>
+              <Route path = "/home/library/document-viewer" element = {<DocumentViewerPage/>}/>
+              <Route path = "/home/chat-chatbot" element = {<ChatPage/>}/>
+              <Route path = "/home/chat-history" element = {<ChatHistoryPage/>}/>
+              </Route>
 
-          </Routes>
+            </Routes>
+          </ThemeProvider>
       </BrowserRouter>
     </AuthProvider>
   </StrictMode>,

@@ -9,7 +9,7 @@ export default function UserMenu({ left = null, right = null }) {
   const { setIsAuthenticated, user } = useAuth();
   const collapseRef = useRef(null);
   const toggleButtonRef = useRef(null);
-  const profilePicture = user?.picture || "../images/default-avatar.png";
+  const profilePicture = user?.picture || "../../../images/userPhoto.png";
   const userName = user?.given_name || "User"
 
   function signOut() {
