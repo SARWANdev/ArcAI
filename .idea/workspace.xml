@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="477490d3-3591-4322-951c-1fcc3de94601" name="Changes" comment="full database refactor&#10;&#10;# Conflicts:&#10;#&#9;database/__pycache__/__init__.cpython-313.pyc&#10;#&#9;database/repository/__pycache__/__init__.cpython-313.pyc&#10;#&#9;database/repository/__pycache__/user_repository.cpython-313.pyc&#10;#&#9;database/utils/__pycache__/__init__.cpython-313.pyc&#10;#&#9;database/utils/__pycache__/mongo_configuration.cpython-313.pyc&#10;#&#9;database/utils/__pycache__/mongo_connector.cpython-313.pyc">
       <change afterPath="$PROJECT_DIR$/database/repository/user_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
