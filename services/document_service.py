@@ -28,16 +28,16 @@ class DocumentService:
         return self.document_properties_repo.mark_as_read(document_id)
 
     def mark_as_unread(self, document_id):
-        pass
+        return self.document_properties_repo.mark_as_not_read(document_id)
 
     def download_document(self, document_id):
         pass
 
     def add_to_favorites(self, document_id):
-        pass
+        return self.document_properties_repo.mark_as_favorite(document_id)
 
     def remove_from_favorites(self, document_id):
-        pass
+        return self.document_properties_repo.mark_as_not_favorite(document_id)
 
     def add_tag(self, document_id, tag):
         pass
