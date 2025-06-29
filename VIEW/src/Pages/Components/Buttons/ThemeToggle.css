@@ -1,9 +1,0 @@
-#theme-toggle-button{
-    border: none;
-    background-color: var(--bg-button-color);
-    color: var(--text-color);
-}
-
-#theme-toggle-button:hover{
-    background-color: var(--bg-button-hover-color);
-}

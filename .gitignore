@@ -1,1 +1,4 @@
 test.py
+#Files from front-end to be ignored
+node_modules
+view
