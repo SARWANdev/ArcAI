@@ -1,59 +1,114 @@
-from ..utils.db_setup import database_connection
+from database.repository.date_time_utils import get_utc_zulu_timestamp
+from database.utils.mongo_connector import mongo_connection
+from typing import Optional, Dict
 
 
 class Document:
-    def __init__(self, project_id, name, path, embeddings_path, note=None):
+    def __init__(self, project_id: str, name: str, path: str, embeddings_path: str, note: Optional[str] = None,
+                 journal: Optional[str] = None, author: Optional[str] = None,
+                 tag: Optional[str] = None, tag_color: Optional[str] = None,  bibtex = None):
+
         self.project_id = project_id
         self.name = name
         self.path = path
         self.embeddings_path = embeddings_path
         self.note = note
+        self.is_document_read = False
+        self.is_document_favorite = False
+        self.journal = journal
+        self.first_author = author
+        self.tag = tag
+        self.tag_color = tag_color
+        self.bibtex = bibtex
+
+        self.created_at = get_utc_zulu_timestamp()
+        self.updated_at = self.created_at
+
 
     def new_document(self):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("""
-                           INSERT INTO Document (project_id, name, path, embeddings_path, note)
-                           VALUES (%s, %s, %s, %s, %s)
-                           """, (self.project_id, self.name, self.path, self.embeddings_path, self.note))
-            connection.commit()
-            return cursor.lastrowid
+        document_data = {
+            "project_id": self.project_id,
+            "name": self.name,
+            "path": self.path,
+            "embeddings_path": self.embeddings_path,
+            "note": self.note,
+            "journal": self.journal,
+            "first_author": self.first_author,
+            "tag": self.tag,
+            "tag_color": self.tag_color,
+            "is_document_read": self.is_document_read,
+            "is_document_favorite": self.is_document_favorite,
+            "bibtex": self.bibtex,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+        with mongo_connection() as db:
+            db.documents.insert_one(document_data)
+
 
     @staticmethod
-    def get_by_project(project_id):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM Document WHERE project_id = %s", (project_id,))
-            return cursor.fetchall()
+    def get_documents_by_project(project_id) -> list[Dict]:
+        with mongo_connection() as db:
+            return list(db.documents.find({"project_id": project_id}))
+
 
     @staticmethod
-    def get_by_document_id(document_id):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM Document WHERE document_id = %s", (document_id,))
-            return cursor.fetchone()
+    def get_by_document_id(document_id) -> dict:
+        with mongo_connection() as db:
+            return db.documents.find_one({"_id": document_id})
 
     @staticmethod
-    def update_document_name(document_id, name):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("UPDATE Document SET name = %s WHERE document_id = %s", (name, document_id,))
-            connection.commit()
-            return cursor.lastrowid
+    def update_document_name(document_id, name) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.documents.update_one({"_id": document_id},
+                                        {"$set": {"name": name, "updated_at": get_utc_zulu_timestamp()}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Document name could not be update: {e}")
+            return False
+
+
     @staticmethod
-    def update_path(document_id, path):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("UPDATE Document SET path = %s WHERE document_id = %s", (path, document_id,))
-            connection.commit()
-            return cursor.lastrowid
+    def update_path(document_id, path) -> bool:
+         try:
+             with mongo_connection() as db:
+                 result = db.documents.update_one({"_id": document_id},
+                                         {"$set": {"path": path, "updated_at": get_utc_zulu_timestamp()}})
+                 return result.modified_count > 1
+         except Exception as e:
+             print(f"Document path could not be update: {e}")
+             return False
         
     @staticmethod
     def update_embeddings_path(document_id, embeddings_path):
-        pass
+        try:
+            with mongo_connection() as db:
+                result = db.documents.update_one({"_id": document_id},
+                                        {"$set": {"embeddings_path": embeddings_path,
+                                                  "updated_at": get_utc_zulu_timestamp()}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Embeddings path could not be update: {e}")
+            return False
+
     @staticmethod
-    def get_bibtex_by_document_id(document_id):
-        pass
+    def get_bibtex_by_document_id(document_id) -> str:
+        try:
+            with mongo_connection() as db:
+                return db.documents.find_one({"_id": document_id})["bibtex"]
+        except Exception as e:
+            print(f"Bibtex could not be retrieved: {e}")
+            return str()
+
     @staticmethod
-    def update_bibtex(document_id, bibtex):
-        pass
+    def update_bibtex(document_id, bibtex) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.documents.update_one({"_id": document_id},
+                                        {"$set": {"bibtex": bibtex,
+                                                      "updated_at": get_utc_zulu_timestamp()}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Bibtex could not be update: {e}")
+            return False

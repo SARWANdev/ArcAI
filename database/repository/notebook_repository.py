@@ -1,36 +1,39 @@
-from ..utils.db_setup import database_connection
+from database.utils.mongo_connector import mongo_connection
 
 class Notebook:
 
     @staticmethod
-    def get_project_notebook(project_id):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT note FROM Project WHERE project_id = %s", (project_id,))
-            return cursor.fetchone()
+    def get_project_notebook(project_id) -> str:
+        with mongo_connection() as db:
+            return db.projects.find_one({"_id": project_id})["note"]
+
 
     @staticmethod
-    def update_project_notebook(project_id, note):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("UPDATE Project SET note = %s WHERE project_id = %s", (note, project_id,))
-            connection.commit()
-            return cursor.rowcount
+    def update_project_notebook(project_id, note) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.projects.update_one({"_id": project_id}, {"$set": {"note": note}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Project notebook could not be update: {e}")
+            return False
+
 
     @staticmethod
-    def get_document_notebook(document_id):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("SELECT note FROM Document WHERE document_id = %s", (document_id,))
-            return cursor.fetchone()
+    def get_document_notebook(document_id) -> str:
+        with mongo_connection() as db:
+            return db.documents.find_one({"_id": document_id})["note"]
+
 
     @staticmethod
-    def update_document_notebook(document_id, note):
-        with database_connection() as connection:
-            cursor = connection.cursor()
-            cursor.execute("UPDATE Document SET note = %s WHERE document_id = %s", (note, document_id,))
-            connection.commit()
-            return cursor.rowcount
+    def update_document_notebook(document_id, note) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.documents.update_one({"_id": document_id}, {"$set": {"note": note}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Document notebook could not be update: {e}")
+            return False
 
 
         

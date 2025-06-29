@@ -1,9 +1,11 @@
-from ..utils.db_setup import database_connection
+from database.utils.mongo_connector import mongo_connection
 
 class Library:
+    # TODO: add a method that returns all documents from an user
     @staticmethod
-    def get_user_library(user_id):
-        with database_connection() as connection:
-            cursor = connection.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM Project WHERE user_id = %s", (user_id,))
-            return cursor.fetchall()
+    def get_user_library(user_id) -> dict:
+        with mongo_connection() as db:
+            return db.projects.find_one({"user_id": user_id})
+
+
+

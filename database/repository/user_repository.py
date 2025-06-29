@@ -1,9 +1,10 @@
 import pymongo
 from pymongo.errors import DuplicateKeyError
+
+from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import List, Dict
-from datetime import datetime
-import pytz
+
 
 
 class User:
@@ -15,7 +16,7 @@ class User:
         self.view_mode = True
         self.is_an_active_account = True
 
-        self.created_at = datetime.utcnow().isoformat() + "Z"  # ISO 8601 with Zulu time
+        self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
 
     def new_user(self):
@@ -76,7 +77,7 @@ class User:
                     {'_id': user_id},
                     {'$set': {
                         'first_name': new_name,
-                        "updated_at": datetime.utcnow().isoformat() + "Z",
+                        "updated_at": get_utc_zulu_timestamp(),
                     }}
                 )
                 return result.modified_count > 0
@@ -92,7 +93,7 @@ class User:
                     {'_id': user_id},
                     {'$set': {
                         'last_name': new_last_name,
-                        "updated_at": datetime.utcnow().isoformat() + "Z",
+                        "updated_at": get_utc_zulu_timestamp(),
                     }}
                 )
                 return result.modified_count > 0
@@ -102,8 +103,12 @@ class User:
 
     @staticmethod
     def update_view_mode(user_id: str, view_mode: bool) -> bool:
-        pass
+        try:
+            with mongo_connection() as db:
+                result = db.users.update_one({"_id": user_id},
+                                             {"$set": {"view_mode": view_mode, "updated_at": get_utc_zulu_timestamp()}})
+                return result.modified_count > 0
 
-
-
-
+        except Exception as e:
+            print(f"Error updating users view mode: {str(e)}")
+            return False
