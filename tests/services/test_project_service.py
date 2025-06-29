@@ -1,62 +1,71 @@
 import unittest
-from unittest.mock import MagicMock
-from services.project_service import ProjectService
-from model.document_reader.project import Project
+from unittest.mock import patch, MagicMock
+from database.repository.project_repository import Project
 
+class TestProjectRepository(unittest.TestCase):
+    @patch("database.repository.project_repository.mongo_connection")
+    def test_new_project_inserts_correct_data(self, mock_mongo_connection):
+        mock_db = MagicMock()
+        mock_projects = MagicMock()
+        mock_db.projects = mock_projects
+        mock_mongo_connection.return_value.__enter__.return_value = mock_db
 
-class TestProjectService(unittest.TestCase):
-    def setUp(self):
-        self.mock_repo = MagicMock()
-        self.service = ProjectService()
-        self.service.project_repository = self.mock_repo  # override with mock
+        mock_projects.insert_one.return_value.inserted_id = "fake_id"
 
-    def test_create_project(self):
-        # Arrange
-        self.mock_repo.new_project.return_value = 1
+        repo = Project(user_id=123, project_name="My Project", note="My note")
+        result = repo.new_project()
 
-        # Act
-        result = self.service.create_project(user_id=101, project_name="Test Project")
+        mock_projects.insert_one.assert_called_once()
+        inserted_data = mock_projects.insert_one.call_args[0][0]
+        self.assertEqual(inserted_data["user_id"], 123)
+        self.assertEqual(inserted_data["project_name"], "My Project")
+        self.assertEqual(inserted_data["note"], "My note")
+        self.assertEqual(result, "fake_id")
 
-        # Assert
-        self.assertIsInstance(result, Project)
-        self.assertEqual(result.project_name, "Test Project")
-        self.assertEqual(result.user_id, 101)
-        self.assertEqual(result.id, 1)
-        self.mock_repo.new_project.assert_called_once()
+    @patch("database.repository.project_repository.mongo_connection")
+    def test_get_project_by_user_id_returns_project(self, mock_mongo_connection):
+        mock_db = MagicMock()
+        mock_projects = MagicMock()
+        mock_db.projects = mock_projects
+        mock_mongo_connection.return_value.__enter__.return_value = mock_db
 
-    def test_get_project_found(self):
-        # Arrange
-        self.mock_repo.get_by_id.return_value = {
-            'project_id': 1,
-            'project_name': 'My Project',
-            'user_id': 101,
-            'note': 'Test note'
-        }
+        fake_project = {"_id": "abc123", "user_id": 123}
+        mock_projects.find_one.return_value = fake_project
 
-        # Act
-        result = self.service.get_project(project_id=1)
+        result = Project.get_project_by_user_id(user_id=123)
 
-        # Assert
-        self.assertEqual(result.project_name, 'My Project')
-        self.assertEqual(result.id, 1)
-        self.assertEqual(result.user_id, 101)
-        self.assertEqual(result.note, 'Test note')
+        mock_projects.find_one.assert_called_once_with({"user_id": 123})
+        self.assertEqual(result, fake_project)
 
-    def test_get_project_not_found(self):
-        self.mock_repo.get_by_id.return_value = None
-        result = self.service.get_project(project_id=999)
-        self.assertIsNone(result)
+    @patch("database.repository.project_repository.mongo_connection")
+    def test_get_project_by_id_returns_project(self, mock_mongo_connection):
+        mock_db = MagicMock()
+        mock_projects = MagicMock()
+        mock_db.projects = mock_projects
+        mock_mongo_connection.return_value.__enter__.return_value = mock_db
 
-    def test_rename_project_success(self):
-        self.mock_repo.update_name.return_value = 1
-        result = self.service.rename_project(project_id=1, project_name="Renamed")
-        self.assertTrue(result)
+        fake_project = {"_id": "abc123", "user_id": 123}
+        mock_projects.find_one.return_value = fake_project
 
-    def test_rename_project_fail(self):
-        self.mock_repo.update_name.return_value = 0
-        result = self.service.rename_project(project_id=1, project_name="Renamed")
-        self.assertFalse(result)
+        result = Project.get_project_by_id(project_id="abc123")
 
+        mock_projects.find_one.assert_called_once_with({"_id": "abc123"})
+        self.assertEqual(result, fake_project)
 
-if __name__ == '__main__':
+    @patch("database.repository.project_repository.mongo_connection")
+    def test_update_name_updates_project_name(self, mock_mongo_connection):
+        mock_db = MagicMock()
+        mock_projects = MagicMock()
+        mock_db.projects = mock_projects
+        mock_mongo_connection.return_value.__enter__.return_value = mock_db
+
+        mock_projects.update_one.return_value.modified_count = 1
+
+        Project.update_name(project_id="abc123", new_name="Updated Project")
+
+        mock_projects.update_one.assert_called_once_with(
+            {"_id": "abc123"}, {"$set": {"name": "Updated Project"}}
+        )
+
+if __name__ == "__main__":
     unittest.main()
