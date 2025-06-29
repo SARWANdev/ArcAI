@@ -1,9 +1,0 @@
-#login-button{
-    width : 220px;
-    height: 70px;
-    background-color: var(--bg-login-button-color);
-}
-
-#login-button:hover{
-    background-color: var(--bg-login-button-hover-color);
-}
