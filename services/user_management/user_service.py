@@ -1,5 +1,8 @@
 from database.repository.user_repository import User as UserRepository
 from model.user_profile.user import User as UserModel
+from model.user_profile.view_mode import ViewMode
+from database.repository.library_repository import Library as LibraryRepository
+from model.document_reader.library import Library as LibraryModel
 
 class UserService:
     def __init__(self):
@@ -12,18 +15,18 @@ class UserService:
             return None
         # Map DB fields to UserModel
         user_model = UserModel(
-            user_id=user_data.get('user_id'),
-            first_name=user_data.get('first_name'),
-            last_name=user_data.get('last_name'),
-            email=user_data.get('email')
+            user_id = user_data.get('user_id'),
+            first_name = user_data.get('first_name'),
+            last_name = user_data.get('last_name'),
+            email = user_data.get('email')
         )
         user_model.prefered_mode = user_data.get('preferred_mode')
         return user_model
         
         
-
     def update_user_profile(self, user_id, first_name=None, last_name=None, email=None):
         # Update basic user information
+        user_data = UserRepository.get_user_by_id(user_id)
         pass
 
     def get_preference(self, user_id):
@@ -34,16 +37,18 @@ class UserService:
         preference = user_data.get('preferred_mode')
         return preference
 
-    def update_preference(self, user_id, preference_key, value):
+    def update_preference(self, user_id, value):
         # Update a user preference like dark/light mode
-        pass
-
-    def get_user_projects(self, user_id):
-        # Return list of projects associated with this user
-        pass
+        result = self.user_repository.update_view_mode(user_id, value)
+        return result == 1
+        
 
     def get_user_library(self, user_id):
         #return the user's library
-        pass
-
-    
+        library_data = LibraryRepository.get_user_library(user_id)
+        if not library_data:
+            return None
+        library_model = LibraryModel()
+        return library_data
+        #TODO: convert all objects into model classes
+        

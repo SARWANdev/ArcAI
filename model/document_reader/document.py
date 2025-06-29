@@ -1,7 +1,7 @@
 
 class Document:
-    def __init__(self):
-        self.name = self.__name_assigner() # crate a method that assign a better name according to the pattern LAst name from the author,
+    def __init__(self, name, project_id):
+        self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern LAst name from the author,
         self.read = False  # Private variable initialized to False
         self.tag = None
         self.metadata = None
@@ -11,6 +11,7 @@ class Document:
         self.journal = None
         self.pages = None
         self.id = None
+        self.project_id = project_id
 
     # Optional: Getter method to access the private variable
     @property
