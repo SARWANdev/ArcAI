@@ -14,8 +14,7 @@ class User:
         self.email = email
         self.sub_id = sub_id
         self.view_mode = True
-        self.is_an_active_account = True
-
+        self.active = True
         self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
 
@@ -29,7 +28,7 @@ class User:
             "last_name": self.last_name,
             "email": self.email,
             "view_mode": self.view_mode,  # Defaults to True
-            "is_an_active_account": self.is_an_active_account,  # Defaults to True
+            "active": self.active,  # Defaults to True
             "created_at": self.created_at,  # ISO 8601 UTC
             "updated_at": self.updated_at
         }
@@ -111,4 +110,15 @@ class User:
 
         except Exception as e:
             print(f"Error updating users view mode: {str(e)}")
+            return False
+
+    @staticmethod
+    def deactivate_user(user_id: str):
+        try:
+            with mongo_connection() as db:
+                result = db.users.update_one({"_id": user_id},
+                                             {"$set": {"active": False, "updated_at": get_utc_zulu_timestamp()}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Error deactivating the account: {str(e)}")
             return False

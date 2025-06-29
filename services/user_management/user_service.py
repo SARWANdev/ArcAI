@@ -23,10 +23,7 @@ class UserService:
         user_model.prefered_mode = user_data.get('preferred_mode')
         return user_model
         
-        
-    def update_user_profile(self, user_id, first_name=None, last_name=None, email=None):
-        # Update basic user information
-        user_data = UserRepository.get_user_by_id(user_id)
+    def deactivate_user(self, user_id):
         pass
 
     def get_preference(self, user_id):
