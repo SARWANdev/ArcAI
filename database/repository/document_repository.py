@@ -4,19 +4,20 @@ from typing import Optional, Dict
 
 
 class Document:
-    def __init__(self, project_id: str, name: str, path: str, embeddings_path: str, note: Optional[str] = None,
-                 journal: Optional[str] = None, author: Optional[str] = None,
+    def __init__(self, project_id: str, name: str, path: str, vector_store_path: str, note: Optional[str] = None,
+                 journal: Optional[str] = None, author: Optional[str] = None, year: Optional[str] = None,
                  tag: Optional[str] = None, tag_color: Optional[str] = None,  bibtex = None):
 
         self.project_id = project_id
         self.name = name
         self.path = path
-        self.embeddings_path = embeddings_path
+        self.vector_store_path = vector_store_path
         self.note = note
-        self.is_document_read = False
-        self.is_document_favorite = False
+        self.read = False
+        self.favorite = False
         self.journal = journal
         self.first_author = author
+        self.year = year
         self.tag = tag
         self.tag_color = tag_color
         self.bibtex = bibtex
@@ -30,14 +31,15 @@ class Document:
             "project_id": self.project_id,
             "name": self.name,
             "path": self.path,
-            "embeddings_path": self.embeddings_path,
+            "vector_store_path": self.vector_store_path,
             "note": self.note,
+            "year": self.year,
             "journal": self.journal,
             "first_author": self.first_author,
             "tag": self.tag,
             "tag_color": self.tag_color,
-            "is_document_read": self.is_document_read,
-            "is_document_favorite": self.is_document_favorite,
+            "read": self.read,
+            "favorite": self.favorite,
             "bibtex": self.bibtex,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
@@ -81,11 +83,11 @@ class Document:
              return False
         
     @staticmethod
-    def update_embeddings_path(document_id, embeddings_path):
+    def update_vector_store_path(document_id, vector_store_path):
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": document_id},
-                                        {"$set": {"embeddings_path": embeddings_path,
+                                        {"$set": {"vector_store_path": vector_store_path,
                                                   "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
         except Exception as e:

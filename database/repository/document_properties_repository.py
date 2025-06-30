@@ -8,7 +8,7 @@ class DocumentPropertiesRepository:
         try:
             with mongo_connection as db:
                 result = db.documents.update_one({"_id": document_id},
-                                                 {"is_document_favorite": True})
+                                                 {"favorite": True})
                 return result.modified_count > 0
         except Exception as e:
             print(f"Document could not be mark as favorite: {e}")
@@ -20,7 +20,7 @@ class DocumentPropertiesRepository:
         try:
             with mongo_connection as db:
                 result = db.documents.update_one({"_id": document_id},
-                                                 {"is_document_favorite": False})
+                                                 {"favorite": False})
                 return result.modified_count > 0
         except Exception as e:
             print(f"Document could not be mark as not favorite: {e}")
@@ -30,7 +30,7 @@ class DocumentPropertiesRepository:
     def mark_as_read(document_id):
         try:
             with mongo_connection as db:
-                result = db.documents.update_one({"_id": document_id}, {"is_document_read": True})
+                result = db.documents.update_one({"_id": document_id}, {"read": True})
                 return result.modified_count > 0
         except Exception as e:
             print(f"Document could not be mark as read: {e}")
@@ -40,7 +40,7 @@ class DocumentPropertiesRepository:
     def mark_as_not_read(document_id) -> bool:
         try:
             with mongo_connection as db:
-                result = db.documents.update_one({"_id": document_id}, {"is_document_read": False})
+                result = db.documents.update_one({"_id": document_id}, {"read": False})
                 return result.modified_count > 0
         except Exception as e:
             print(f"Document could not be mark as read: {e}")
