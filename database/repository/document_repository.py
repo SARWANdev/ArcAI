@@ -6,7 +6,7 @@ from typing import Optional, Dict
 class Document:
     def __init__(self, project_id: str, name: str, path: str, vector_store_path: str, note: Optional[str] = None,
                  journal: Optional[str] = None, author: Optional[str] = None, year: Optional[str] = None,
-                 tag: Optional[str] = None, tag_color: Optional[str] = None,  bibtex = None):
+                 pages: Optional[int] = None, tag: Optional[str] = None, tag_color: Optional[str] = None,  bibtex = None):
 
         self.project_id = project_id
         self.name = name
@@ -18,6 +18,7 @@ class Document:
         self.journal = journal
         self.first_author = author
         self.year = year
+        self.pages = pages
         self.tag = tag
         self.tag_color = tag_color
         self.bibtex = bibtex
@@ -34,6 +35,7 @@ class Document:
             "vector_store_path": self.vector_store_path,
             "note": self.note,
             "year": self.year,
+            "pages": self.pages,
             "journal": self.journal,
             "first_author": self.first_author,
             "tag": self.tag,

@@ -24,7 +24,8 @@ class UserService:
         return user_model
         
     def deactivate_user(self, user_id):
-        pass
+        # Deactivates a user's account. Returns the result of the operation 
+        return self.user_repository.deactivate_user(user_id)
 
     def get_preference(self, user_id):
         # Return user preferences (e.g., UI mode)

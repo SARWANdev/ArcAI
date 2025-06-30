@@ -1,25 +1,25 @@
 
 class Document:
-    def __init__(self, name, project_id):
+    def __init__(self, name, id, project_id, vector_store_path, author, year, journal, pages):
         self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern LAst name from the author,
-        self.read = False  # Private variable initialized to False
-        self.tag = None
-        self.metadata = None
-        self.vector_store = None
-        self.author = None
-        self.year = None
-        self.journal = None
-        self.pages = None
-        self.id = None
+        self.id = id
         self.project_id = project_id
+        self.read = False  # Private variable initialized to False
+        self.favorite = False
+        self.tag = None
+        self.vector_store_path = vector_store_path
+        self.author = author
+        self.year = year
+        self.journal = journal
+        self.pages = pages
 
     # Optional: Getter method to access the private variable
     @property
     def read(self):
         return self.read
 
-    def mark_document_as_read(self):
-        self.read = True
+    def set_read(self, read):
+        self.read = read
 
     def set_name(self, name):
         self.name = name
@@ -30,7 +30,7 @@ class Document:
     def get_tag(self):
         return self.tag
     
-    def favorite(self):
+    def get_favorite(self):
         return self.favorite
 
     def set_favorite(self, favorite):
