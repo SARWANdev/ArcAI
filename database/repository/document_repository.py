@@ -72,6 +72,15 @@ class Document:
             print(f"Document name could not be update: {e}")
             return False
 
+    @staticmethod
+    def delete_document(document_id) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.documents.delete_one({"_id": document_id})
+                return result.deleted_count > 0
+        except Exception as e:
+            print(f"Document could not be deleted: {e}")
+            return False
 
     @staticmethod
     def update_path(document_id, path) -> bool:

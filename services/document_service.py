@@ -12,8 +12,9 @@ class DocumentService:
         self.document_properties_repo = DocumentPropertiesRepository()
         self.document_repository = DocumentRepository()
 
-    def create_document(self, project_id, name, path, note=None):
-        pass
+    def create_document(self, name, document_id, project_id, vector_store_path, author, year, journal, pages):
+        new_document = DocumentRepository(name, document_id, project_id, vector_store_path, author, year, journal, pages)
+        new_document.new_document()
 
     def get_document(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)
@@ -38,7 +39,7 @@ class DocumentService:
         pass 
 
     def delete_document(self, document_id):
-        pass
+        return self.document_repository.delete_document(document_id)
 
     def mark_as_read(self, document_id):
         return self.document_properties_repo.mark_as_read(document_id)
@@ -77,8 +78,10 @@ class DocumentService:
     def process_document_metadata(self, document_id):
         pass
 
-    def duplicate_document(self, project_id, document_id):
-        pass
+    def duplicate_document(self, document_id):
+        document_data = self.document_repository.get_by_document_id(document_id)
+        if not document_data:
+            return None
 
     def extract_text_from_document(self, document_id):
         pass
