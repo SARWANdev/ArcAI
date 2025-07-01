@@ -2,6 +2,7 @@ from database.repository.document_repository import Document as DocumentReposito
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.tag import Tag as TagModel
+import io
 
 
 
@@ -13,10 +14,12 @@ class DocumentService:
         self.document_repository = DocumentRepository()
 
     def create_document(self, name, document_id, project_id, vector_store_path, author, year, journal, pages):
+        #Creates a new document in the database
         new_document = DocumentRepository(name, document_id, project_id, vector_store_path, author, year, journal, pages)
         new_document.new_document()
 
     def get_document(self, document_id):
+        #Gets a document from the database
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
@@ -36,7 +39,14 @@ class DocumentService:
         return document_model
 
     def get_project_documents(self, project_id):
-        pass 
+        documents_data = self.document_repository.get_documents_by_project(project_id) 
+        if not documents_data:
+            return None
+        documents_list = []
+        for document_data in documents_data:
+            document_model = self.get_document(document_data.get('_id'))
+            documents_list.append(document_model)
+        return documents_list
 
     def delete_document(self, document_id):
         return self.document_repository.delete_document(document_id)
@@ -90,7 +100,16 @@ class DocumentService:
         pass
 
     def download_bibtex(self, document_id):
-        pass
+        #Get a document's bibtex and returns it as a buffer, with it's name
+        document_data = self.document_repository.get_by_document_id(document_id)
+        bibtex = document_data.get('bibtex')
+        title = document_data.get('name') + '.bibtex.txt'
+        if not bibtex:
+            return None
+        buffer = io.BytesIO()
+        buffer.write(bibtex.encode('utf-8'))
+        return buffer, title
+        
 
     def name_assigner(self):
         #takes the pdf information from the Bibtex and assign a name possibly athorLastName-first3Wordsof the tittle and date
