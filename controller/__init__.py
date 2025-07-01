@@ -3,27 +3,26 @@ from dotenv import find_dotenv, load_dotenv
 from os import environ as env
 from flask_cors import CORS
 from services.user_management.authentication_service import AuthenticationService
-from user_controller import authenticate, UserController
+from controller.user_controller import UserController
 
-# Load .env
+# Load environment variables
 ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
 
 # Create Flask app
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 app.secret_key = env.get("APP_SECRET_KEY")
+CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
 
-authentication_service = AuthenticationService()
+
+# Initialize OAuth
+authentication_service = AuthenticationService(app)
 authentication_service.init_oauth(app)
 
-app.register_blueprint(authenticate)
-
-controller = UserController()
-authenticate.add_url_rule("/login", view_func=controller.login)
-authenticate.add_url_rule("/callback", view_func=controller.callback)
-authenticate.add_url_rule("/logout", view_func=controller.logout)
+# Initialize authentication routes
+user_controller = UserController(authentication_service)
+user_controller.register_auth_routes(app)
 
 # Run the server
 if __name__ == "__main__":
