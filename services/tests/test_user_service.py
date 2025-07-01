@@ -1,4 +1,3 @@
-
 import unittest
 from unittest.mock import patch, MagicMock
 from services.user_management.user_service import UserService

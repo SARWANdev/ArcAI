@@ -1,7 +1,7 @@
 class Tag:
-    def __init__(self, name):
+    def __init__(self, name, color):
         self.name = name
-        self.color = None
+        self.color = color
 
     def rename_tag(self, name):
         self.name = name

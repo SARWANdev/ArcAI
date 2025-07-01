@@ -1,9 +1,11 @@
 from database.repository.project_repository import Project as ProjectRepository
 from model.document_reader.project import Project as ProjectModel
+from database.repository.library_repository import Library as LibraryRepository
 
 class ProjectService:
     def __init__(self):
         self.project_repository = ProjectRepository
+        self.library_repository = LibraryRepository
 
     #TODO: When thge user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
     #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
@@ -43,7 +45,14 @@ class ProjectService:
         return project_model
 
     def get_user_projects(self, user_id):
-        pass
+        library_data = self.library_repository.get_user_library(user_id)
+        if not library_data:
+            return None
+        projects_list = []
+        for project_data in library_data:
+            project_model = self.get_project(project_data.get('project_id'))
+            projects_list.append(project_model)
+        return projects_list
 
     def delete_project(self, project_id):
         pass

@@ -6,6 +6,3 @@ class Library:
     def get_user_library(user_id) -> dict:
         with mongo_connection() as db:
             return db.projects.find_one({"user_id": user_id})
-
-
-

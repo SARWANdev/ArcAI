@@ -77,9 +77,9 @@ class DocumentService:
         if not document_data:
             return None
         tag = TagModel(
-            name = document_data.get('tag')
+            name = document_data.get('tag'),
+            color = document_data.get('tag_color')
         )
-        tag.set_color(document_data.get('tag_color'))
         return tag
 
     def highlight_document(self, document_id, text):
