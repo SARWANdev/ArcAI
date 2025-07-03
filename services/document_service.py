@@ -1,6 +1,5 @@
 from database.repository.document_repository import Document as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
-from notebook_service import NotebookService
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.tag import Tag as TagModel
 import io

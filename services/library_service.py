@@ -13,8 +13,7 @@ class LibraryService:
         pass
 
     def sort_library(self, sort_by, sort_order='asc'):
-        #Sorts library either in alphabetical, last updated or chronlogical order
-        
+        # Sorts library either in alphabetical, last updated or chronlogical order
         pass
 
     def filter_library(self, filters):
