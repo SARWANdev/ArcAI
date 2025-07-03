@@ -125,3 +125,9 @@ class Document:
         except Exception as e:
             print(f"Bibtex could not be update: {e}")
             return False
+        
+    @staticmethod
+    def get_pdf(document_id, path):
+        #Gets a document's pdf to be downloaded or shown
+        #TODO: finish this
+        pass

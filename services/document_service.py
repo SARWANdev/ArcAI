@@ -1,5 +1,6 @@
 from database.repository.document_repository import Document as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
+from notebook_service import NotebookService
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.tag import Tag as TagModel
 import io
@@ -13,9 +14,10 @@ class DocumentService:
         self.document_properties_repo = DocumentPropertiesRepository()
         self.document_repository = DocumentRepository()
 
-    def create_document(self, name, document_id, project_id, vector_store_path, author, year, journal, pages):
+    def create_document(self, name, project_id, path, vector_store_path, author, year, journal, pages, bibtex):
         #Creates a new document in the database
-        new_document = DocumentRepository(name, document_id, project_id, vector_store_path, author, year, journal, pages)
+        note = None #= NotebookService.create_notebook() #TODO: create new note for document's
+        new_document = DocumentRepository(project_id, name, path, vector_store_path, author, year, journal, pages, bibtex)
         new_document.new_document()
 
     def get_document(self, document_id):
@@ -58,7 +60,12 @@ class DocumentService:
         return self.document_properties_repo.mark_as_not_read(document_id)
 
     def download_document(self, document_id):
-        pass
+        document_data = self.document_repository.get_by_document_id(document_id)
+        if not document_data:
+            return None
+        path = document_data.get('path')
+        pdf = self.document_repository.get_pdf(document_id, path)
+        return pdf
 
     def add_to_favorites(self, document_id):
         return self.document_properties_repo.mark_as_favorite(document_id)
@@ -70,7 +77,7 @@ class DocumentService:
         return self.document_properties_repo.update_tag(document_id, tag, color)
 
     def remove_tag(self, document_id):
-        pass
+        return self.document_properties_repo.update_tag(document_id, None) & self.document_properties_repo.update_tag_color(document_id, None)
 
     def get_document_tag(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)
@@ -89,6 +96,7 @@ class DocumentService:
         pass
 
     def duplicate_document(self, document_id):
+        #TODO: duplicate the document in the database
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
@@ -100,7 +108,7 @@ class DocumentService:
         pass
 
     def download_bibtex(self, document_id):
-        #Get a document's bibtex and returns it as a buffer, with it's name
+        # Get a document's bibtex and returns it as a buffer, with it's name
         document_data = self.document_repository.get_by_document_id(document_id)
         bibtex = document_data.get('bibtex')
         title = document_data.get('name') + '.bibtex.txt'
@@ -112,5 +120,5 @@ class DocumentService:
         
 
     def name_assigner(self):
-        #takes the pdf information from the Bibtex and assign a name possibly athorLastName-first3Wordsof the tittle and date
+        #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
         return str()
