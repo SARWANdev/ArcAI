@@ -9,7 +9,7 @@ import io
 class DocumentService:
    
     def __init__(self):
-        self.document_repository = DocumentRepository
+        self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository()
         self.document_repository = DocumentRepository()
 
