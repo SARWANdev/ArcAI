@@ -32,12 +32,12 @@ class ProjectService:
 
     def get_project(self, project_id):
         # Fetch project data from repository
-        project_data = self.project_repository.get_by_id(project_id)
+        project_data = self.project_repository.get_project_by_id(project_id)
         if not project_data:
             return None
         # Map DB fields to ProjectModel
         project_model = ProjectModel(
-            project_id=project_data.get('project_id'),
+            project_id=project_data.get('_id'),
             project_name=project_data.get('project_name'),
             user_id=project_data.get('user_id')
         )
@@ -55,7 +55,7 @@ class ProjectService:
         return projects_list
 
     def delete_project(self, project_id):
-        pass
+        return self.project_repository.delete_project(project_id)
 
     def rename_project(self, project_id, project_name):
         result = self.project_repository.update_name(project_id, project_name)

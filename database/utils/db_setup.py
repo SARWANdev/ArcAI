@@ -3,7 +3,7 @@ from contextlib import contextmanager
 
 
 client = MongoClient("mongodb://localhost:27017/")
-db = client["ArcAI"]
+db = client["arcai1"]
 users = db["users"]
 projects = db["projects"]
 documents = db["documents"]
