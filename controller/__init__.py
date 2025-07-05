@@ -2,8 +2,11 @@ from flask import Flask
 from dotenv import find_dotenv, load_dotenv
 from os import environ as env
 from flask_cors import CORS
+
+import controller.library_controller
 from services.user_management.authentication_service import AuthenticationService
 from controller.user_controller import UserController
+from controller.library_controller import LibraryController
 
 # Load environment variables
 ENV_FILE = find_dotenv()
@@ -21,8 +24,8 @@ authentication_service = AuthenticationService(app)
 authentication_service.init_oauth(app)
 
 # Initialize authentication routes
-user_controller = UserController(authentication_service)
-user_controller.register_auth_routes(app)
+user_controller = UserController(authentication_service, app)
+library_controller = LibraryController(app)
 
 # Run the server
 if __name__ == "__main__":

@@ -32,7 +32,18 @@ class AuthenticationService:
         try:
             token = self.oauth.auth0.authorize_access_token()
             session["user"] = token
-            return redirect("http://localhost:5173/home")
+            sub_id = session["user"]["userinfo"]["sub"][14:]
+            first_name = session["user"]["userinfo"]["given_name"]
+            last_name = session["user"]["userinfo"]["family_name"]
+            email = session["user"]["userinfo"]["email"]
+            # Through UserRepository we will check if the user is already present in db
+            try:
+                user = UserRepository(first_name=first_name, last_name=last_name, email=email, sub_id=sub_id)
+                user.new_user()
+            except Exception as e:
+                print(e)
+            finally:
+                return redirect("http://localhost:5173/home")
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
