@@ -10,8 +10,7 @@ class DocumentService:
    
     def __init__(self):
         self.document_repository = DocumentRepository 
-        self.document_properties_repo = DocumentPropertiesRepository()
-        self.document_repository = DocumentRepository()
+        self.document_properties_repo = DocumentPropertiesRepository
 
     def create_document(self, name, project_id, path, vector_store_path, author, year, journal, pages, bibtex):
         #Creates a new document in the database

@@ -12,9 +12,39 @@ class LibraryService:
     def search_documents(self, query, filters=None):
         pass
 
-    def sort_library(self, sort_by, sort_order='asc'):
-        # Sorts library either in alphabetical, last updated or chronlogical order
-        pass
+    def sort_library(self, user_id, sort_by, order='asc'):
+        # Fetch all projects for the user
+        library_data = self.library_repository.get_user_library(user_id)
+        if not library_data:
+            return []
+
+        reverse = (order == 'desc')
+
+        # Choose key
+        if sort_by == 'name':
+            key_func = lambda p: p.get('project_name', '').lower()
+        elif sort_by == 'created':
+            key_func = lambda p: p.get('created_at', '')
+        elif sort_by == 'updated':
+            key_func = lambda p: p.get('updated_at', '')
+        else:
+            raise ValueError(f"Invalid sort_by: {sort_by}")
+
+        # Sort in Python
+        sorted_projects = sorted(library_data, key=key_func, reverse=reverse)
+
+        # Map to ProjectModel instances if needed
+        projects_list = []
+        for p in sorted_projects:
+            project_model = Project(
+                project_id=p.get('_id'),
+                project_name=p.get('project_name'),
+                user_id=p.get('user_id')
+            )
+            project_model.note = p.get('note')
+            projects_list.append(project_model)
+
+        return projects_list
 
     def filter_library(self, filters):
         pass

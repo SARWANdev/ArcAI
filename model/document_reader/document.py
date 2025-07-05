@@ -13,27 +13,28 @@ class Document:
         self.journal = journal
         self.pages = pages
 
-    # Optional: Getter method to access the private variable
+    #TODO: Make sure that the read and favorite functions are to a certain convention, 
+    # either setters and getters or just functions
+    
+    def mark_read(self):
+        self.read = True
+
+    def mark_unread(self):
+        self.read = False
+
+    def add_favorite(self):
+        self.favorite = True
+
+    def remove_favorite(self):
+        self.favorite = False
+
     @property
     def read(self):
-        return self.read
+        return self._read
 
-    def set_read(self, read):
-        self.read = read
+    @property
+    def favorite(self):
+        return self._favorite
 
-    def set_name(self, name):
-        self.name = name
-
-    def set_tag(self, tag):
-        self.tag = tag
-
-    def get_tag(self):
-        return self.tag
-    
-    def get_favorite(self):
-        return self.favorite
-
-    def set_favorite(self, favorite):
-        self.favorite = favorite
 
 

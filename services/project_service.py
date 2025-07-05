@@ -50,8 +50,9 @@ class ProjectService:
             return None
         projects_list = []
         for project_data in library_data:
-            project_model = self.get_project(project_data.get('project_id'))
-            projects_list.append(project_model)
+            project_model = self.get_project(project_data.get('_id'))
+            if project_model:
+                projects_list.append(project_model)
         return projects_list
 
     def delete_project(self, project_id):
