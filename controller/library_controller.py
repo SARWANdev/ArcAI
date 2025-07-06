@@ -115,4 +115,3 @@ class LibraryController:
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
         self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
         app.register_blueprint(self.library)
-
