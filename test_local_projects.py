@@ -8,7 +8,7 @@ if __name__ == "__main__":
     service = ProjectService()
 
     # 1) Create a project using the service
-    created_proj = service.create_project(user_id=6666, project_name="SP")
+    created_proj = service.create_project(user_id=1234, project_name="Dani")
     print(f"\nCreated Project: id={created_proj.id}, name={created_proj.project_name}, user_id={created_proj.user_id}")
 
     # 2) Fetch the created project by ID (using service.get_project)

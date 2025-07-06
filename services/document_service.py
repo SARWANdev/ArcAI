@@ -15,7 +15,17 @@ class DocumentService:
     def create_document(self, name, project_id, path, vector_store_path, author, year, journal, pages, bibtex):
         #Creates a new document in the database
         note = None #= NotebookService.create_notebook() #TODO: create new note for document's
-        new_document = DocumentRepository(project_id, name, path, vector_store_path, author, year, journal, pages, bibtex)
+        new_document = DocumentRepository(
+            project_id=project_id,
+            name=name,
+            path=path,
+            vector_store_path=vector_store_path,
+            author=author,
+            year=year,
+            journal=journal,
+            pages=pages,
+            bibtex=bibtex
+        )
         new_document.new_document()
 
     def get_document(self, document_id):
@@ -23,6 +33,7 @@ class DocumentService:
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
+        
         document_model = DocumentModel(
             name = document_data.get('name'),
             id = document_id,
@@ -33,9 +44,22 @@ class DocumentService:
             journal = document_data.get('journal'),
             pages = document_data.get('pages')
         )
-        document_model.set_tag = document_data.get('tag')
-        document_model.set_read = document_data.get('read')
-        document_model.set_favorite = document_data.get('favorite')
+        
+        # Update state using explicit methods
+        if document_data.get('read'):
+            document_model.mark_read()
+        else:
+            document_model.mark_unread()
+
+        if document_data.get('favorite'):
+            document_model.add_favorite()
+        else:
+            document_model.remove_favorite()
+
+        tag = document_data.get('tag')
+        if tag:
+            document_model.set_tag(tag)
+
         return document_model
 
     def get_project_documents(self, project_id):
@@ -44,8 +68,10 @@ class DocumentService:
             return None
         documents_list = []
         for document_data in documents_data:
-            document_model = self.get_document(document_data.get('_id'))
-            documents_list.append(document_model)
+            doc_id = document_data.get('_id')
+            document_model = self.get_document(doc_id)
+            if document_model:
+                documents_list.append(document_model)
         return documents_list
 
     def delete_document(self, document_id):
@@ -56,15 +82,7 @@ class DocumentService:
 
     def mark_as_unread(self, document_id):
         return self.document_properties_repo.mark_as_not_read(document_id)
-
-    def download_document(self, document_id):
-        document_data = self.document_repository.get_by_document_id(document_id)
-        if not document_data:
-            return None
-        path = document_data.get('path')
-        pdf = self.document_repository.get_pdf(document_id, path)
-        return pdf
-
+    
     def add_to_favorites(self, document_id):
         return self.document_properties_repo.mark_as_favorite(document_id)
 
@@ -86,6 +104,14 @@ class DocumentService:
             color = document_data.get('tag_color')
         )
         return tag
+    
+    def download_document(self, document_id):
+        document_data = self.document_repository.get_by_document_id(document_id)
+        if not document_data:
+            return None
+        path = document_data.get('path')
+        pdf = self.document_repository.get_pdf(document_id, path)
+        return pdf
 
     def highlight_document(self, document_id, text):
         pass

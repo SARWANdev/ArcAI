@@ -44,10 +44,6 @@ class LibraryController:
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    # Old function
-    # def create_project(self, user_id, name, description=None, note=None):
-    #     pass
-
     def download_project(self, project_id):
        pass
 
