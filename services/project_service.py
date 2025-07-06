@@ -39,7 +39,9 @@ class ProjectService:
         project_model = ProjectModel(
             project_id=project_data.get('_id'),
             project_name=project_data.get('project_name'),
-            user_id=project_data.get('user_id')
+            user_id=project_data.get('user_id'),
+            created_at=project_data.get('created_at'),
+            updated_at=project_data.get('updated_at')
         )
         project_model.note = project_data.get('note')
         return project_model
