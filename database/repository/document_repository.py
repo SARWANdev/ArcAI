@@ -13,8 +13,15 @@ class Document:
         self.path = path
         self.vector_store_path = vector_store_path
         self.note = note
+
         self.read = False
         self.favorite = False
+
+        self.copy = False #TODO method to change this only one way, only ca be chan to true
+        self.number_of_references = 0  #TODO make a method to decrease and increase by 1.
+        self.sha_256 = None #TODO make a method that update this
+        self.document_reference_id = None #TODO make a method that updates
+
         self.journal = journal
         self.first_author = author
         self.year = year
@@ -45,6 +52,10 @@ class Document:
             "bibtex": self.bibtex,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "copy": self.copy,
+            "number_of_references": self.number_of_references,
+            "sha_256": self.sha_256,
+            "document_reference_id": self.document_reference_id,
         }
         with mongo_connection() as db:
             db.documents.insert_one(document_data)
