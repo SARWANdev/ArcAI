@@ -18,6 +18,12 @@ class DocumentService:
         new_document = DocumentRepository(project_id, name, path, vector_store_path, author, year, journal, pages, bibtex)
         new_document.new_document()
 
+    def upload_document(self):
+        
+
+
+        pass
+
     def get_document(self, document_id):
         #Gets a document from the database
         document_data = self.document_repository.get_by_document_id(document_id)
