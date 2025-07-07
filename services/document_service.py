@@ -4,6 +4,7 @@ from model.document_reader.document import Document as DocumentModel
 from model.document_reader.tag import Tag as TagModel
 import io
 
+from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
 
 
 class DocumentService:
@@ -28,14 +29,27 @@ class DocumentService:
         )
         new_document.new_document()
 
-    def upload_document(self):
+    def upload_document(self, document_path: str, user_id: str, project_id: str):
         # TODO(santiago)
-        # 1.  calculate the file Hash SHA-256
+        # 1.  calculate the file Hash SHA-256 ++
+        file_hash = get_pdf_sha256(document_path)
         # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
+        existing_doc = DocumentRepository.is_document_uploaded(file_hash)
         # 3. if the file exists
+        document_name = document_name_generator(document_path)
+        if existing_doc:
             # create another object in mongoDB where the new attributes are correctly linked
+            document_id = DocumentRepository(project_id = project_id,name= document_name, ).new_document() #Mongo Instance
+            DocumentRepository.set_document_as_copy(document_id)
+            relative_path_in_server = relative_path_generator(user_id,project_id)
+            DocumentRepository.update_path(document_id, relative_path_in_server)
+            #TODO set the document_id from existing_doc in Document_repository as a document_reference_id
+
             # increase the reference number by one in the original mongo db instance
         # 4. if the file doesn't exist
+        else:
+            hola = 1 #to remove
+
             # create the path
             # create the mongo instance
             # upload the file to the server

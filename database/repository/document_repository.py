@@ -4,7 +4,7 @@ from typing import Optional, Dict
 
 
 class Document:
-    def __init__(self, project_id: str, name: str, path: str, vector_store_path: str, note: Optional[str] = None,
+    def __init__(self, project_id: str, name: str, path: Optional[str] = None, vector_store_path: Optional[str] = None, note: Optional[str] = None,
                  journal: Optional[str] = None, author: Optional[str] = None, year: Optional[str] = None,
                  pages: Optional[int] = None, tag: Optional[str] = None, tag_color: Optional[str] = None,  bibtex = None):
 
@@ -33,7 +33,6 @@ class Document:
         self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
 
-
     def new_document(self):
         document_data = {
             "project_id": self.project_id,
@@ -58,13 +57,16 @@ class Document:
             "document_reference_id": self.document_reference_id,
         }
         with mongo_connection() as db:
-            db.documents.insert_one(document_data)
+            result = db.documents.insert_one(document_data)
+            return result.inserted_id
+
 
 
     @staticmethod
     def get_documents_by_project(project_id) -> list[Dict]:
         with mongo_connection() as db:
             return list(db.documents.find({"project_id": project_id}))
+
 
 
     @staticmethod
@@ -142,3 +144,18 @@ class Document:
         #Gets a document's pdf to be downloaded or shown
         #TODO: finish this
         pass
+
+    @staticmethod
+    def is_document_uploaded(pdf_hash: str) :
+        with mongo_connection() as db:
+            result = db.documents.find_one({"sha_256": pdf_hash})
+            return result
+
+    @staticmethod
+    def set_document_as_copy(document_id):
+        try:
+            with mongo_connection() as db:
+                db.documents.update_one({"_id": document_id}, {"$set": {"copy": True}})
+        except Exception as e:
+            print(f"Document name could not be set as copy: {e}")
+
