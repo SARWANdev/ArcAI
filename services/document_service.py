@@ -29,9 +29,18 @@ class DocumentService:
         new_document.new_document()
 
     def upload_document(self):
-        
-
-
+        # TODO(santiago)
+        # 1.  calculate the file Hash SHA-256
+        # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
+        # 3. if the file exists
+            # create another object in mongoDB where the new attributes are correctly linked
+            # increase the reference number by one in the original mongo db instance
+        # 4. if the file doesn't exist
+            # create the path
+            # create the mongo instance
+            # upload the file to the server
+            # create the instance in our system
+        #TODO(santiago)
         pass
 
     def get_document(self, document_id):

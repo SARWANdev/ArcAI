@@ -17,10 +17,10 @@ class Document:
         self.read = False
         self.favorite = False
 
-        self.copy = False #TODO method to change this only one way, only ca be chan to true
-        self.number_of_references = 0  #TODO make a method to decrease and increase by 1.
-        self.sha_256 = None #TODO make a method that update this
-        self.document_reference_id = None #TODO make a method that updates
+        self.copy = False #TODO(santiago) method to change this only one way, only ca be chan to true
+        self.number_of_references = 0  #TODO(santiago) make a method to decrease and increase by 1.
+        self.sha_256 = None #TODO(santiago) make a method that update this
+        self.document_reference_id = None #TODO(santiago) make a method that updates
 
         self.journal = journal
         self.first_author = author
