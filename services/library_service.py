@@ -39,7 +39,9 @@ class LibraryService:
             project_model = Project(
                 project_id=p.get('_id'),
                 project_name=p.get('project_name'),
-                user_id=p.get('user_id')
+                user_id=p.get('user_id'),
+                created_at=p.get('created_at'),
+                updated_at=p.get('updated_at')
             )
             project_model.note = p.get('note')
             projects_list.append(project_model)

@@ -54,4 +54,5 @@ if __name__ == "__main__":
 
         print(f"\nSorted Projects ({choice}):")
         for i, proj in enumerate(sorted_projects, start=1):
-            print(f"Project {i}: id={proj.id}, name={proj.project_name}, user_id={proj.user_id}")
+            print(f"Project {i}: id={proj.id}, name={proj.project_name}, user_id={proj.user_id}, "
+                f"created_at={proj.created_at}, updated_at={proj.updated_at}")

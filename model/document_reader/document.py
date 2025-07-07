@@ -22,19 +22,17 @@ class Document:
     def mark_unread(self):
         self.read = False
 
+    def is_read(self):
+        return self.read
+
     def add_favorite(self):
         self.favorite = True
 
     def remove_favorite(self):
         self.favorite = False
 
-    @property
-    def read(self):
-        return self._read
-
-    @property
-    def favorite(self):
-        return self._favorite
+    def is_favorite(self):
+        return self.favorite
 
 
 
