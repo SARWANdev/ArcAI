@@ -1,7 +1,7 @@
 from database.repository.document_repository import Document as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from model.document_reader.document import Document as DocumentModel
-from model.document_reader.tag import Tag as TagModel
+from model.document_reader.tag_manager.tag import Tag as TagModel
 import io
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
