@@ -1,10 +1,8 @@
 from database.utils.mongo_connector import mongo_connection
-from typing import Optional, Dict
-
 from services.upload_manager.document_upload_service import get_pdf_sha256
 
 
-class Pdfmaster:
+class PdfMaster:
     def __init__(self, path: str):
         self.path = path
 
@@ -44,24 +42,34 @@ class Pdfmaster:
             print(f"count reference could not be decremented: {e}")
 
     @staticmethod
-    def get_pdf_hash(pdf_master_id: str) -> str:
-        """Retrieve the PDF hash from MongoDB by its master ID.
-
-        Args:
-            pdf_master_id: The MongoDB _id of the PDF document.
-
-        Returns:
-            The PDF hash as a string, or an empty string if not found/error occurs.
-        """
+    def get_ref_count(pdf_master_id):
         try:
             with mongo_connection() as db:
-                document = db.conversations.find_one(
-                    {"_id": pdf_master_id},
-                    {"hash": 1}  # Projection: Only fetch the 'hash' field
-                )
-                return document.get("hash", "") if document else ""
+                ref_count = db.pdf_master.find({"_id": pdf_master_id}, {"ref_count": 1}).get("ref_count")
+                return ref_count
         except Exception as e:
-            print(f"Failed to retrieve hash for PDF {pdf_master_id}: {e}")
+            print(f"count reference could not be retrieved: {e}")
+            return None
+
+
+    @staticmethod
+    def get_pdf_hash(pdf_master_id):
+        try:
+            with mongo_connection() as db:
+                pdf_hash = db.pdf_master.find_one({"_id": pdf_master_id}, {"hash": 1}).get("hash")
+                return pdf_hash
+        except Exception as e:
+            print(f"hash can not be retrieved: {e}")
+            return ""
+
+    @staticmethod
+    def get_path(pdf_master_id):
+        try:
+            with mongo_connection() as db:
+                path = db.pdf_master.find_one({"_id": pdf_master_id}, {"path": 1}).get("path")
+                return path
+        except Exception as e:
+            print(f"path can not be retrieved: {e}")
             return ""
 
     @staticmethod
@@ -71,6 +79,89 @@ class Pdfmaster:
                 db.pdf_master.update_one({"_id": pdf_master_id}, {"$set": {"path": path}})
         except Exception as e:
             print(f"Failed to set path for PDF {pdf_master_id}: {e}")
+
+
+
+"""
+DUMMY TEST TO UNDERTSAND ; NOT IMPORTANT
+
+def test_pdfmaster_operations():
+    from bson import ObjectId  # For simulating existing IDs if needed
+
+    # 1. Create a new PDF master entry
+    print("=== Creating new PDF master ===")
+    fake_path = r"C:\Users\User\Documents\formulario alicacion mama.pdf"
+    pdf = PdfMaster(fake_path)
+    pdf_id = pdf.new_pdf_master()
+    print(f"Created PDF master with ID: {pdf_id}")
+
+    # If you want to test with an existing ID (for get/update methods), uncomment:
+    # pdf_id = ObjectId("507f1f77bcf86cd799439011")  # Fake existing ID
+
+    # 2. Get the PDF hash
+    print("\n=== Getting PDF hash ===")
+    pdf_hash = PdfMaster.get_pdf_hash(pdf_id)
+    print(f"PDF hash: {pdf_hash if pdf_hash else '<not found>'}")
+
+    # 3. Increment ref count
+    print("\n=== Incrementing ref count ===")
+    PdfMaster.increment_ref_count(pdf_id)
+    print(f"Incremented ref_count for {pdf_id}")
+
+    # 3. Increment ref count
+    print("\n=== Incrementing ref count ===")
+    PdfMaster.increment_ref_count(pdf_id)
+    print(f"Incremented ref_count for {pdf_id}")
+
+    # 3. Increment ref count
+    print("\n=== Incrementing ref count ===")
+    PdfMaster.increment_ref_count(pdf_id)
+    print(f"Incremented ref_count for {pdf_id}")
+
+    # 3. Increment ref count
+    print("\n=== Incrementing ref count ===")
+    PdfMaster.increment_ref_count(pdf_id)
+    print(f"Incremented ref_count for {pdf_id}")
+
+    # 4. Decrement ref count
+    print("\n=== Decrementing ref count ===")
+    PdfMaster.decrement_ref_count(pdf_id)
+    print(f"Decremented ref_count for {pdf_id}")
+
+    # 4. Decrement ref count
+    print("\n=== Decrementing ref count ===")
+    PdfMaster.decrement_ref_count(pdf_id)
+    print(f"Decremented ref_count for {pdf_id}")
+
+    # 5. Update path
+    print("\n=== Updating path ===")
+    new_path = "/new/fake/path/updated.pdf___"
+    PdfMaster.set_path(pdf_id, new_path)
+    print(f"Updated path to: {new_path}")
+
+    # Verification (simplified - would query DB in real use)
+    print("\n=== Final state (simulated) ===")
+    print(f"ID: {pdf_id}")
+    print(f"Path: {new_path}")
+    print(f"Hash: {pdf_hash}")
+    print("ref_count: 0 (initial 0 +1 -1)")
+    return pdf_id
+
+
+if __name__ == "__main__":
+    pdf_id = test_pdfmaster_operations()
+    print("======HASH=========")
+    print("===============")
+    print(PdfMaster.get_pdf_hash(pdf_id))
+    print("===============")
+
+    print("======Path=========")
+    print("===============")
+    print(PdfMaster.get_path(pdf_id))
+    print("===============")
+
+"""
+
 
 
 
