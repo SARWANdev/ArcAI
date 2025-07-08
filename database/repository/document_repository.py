@@ -5,30 +5,15 @@ from utils.db_setup import es
 
 
 class Document:
-    def __init__(self, project_id: str, name: str, path: str, vector_store_path: str, note: Optional[str] = None,
-                 journal: Optional[str] = None, author: Optional[str] = None, year: Optional[str] = None,
-                 pages: Optional[int] = None, tag: Optional[str] = None, tag_color: Optional[str] = None,  bibtex = None):
+    def __init__(self, project_id: str, name: str, note: Optional[str] = None,
+                  tag: Optional[str] = None, tag_color: Optional[str] = None):
 
         self.project_id = project_id
+        self.pdf_master_id = None #TODO make the manager method for this attribute
         self.name = name
-        self.path = path
-        self.vector_store_path = vector_store_path
         self.note = note
-        self.read = False
-        self.favorite = False
-
-        self.copy = False #TODO(santiago) method to change this only one way, only ca be chan to true
-        self.number_of_references = 0  #TODO(santiago) make a method to decrease and increase by 1.
-        self.sha_256 = None #TODO(santiago) make a method that update this
-        self.document_reference_id = None #TODO(santiago) make a method that updates
-        
-        self.journal = journal
-        self.first_author = author
-        self.year = year
-        self.pages = pages
         self.tag = tag
         self.tag_color = tag_color
-        self.bibtex = bibtex
 
         self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
@@ -38,24 +23,13 @@ class Document:
         document_data = {
             "project_id": self.project_id,
             "name": self.name,
-            "path": self.path,
-            "vector_store_path": self.vector_store_path,
             "note": self.note,
-            "year": self.year,
-            "pages": self.pages,
-            "journal": self.journal,
-            "first_author": self.first_author,
             "tag": self.tag,
             "tag_color": self.tag_color,
-            "read": self.read,
-            "favorite": self.favorite,
-            "bibtex": self.bibtex,
+            "read": False,
+            "favorite": False,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
-            "copy": self.copy,
-            "number_of_references": self.number_of_references,
-            "sha_256": self.sha_256,
-            "document_reference_id": self.document_reference_id,
         }
         with mongo_connection() as db:
             result = db.documents.insert_one(document_data)
@@ -63,7 +37,7 @@ class Document:
             document_id = result.inserted_id
             es.index("documents", id=document_id, body={
                 "title": self.name,
-                "author": self.first_author,
+                "author": self.first_author, #TODO(Dani) this variables doesnt exist anymore in document, they are gonna be in pdf_master_repository
                 "journal": self.journal,
                 "suggest": {
                     "input": [self.name, self.author]
@@ -162,20 +136,7 @@ class Document:
         #Gets a document's pdf to be downloaded or shown
         #TODO: finish this
         pass
-    
-    @staticmethod
-    def is_document_uploaded(pdf_hash: str) :
-        with mongo_connection() as db:
-            result = db.documents.find_one({"sha_256": pdf_hash})
-            return result
-    
-    @staticmethod
-    def set_document_as_copy(document_id):
-        try:
-            with mongo_connection() as db:
-                db.documents.update_one({"_id": document_id}, {"$set": {"copy": True}})
-        except Exception as e:
-            print(f"Document name could not be set as copy: {e}")
+
         
     @staticmethod
     def search_documents(self, prefix):
