@@ -88,8 +88,13 @@ class Document:
     def update_document_name(document_id, name) -> bool:
         try:
             with mongo_connection() as db:
+                #Update in Mongo
                 result = db.documents.update_one({"_id": document_id},
                                         {"$set": {"name": name, "updated_at": get_utc_zulu_timestamp()}})
+                #Update in Elastic
+                es.update(index = "documents", id = document_id, body={
+                    "doc": {"title": name}
+                })
                 return result.modified_count > 0
         except Exception as e:
             print(f"Document name could not be update: {e}")
@@ -99,7 +104,10 @@ class Document:
     def delete_document(document_id) -> bool:
         try:
             with mongo_connection() as db:
+                #Deletion in Mongo
                 result = db.documents.delete_one({"_id": document_id})
+                #Deletion in Mongo
+                es.delete(index = "documents", id=document_id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Document could not be deleted: {e}")
@@ -177,7 +185,8 @@ class Document:
                 "documents-suggest": {
                     "prefix": prefix,
                     "completion": {
-                        "field": "suggest"
+                        "field": "suggest",
+                        "size": 5
                     }
                 }
             }
