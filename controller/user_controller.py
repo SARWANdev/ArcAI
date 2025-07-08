@@ -2,7 +2,6 @@ from services.user_management.user_service import UserService
 from services.user_management.authentication_service import AuthenticationService
 from flask import Blueprint, Flask
 
-# Changed
 class UserController:
     def __init__(self, auth_service: AuthenticationService, app : Flask):
         self.user_service = UserService()

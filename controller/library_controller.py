@@ -3,8 +3,6 @@ from services.project_service import ProjectService
 from services.document_service import DocumentService
 from flask import Blueprint, Flask, jsonify, request
 
-
-# Changed
 class LibraryController:
     def __init__(self, app : Flask):
         self.library_service = LibraryService()
@@ -25,7 +23,6 @@ class LibraryController:
     def search_documents(self, query, filters=None):
         pass
 
-    # New function
     def create_project(self):
         try:
             data = request.get_json()
@@ -43,6 +40,57 @@ class LibraryController:
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
+    def get_user_projects(self):
+        try:
+            # Get parameters from query string
+            user_id = request.args.get("user_id")
+            sort_by = request.args.get("sort_by", "title")  # default to 'title'
+            order = request.args.get("order", "asc")  # default to 'asc'
+
+            # Map frontend field names to database columns
+            if sort_by == "Title":
+                sort_by = "name"
+            elif sort_by == "CreatedAt":
+                sort_by = "created"
+            elif sort_by == "LastUpdated":
+                sort_by = "updated"
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            # Get sorted projects from service layer
+            project_model_list = self.library_service.sort_library(user_id, sort_by, order)
+
+            # Convert models to dictionaries for frontend
+            project_list = [
+                {
+                    "Title": model.project_name,
+                    "CreatedAt": model.created_at,
+                    "LastUpdated": model.updated_at
+                    # Add other fields if needed
+                }
+                for model in project_model_list
+            ]
+
+            # Return both success message AND the project data
+            return jsonify({
+                "status": "success",
+                "message": "Projects retrieved successfully",
+                "data": {
+                    "projects": project_list,
+                    "sort_by": sort_by,
+                    "order": order
+                }
+            }), 200
+
+        except Exception as e:
+            print(f"Error in get_user_projects: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to retrieve projects",
+                "error": str(e)
+            }), 500
 
     def download_project(self, project_id):
        pass
@@ -65,5 +113,5 @@ class LibraryController:
     # To register all the library-routes
     def register_library_routes(self, app):
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
+        self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
         app.register_blueprint(self.library)
-
