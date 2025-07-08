@@ -41,7 +41,7 @@ class AuthenticationService:
                 user = UserRepository(first_name=first_name, last_name=last_name, email=email, sub_id=sub_id)
                 user.new_user()
             except Exception as e:
-                print(e)
+                print(e) # Shows that the user already exists
             finally:
                 return redirect("http://localhost:5173/home")
         except Exception as e:
