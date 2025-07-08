@@ -2,7 +2,7 @@ from services.document_service import DocumentService
 from bson import ObjectId
 
 if __name__ == "__main__":
-    print("=== Manual Integration Test: DocumentService.mark_read/unread + add/remove favorites ===")
+    print("=== Manual Integration Test: DocumentService.mark_read/unread + add/remove favorites + delete ===")
 
     service = DocumentService()
 
@@ -11,23 +11,23 @@ if __name__ == "__main__":
 
     # 1) Create a new document with dummy data
     created_doc = service.create_document(
-        name="metallica",
+        name="nin",
         project_id=project_id,
         path="/fake/path/to/doc.pdf",
         vector_store_path="/fake/path/to/vector.store",
-        author="ridethelightning",
-        year="1991",
-        journal="jameshetfield",
-        pages=127,
+        author="gaveup",
+        year="1992",
+        journal="trentreznor",
+        pages=121,
         bibtex="@article{doe2025, title={My Test}, author={John Doe}}",
     )
-    print("\nDocument creation attempted! Go check Compass: database 'arcai' -> collection 'documents'.")
+    print("\n✅ Document creation attempted! Go check Compass: database 'arcai' -> collection 'documents'.")
 
     # 2) Start persistent loop
     while True:
         docs = service.get_project_documents(project_id)
         if not docs:
-            print("\nNo documents found for that project.")
+            print("\n❌ No documents found for that project.")
             break
 
         print(f"\nFound {len(docs)} documents in project {project_id}:")
@@ -39,36 +39,45 @@ if __name__ == "__main__":
         try:
             choice = int(input(f"\nSelect a document to act on (0-{len(docs)}): ").strip())
         except ValueError:
-            print("Invalid input. Please enter a number.")
+            print("❌ Invalid input. Please enter a number.")
             continue
 
         if choice == 0:
-            print("Exiting test script.")
+            print("✅ Exiting test script.")
             break
 
         if choice < 1 or choice > len(docs):
-            print("Invalid selection. Try again.")
+            print("❌ Invalid selection. Try again.")
             continue
 
         selected_doc = docs[choice - 1]
         print(f"\nSelected document ID: {selected_doc.id}, name: {selected_doc.name}")
 
-        action = input("Type 'read' to mark as read, 'unread' to mark as unread, "
-                       "'fav' to add to favorites, 'unfav' to remove from favorites: ").strip().lower()
+        action = input(
+            "Type 'read' to mark as read, 'unread' to mark as unread, "
+            "'fav' to add to favorites, 'unfav' to remove from favorites, "
+            "'delete' to delete the document: "
+        ).strip().lower()
         doc_oid = ObjectId(str(selected_doc.id))
 
         if action == "read":
             result = service.mark_as_read(doc_oid)
-            print(f"\nMarked as read: {result}")
+            print(f"\n✅ Marked as read: {result}")
         elif action == "unread":
             result = service.mark_as_unread(doc_oid)
-            print(f"\nMarked as unread: {result}")
+            print(f"\n✅ Marked as unread: {result}")
         elif action == "fav":
             result = service.add_to_favorites(doc_oid)
-            print(f"\nAdded to favorites: {result}")
+            print(f"\n✅ Added to favorites: {result}")
         elif action == "unfav":
             result = service.remove_from_favorites(doc_oid)
-            print(f"\nRemoved from favorites: {result}")
+            print(f"\n✅ Removed from favorites: {result}")
+        elif action == "delete":
+            confirm = input("⚠️ Are you sure you want to delete this document? Type 'yes' to confirm: ").strip().lower()
+            if confirm == "yes":
+                result = service.delete_document(doc_oid)
+                print(f"\n✅ Document deleted: {result}")
+            else:
+                print("❎ Deletion cancelled.")
         else:
-            print("Invalid action. Try again.")
-
+            print("❌ Invalid action. Try again.")
