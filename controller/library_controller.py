@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from services.library_service import LibraryService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
@@ -67,7 +69,8 @@ class LibraryController:
                 {
                     "Title": model.project_name,
                     "CreatedAt": model.created_at,
-                    "LastUpdated": model.updated_at
+                    "LastUpdated": model.updated_at,
+                    "ProjectId" : str(model.id) # cant send the object id created by MongoDb hence it's converted to string
                     # Add other fields if needed
                 }
                 for model in project_model_list
@@ -95,11 +98,48 @@ class LibraryController:
     def download_project(self, project_id):
        pass
 
-    def delete_project(self, project_id):
-        pass
+    def delete_project(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            project_id = ObjectId(data.get("project_id"))
 
-    def rename_project(self, project_id, name):
-        pass
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.project_service.delete_project(project_id)
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "Projects deleted successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in delete_project: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to retrieve projects",
+                "error": str(e)
+            }), 500
+
+    def rename_project(self):
+        try:
+            data = request.get_json()
+            user_id = data.get('user_id')
+            project_id = ObjectId(data.get('project_id'))
+            new_name = data.get('name')
+
+            if not all([user_id, project_id, new_name]):
+                return jsonify({'error': 'Missing required fields'}), 400
+
+            result = self.project_service.rename_project(project_id, new_name)
+            if result:
+                return jsonify({"status": "success", "message": "Project renamed successfully"}), 200
+            else:
+                return jsonify({"status": "error", "message": "Failed to rename the project"}), 500
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
 
     def sort_projects(self, sort_by, sort_order):
         pass
@@ -114,4 +154,6 @@ class LibraryController:
     def register_library_routes(self, app):
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
         self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
+        self.library.add_url_rule("/library/delete-project", view_func=self.delete_project, methods=["DELETE"])
+        self.library.add_url_rule("/library/rename-project", view_func=self.rename_project, methods=["PATCH"])
         app.register_blueprint(self.library)
