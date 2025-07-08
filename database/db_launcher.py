@@ -52,6 +52,12 @@ def init_mongo():
         # db.documents.create_index([("journal", "text"), ("note", "text"), ("bibtex", "text")])
 
         # --------------------
+        # DOCUMENTS collection
+        # --------------------
+        db.pdf_master.create_index([("hash", ASCENDING)], unique=True)  # Ensure deduplication
+        db.pdf_master.create_index([("ref_count", ASCENDING)])
+
+        # --------------------
         # CONVERSATIONS collection
         # --------------------
         db.conversations.create_index([("user_id", ASCENDING)])
