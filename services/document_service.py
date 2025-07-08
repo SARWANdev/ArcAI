@@ -85,9 +85,11 @@ class DocumentService:
         else:
             document_model.remove_favorite()
 
-        tag = document_data.get('tag')
-        if tag:
-            document_model.set_tag(tag)
+        tag_name = document_data.get('tag')
+        tag_color = document_data.get('tag_color')
+        if tag_name is not None and tag_color is not None:
+            tag_obj = TagModel(tag_name, tag_color)
+            document_model.set_tag(tag_obj)
 
         return document_model
 
@@ -118,8 +120,10 @@ class DocumentService:
     def remove_from_favorites(self, document_id):
         return self.document_properties_repo.mark_as_not_favorite(document_id)
 
-    def add_tag(self, document_id, tag, color):
-        return self.document_properties_repo.update_tag(document_id, tag, color)
+    def add_tag(self, document_id, tag_name, tag_color):
+        success_name = self.document_properties_repo.update_tag(document_id, tag_name)
+        success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
+        return success_name and success_color
 
     def remove_tag(self, document_id):
         return self.document_properties_repo.update_tag(document_id, None) & self.document_properties_repo.update_tag_color(document_id, None)
@@ -128,11 +132,11 @@ class DocumentService:
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
-        tag = TagModel(
-            name = document_data.get('tag'),
-            color = document_data.get('tag_color')
-        )
-        return tag
+        tag_name = document_data.get('tag')
+        tag_color = document_data.get('tag_color')
+        if tag_name and tag_color:
+            return TagModel(name=tag_name, color=tag_color)
+        return None
     
     def download_document(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)

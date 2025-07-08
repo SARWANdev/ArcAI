@@ -34,5 +34,11 @@ class Document:
     def is_favorite(self):
         return self.favorite
 
+    def set_tag(self, tag_obj):
+        self.tag = tag_obj
+
+    def get_tag(self):
+        return self.tag
+
 
 

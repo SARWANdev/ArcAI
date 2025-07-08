@@ -8,3 +8,9 @@ class Tag:
 
     def set_color(self, color):
         self.color = color
+
+    def get_name(self):
+        return self.name
+    
+    def get_color(self):
+        return self.color

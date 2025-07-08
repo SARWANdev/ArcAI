@@ -1,5 +1,6 @@
 from services.document_service import DocumentService
 from bson import ObjectId
+from model.document_reader.tag_manager.color import Color  # adjust import path if needed
 
 if __name__ == "__main__":
     print("=== Manual Integration Test: DocumentService.mark_read/unread + add/remove favorites + delete ===")
@@ -11,14 +12,14 @@ if __name__ == "__main__":
 
     # 1) Create a new document with dummy data
     created_doc = service.create_document(
-        name="nin",
+        name="qotsa",
         project_id=project_id,
         path="/fake/path/to/doc.pdf",
         vector_store_path="/fake/path/to/vector.store",
-        author="gaveup",
-        year="1992",
-        journal="trentreznor",
-        pages=121,
+        author="chemistry",
+        year="1973",
+        journal="josh",
+        pages=130,
         bibtex="@article{doe2025, title={My Test}, author={John Doe}}",
     )
     print("\n✅ Document creation attempted! Go check Compass: database 'arcai' -> collection 'documents'.")
@@ -79,5 +80,25 @@ if __name__ == "__main__":
                 print(f"\n✅ Document deleted: {result}")
             else:
                 print("❎ Deletion cancelled.")
+        elif action == "tag":
+            tag_name = input("Enter tag name: ").strip()
+            color_name = input(f"Enter color name (choose from {', '.join([c.name for c in Color])}): ").strip().upper()
+            try:
+                color_value = Color[color_name].value
+                result = service.add_tag(doc_oid, tag_name, color_value)
+                print(f"\n✅ Tag set: name='{tag_name}', color={color_value} | Success: {result}")
+            except KeyError:
+                print("❌ Invalid color name. Please try again.")
+
+        elif action == "untag":
+            result = service.remove_tag(doc_oid)
+            print(f"\n✅ Tag removed. Success: {result}")
+
+        elif action == "showtag":
+            tag = service.get_document_tag(doc_oid)
+            if tag:
+                print(f"\n📎 Current tag — Name: {tag.name}, Color: {tag.color}")
+            else:
+                print("ℹ️ This document has no tag.")
         else:
             print("❌ Invalid action. Try again.")
