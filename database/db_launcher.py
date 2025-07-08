@@ -1,5 +1,32 @@
 from pymongo import ASCENDING
 from utils.mongo_connector import mongo_connection
+from utils.db_setup import es
+
+def init_es():
+    # Creates Elasticsearch indices
+    if not (es.indices.exists(index = "documents") & es.indices.exists("conversations")):
+        es.indices.create(index="documents", body={
+            "mappings": {
+                "properties": {
+                    "name": {"type": "text"},
+                    "author": {"type": "text"},
+                    "journal": {"type": "text"},
+                    "suggest": {"type": "completion"}
+                }
+            }
+        })
+        es.indices.create(index = "conversations", body={
+            "mappings": {
+                "properties": {
+                    "name": {"type": "text"},
+                    "suggest": {"type": "completion"}
+                }
+            }
+        })
+        print("Elasticsearch indices created")
+    else:
+        print("Elasticsearch indices already exist")
+
 
 
 def init_mongo():
