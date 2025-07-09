@@ -3,13 +3,15 @@ from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
 from utils.db_setup import es
 
+from model.document_reader.document import Document
 
-class Document:
-    def __init__(self, project_id: str, name: str, note: Optional[str] = None,
+
+class DocumentDataBase:
+    def __init__(self, project_id: str, name: str, pdf_master_id, note: Optional[str] = None,
                   tag: Optional[str] = None, tag_color: Optional[str] = None):
 
         self.project_id = project_id
-        self.pdf_master_id = None #TODO make the manager method for this attribute
+        self.pdf_master_id = pdf_master_id #TODO(santiago) make the manager method for this attribute
         self.name = name
         self.note = note
         self.tag = tag
@@ -17,6 +19,13 @@ class Document:
 
         self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
+
+    # this method store an object Document and returns teh Mong _id.
+    @staticmethod
+    def save(document: Document) -> str:
+        with mongo_connection() as db:
+            doc_id = db.documents.insert_one(document.to_dict())
+            return str(doc_id.inserted_id)
 
 
     def new_document(self):
@@ -37,13 +46,28 @@ class Document:
             document_id = result.inserted_id
             es.index("documents", id=document_id, body={
                 "title": self.name,
-                "author": self.first_author, #TODO(Dani) this variables doesnt exist anymore in document, they are gonna be in pdf_master_repository
+                "author": self.first_author,
+                # TODO(Dani) this variables doesnt exist anymore in document, they are gonna be in pdf_master_repository
                 "journal": self.journal,
                 "suggest": {
                     "input": [self.name, self.author]
                 }
             })
             return document_id
+    @staticmethod
+    def set_pdf_master_id(document_id, pdf_master_id):
+        try:
+            with mongo_connection() as db:
+                db.documents.update_one({"_id": document_id}, {"$set": {"pdf_master_id": pdf_master_id}})
+        except Exception as e:
+            print(f"pdf_master_id could not be set {e}")
+
+    @staticmethod
+    def get_pdf_master_id(document_id):
+        with mongo_connection() as db:
+            db.documents.find_one({"_id": document_id}, {"pdf_master_id": 1}).get("pdf_master_id")
+
+
         
 
 

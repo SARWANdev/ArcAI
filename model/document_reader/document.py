@@ -1,44 +1,26 @@
+from database.repository.date_time_utils import get_utc_zulu_timestamp
+
 
 class Document:
-    def __init__(self, name, id, project_id, vector_store_path, author, year, journal, pages):
+    def __init__(self, name, project_id, pdf_master_id):
         self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern LAst name from the author,
-        self.id = id
         self.project_id = project_id
-        self.read = False  # Private variable initialized to False
-        self.favorite = False
-        self.tag = None
-        self.vector_store_path = vector_store_path
-        self.author = author
-        self.year = year
-        self.journal = journal
-        self.pages = pages
+        self.pdf_master_id = pdf_master_id
 
-    #TODO: Make sure that the read and favorite functions are to a certain convention, 
-    # either setters and getters or just functions
-    
-    def mark_read(self):
-        self.read = True
-
-    def mark_unread(self):
-        self.read = False
-
-    def is_read(self):
-        return self.read
-
-    def add_favorite(self):
-        self.favorite = True
-
-    def remove_favorite(self):
-        self.favorite = False
-
-    def is_favorite(self):
-        return self.favorite
-
-    def set_tag(self, tag_obj):
-        self.tag = tag_obj
-
-    def get_tag(self):
-        return self.tag
+    def to_dict(self):
+        document_dic = {
+            "name": self.name,
+            "project_id": self.project_id,
+            "pdf_master_id": self.pdf_master_id,
+            "note": "",
+            "tag": "",
+            "tag_color": "",
+            "read": False,
+            "favorite": False,
+            "created_at": get_utc_zulu_timestamp(),
+            "updated_at": get_utc_zulu_timestamp(),
+        }
+        return document_dic
 
 
 

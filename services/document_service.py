@@ -1,5 +1,6 @@
-from database.repository.document_repository import Document as DocumentRepository
+from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
+from database.repository.pdf_master_repository import PdfMaster as PdfMaster
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
 import io
@@ -32,17 +33,31 @@ class DocumentService:
     def upload_document(self, document_path: str, user_id: str, project_id: str):
         # TODO(santiago)
         # 1.  calculate the file Hash SHA-256 ++
-        file_hash = get_pdf_sha256(document_path)
+        pdf_hash = get_pdf_sha256(document_path)
         # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
-        existing_doc = DocumentRepository.is_document_uploaded(file_hash)
+        existing_pdf_master = PdfMaster.is_document_uploaded(pdf_hash)
         # 3. if the file exists
         document_name = document_name_generator(document_path)
-        if existing_doc:
+        if existing_pdf_master:
+            pdf_master_id = existing_pdf_master.pdf_master_id
+            document_id = DocumentRepository(project_id=project_id, name=document_name, pdf_master_id=pdf_master_id).new_document()
+            PdfMaster.increment_ref_count(pdf_master_id)
+
+            # crear instacia en el model como objeto
+            DocumentModel.
+
             # create another object in mongoDB where the new attributes are correctly linked
-            document_id = DocumentRepository(project_id = project_id,name= document_name, ).new_document() #Mongo Instance
-            DocumentRepository.set_document_as_copy(document_id)
+            #
+            # traer el _id del pdf_master con el hash
+            # crear una instancia de documento
+            # generar el path, el path ya existe
+            #
+
+
+             #Mongo Instance
+
             relative_path_in_server = relative_path_generator(user_id,project_id)
-            DocumentRepository.update_path(document_id, relative_path_in_server)
+
             #TODO set the document_id from existing_doc in Document_repository as a document_reference_id
 
             # increase the reference number by one in the original mongo db instance
@@ -55,7 +70,7 @@ class DocumentService:
             # upload the file to the server
             # create the instance in our system
         #TODO(santiago)
-        pass
+
 
     def get_document(self, document_id):
         #Gets a document from the database
