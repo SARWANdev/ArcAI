@@ -1,7 +1,8 @@
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
-from database.repository.pdf_master_repository import PdfMaster as PdfMaster
+from database.repository.pdf_master_repository import PdfMasterDataBase
 from model.document_reader.document import Document as DocumentModel
+from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
 import io
 
@@ -13,6 +14,27 @@ class DocumentService:
     def __init__(self):
         self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository
+        self.pdf_master_repository = PdfMasterDataBase
+
+    def upload_document(self, document_path: str, user_id: str, project_id: str):
+
+        pdf_hash = get_pdf_sha256(document_path)    # 1.  calculate the file Hash SHA-256 ++
+        existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash)     # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
+        # document_name = document_name_generator(document_path)
+        document_name = "document dummy " # 3. generates the docuemnt name from the bibtex according to teh parameter
+        new_document_instance = DocumentModel(name=document_name, project_id=project_id)    # 4. intance of the model Document
+        if existing_pdf_master:
+            pdf_master_id = str(existing_pdf_master.get("_id"))
+            print("pdf_master_id:  if exists", pdf_master_id)
+        else:
+            document_path = relative_path_generator(user_id, project_id)
+            new_pdf_master_instance = PdfMasterModel(path=document_path, hash=pdf_hash)
+            # TODO eather update the instance or the database described in number 2
+            pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
+
+        new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database callection documents
+        self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id) # set the pdf_master_id in the database for that collection
+        self.pdf_master_repository.increment_ref_count(pdf_master_id) # increas by one the number of references of the pdf master
 
     def create_document(self, name, project_id, path, vector_store_path, author, year, journal, pages, bibtex):
         #Creates a new document in the database
@@ -30,46 +52,7 @@ class DocumentService:
         )
         new_document.new_document()
 
-    def upload_document(self, document_path: str, user_id: str, project_id: str):
-        # TODO(santiago)
-        # 1.  calculate the file Hash SHA-256 ++
-        pdf_hash = get_pdf_sha256(document_path)
-        # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
-        existing_pdf_master = PdfMaster.is_document_uploaded(pdf_hash)
-        # 3. if the file exists
-        document_name = document_name_generator(document_path)
-        if existing_pdf_master:
-            pdf_master_id = existing_pdf_master.pdf_master_id
-            document_id = DocumentRepository(project_id=project_id, name=document_name, pdf_master_id=pdf_master_id).new_document()
-            PdfMaster.increment_ref_count(pdf_master_id)
 
-            # crear instacia en el model como objeto
-            DocumentModel.
-
-            # create another object in mongoDB where the new attributes are correctly linked
-            #
-            # traer el _id del pdf_master con el hash
-            # crear una instancia de documento
-            # generar el path, el path ya existe
-            #
-
-
-             #Mongo Instance
-
-            relative_path_in_server = relative_path_generator(user_id,project_id)
-
-            #TODO set the document_id from existing_doc in Document_repository as a document_reference_id
-
-            # increase the reference number by one in the original mongo db instance
-        # 4. if the file doesn't exist
-        else:
-            hola = 1 #to remove
-
-            # create the path
-            # create the mongo instance
-            # upload the file to the server
-            # create the instance in our system
-        #TODO(santiago)
 
 
     def get_document(self, document_id):

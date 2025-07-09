@@ -1,7 +1,9 @@
+from bson import ObjectId
+
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
-from utils.db_setup import es
+#from utils.db_setup import es
 
 from model.document_reader.document import Document
 
@@ -58,18 +60,14 @@ class DocumentDataBase:
     def set_pdf_master_id(document_id, pdf_master_id):
         try:
             with mongo_connection() as db:
-                db.documents.update_one({"_id": document_id}, {"$set": {"pdf_master_id": pdf_master_id}})
+                db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"pdf_master_id": pdf_master_id}})
         except Exception as e:
             print(f"pdf_master_id could not be set {e}")
 
     @staticmethod
     def get_pdf_master_id(document_id):
         with mongo_connection() as db:
-            db.documents.find_one({"_id": document_id}, {"pdf_master_id": 1}).get("pdf_master_id")
-
-
-        
-
+            db.documents.find_one({"_id": ObjectId(document_id)}, {"pdf_master_id": 1}).get("pdf_master_id")
 
     @staticmethod
     def get_documents_by_project(project_id) -> list[Dict]:
@@ -80,14 +78,14 @@ class DocumentDataBase:
     @staticmethod
     def get_by_document_id(document_id) -> dict:
         with mongo_connection() as db:
-            return db.documents.find_one({"_id": document_id})
+            return db.documents.find_one({"_id": ObjectId(document_id)})
 
     @staticmethod
     def update_document_name(document_id, name) -> bool:
         try:
             with mongo_connection() as db:
                 #Update in Mongo
-                result = db.documents.update_one({"_id": document_id},
+                result = db.documents.update_one({"_id": ObjectId(document_id)},
                                         {"$set": {"name": name, "updated_at": get_utc_zulu_timestamp()}})
                 #Update in Elastic
                 es.update(index = "documents", id = document_id, body={
@@ -103,7 +101,7 @@ class DocumentDataBase:
         try:
             with mongo_connection() as db:
                 #Deletion in Mongo
-                result = db.documents.delete_one({"_id": document_id})
+                result = db.documents.delete_one({"_id": ObjectId(document_id)})
                 #Deletion in Mongo
                 es.delete(index = "documents", id=document_id)
                 return result.deleted_count > 0
@@ -115,7 +113,7 @@ class DocumentDataBase:
     def update_path(document_id, path) -> bool:
          try:
              with mongo_connection() as db:
-                 result = db.documents.update_one({"_id": document_id},
+                 result = db.documents.update_one({"_id": ObjectId(document_id)},
                                          {"$set": {"path": path, "updated_at": get_utc_zulu_timestamp()}})
                  return result.modified_count > 1
          except Exception as e:
@@ -126,7 +124,7 @@ class DocumentDataBase:
     def update_vector_store_path(document_id, vector_store_path):
         try:
             with mongo_connection() as db:
-                result = db.documents.update_one({"_id": document_id},
+                result = db.documents.update_one({"_id": ObjectId(document_id)},
                                         {"$set": {"vector_store_path": vector_store_path,
                                                   "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
@@ -138,7 +136,7 @@ class DocumentDataBase:
     def get_bibtex_by_document_id(document_id) -> str:
         try:
             with mongo_connection() as db:
-                return db.documents.find_one({"_id": document_id})["bibtex"]
+                return db.documents.find_one({"_id": ObjectId(document_id)})["bibtex"]
         except Exception as e:
             print(f"Bibtex could not be retrieved: {e}")
             return str()
@@ -147,7 +145,7 @@ class DocumentDataBase:
     def update_bibtex(document_id, bibtex) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.documents.update_one({"_id": document_id},
+                result = db.documents.update_one({"_id": ObjectId(document_id)},
                                         {"$set": {"bibtex": bibtex,
                                                       "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
