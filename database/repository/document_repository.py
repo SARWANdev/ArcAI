@@ -102,7 +102,7 @@ class DocumentDataBase:
             with mongo_connection() as db:
                 #Deletion in Mongo
                 result = db.documents.delete_one({"_id": ObjectId(document_id)})
-                #Deletion in Mongo
+                #Deletion in Elastic search
                 es.delete(index = "documents", id=document_id)
                 return result.deleted_count > 0
         except Exception as e:

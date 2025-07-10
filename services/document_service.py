@@ -7,6 +7,7 @@ from model.document_reader.tag_manager.tag import Tag as TagModel
 import io
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
+from services.upload_manager.server_conection import upload_document
 
 
 class DocumentService:
@@ -19,7 +20,7 @@ class DocumentService:
     def upload_document(self, document_path: str, user_id: str, project_id: str):
 
         pdf_hash = get_pdf_sha256(document_path)    # 1.  calculate the file Hash SHA-256 ++
-        existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash)     # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
+        existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash, user_id)     # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
         # document_name = document_name_generator(document_path)
         document_name = "document dummy " # 3. generates the docuemnt name from the bibtex according to teh parameter
         new_document_instance = DocumentModel(name=document_name, project_id=project_id)    # 4. intance of the model Document
@@ -27,9 +28,10 @@ class DocumentService:
             pdf_master_id = str(existing_pdf_master.get("_id"))
             print("pdf_master_id:  if exists", pdf_master_id)
         else:
-            document_path = relative_path_generator(user_id, project_id)
-            new_pdf_master_instance = PdfMasterModel(path=document_path, hash=pdf_hash)
-            # TODO eather update the instance or the database described in number 2
+            relative_path = relative_path_generator(user_id, project_id)
+            pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
+            new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
+            # TODO eather update the instance or the database described with the bibtex
             pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
 
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database callection documents

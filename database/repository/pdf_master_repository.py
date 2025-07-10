@@ -181,9 +181,9 @@ class PdfMasterDataBase:
             return ""
 
     @staticmethod
-    def is_document_uploaded(pdf_hash: str):
+    def is_document_uploaded(pdf_hash: str, user_id):
         with mongo_connection() as db:
-            result = db.pdf_master.find_one({"hash": pdf_hash})
+            result = db.pdf_master.find_one({"hash": pdf_hash, "user_id": user_id})
             return result
 
 

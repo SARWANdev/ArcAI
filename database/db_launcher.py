@@ -54,7 +54,7 @@ def init_mongo():
         # --------------------
         # DOCUMENTS collection
         # --------------------
-        db.pdf_master.create_index([("hash", ASCENDING)], unique=True)  # Ensure deduplication
+        db.pdf_master.create_index([("hash", ASCENDING)])  # Ensure deduplication , unique=True
         db.pdf_master.create_index([("ref_count", ASCENDING)])
 
         # --------------------
