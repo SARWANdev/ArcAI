@@ -47,10 +47,6 @@ class DocumentService:
         self.create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
 
-
-
-
-
     def get_document(self, document_id):
         #Gets a document from the database
         document_data = self.document_repository.get_by_document_id(document_id)
