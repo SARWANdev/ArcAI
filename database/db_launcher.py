@@ -10,7 +10,6 @@ def init_es():
                 "properties": {
                     "name": {"type": "text"},
                     "author": {"type": "text"},
-                    "journal": {"type": "text"},
                     "suggest": {"type": "completion"}
                 }
             }

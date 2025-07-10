@@ -36,23 +36,16 @@ class DocumentService:
         self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id) # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id) # increas by one the number of references of the pdf master
 
-    def create_document(self, name, project_id, path, vector_store_path, author, year, journal, pages, bibtex):
+    def create_document(self, name, project_id, pdf_master_id):
         #Creates a new document in the database
         note = None #= NotebookService.create_notebook() #TODO: create new note for document's
         new_document = DocumentRepository(
-            project_id=project_id,
-            name=name,
-            path=path,
-            vector_store_path=vector_store_path,
-            author=author,
-            year=year,
-            journal=journal,
-            pages=pages,
-            bibtex=bibtex
+            project_id = project_id,
+            name = name,
+            pdf_master_id = pdf_master_id,
+            note = note
         )
         new_document.new_document()
-
-
 
 
     def get_document(self, document_id):

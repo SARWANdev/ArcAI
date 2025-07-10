@@ -3,6 +3,7 @@ from bson import ObjectId
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
+from pdf_master_repository import PdfMaster
 #from utils.db_setup import es
 
 from model.document_reader.document import Document
@@ -46,16 +47,16 @@ class DocumentDataBase:
             result = db.documents.insert_one(document_data)
             # Add document to Elasticsearch
             document_id = result.inserted_id
+            author = PdfMaster.get_first_author(self.pdf_master_id)
             es.index("documents", id=document_id, body={
-                "title": self.name,
-                "author": self.first_author,
-                # TODO(Dani) this variables doesnt exist anymore in document, they are gonna be in pdf_master_repository
-                "journal": self.journal,
+                "name": self.name,
+                "author": author,
                 "suggest": {
-                    "input": [self.name, self.author]
+                    "input": [self.name, author]
                 }
             })
             return document_id
+        
     @staticmethod
     def set_pdf_master_id(document_id, pdf_master_id):
         try:
