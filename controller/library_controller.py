@@ -9,7 +9,6 @@ class LibraryController:
     def __init__(self, app : Flask):
         self.library_service = LibraryService()
         self.project_service = ProjectService()
-        # The line below is causing error
         self.document_service = DocumentService()
         # To create routes for library related method's endpoints
         self.library = Blueprint('library', __name__)

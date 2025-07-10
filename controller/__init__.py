@@ -4,9 +4,11 @@ from os import environ as env
 from flask_cors import CORS
 
 import controller.library_controller
+from controller.project_controller import ProjectController
 from services.user_management.authentication_service import AuthenticationService
 from controller.user_controller import UserController
 from controller.library_controller import LibraryController
+
 
 # Load environment variables
 ENV_FILE = find_dotenv()
@@ -26,6 +28,7 @@ authentication_service.init_oauth(app)
 # Initialize authentication routes
 user_controller = UserController(authentication_service, app)
 library_controller = LibraryController(app)
+project_controller = ProjectController(app)
 
 # Run the server
 if __name__ == "__main__":
