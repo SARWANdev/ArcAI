@@ -2,7 +2,6 @@ from bson import ObjectId
 
 from database.utils.mongo_connector import mongo_connection
 from model.document_reader.pdf_master import PdfMaster
-from services.upload_manager.document_upload_service import get_pdf_sha256
 
 
 class PdfMasterDataBase:

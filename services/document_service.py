@@ -17,37 +17,38 @@ class DocumentService:
         self.document_properties_repo = DocumentPropertiesRepository
         self.pdf_master_repository = PdfMasterDataBase
 
+    def create_document(self, document_name, project_id, pdf_master_id):
+        #Creates a new document in the database
+        new_document_instance = DocumentModel(name=document_name, project_id=project_id)  # instance of the model Document
+        new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
+        self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
+        self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
+
+    def create_pdf_master(self, document_path, user_id, project_id, pdf_hash):
+        relative_path = relative_path_generator(user_id, project_id)
+        pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
+        new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
+        # TODO eather update the instance or the database described with the bibtex
+        pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
+        return pdf_master_id
+
+
     def upload_document(self, document_path: str, user_id: str, project_id: str):
 
-        pdf_hash = get_pdf_sha256(document_path)    # 1.  calculate the file Hash SHA-256 ++
-        existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash, user_id)     # 2.  check if the SHA-256 already exists(check if that pdf is already in the database)
-        # document_name = document_name_generator(document_path)
-        document_name = "document dummy " # 3. generates the docuemnt name from the bibtex according to teh parameter
-        new_document_instance = DocumentModel(name=document_name, project_id=project_id)    # 4. intance of the model Document
+        pdf_hash = get_pdf_sha256(document_path)
+        existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash, user_id)
+
         if existing_pdf_master:
             pdf_master_id = str(existing_pdf_master.get("_id"))
-            print("pdf_master_id:  if exists", pdf_master_id)
         else:
-            relative_path = relative_path_generator(user_id, project_id)
-            pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
-            new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
-            # TODO eather update the instance or the database described with the bibtex
-            pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
+            pdf_master_id = self.create_pdf_master(document_path, user_id, project_id, pdf_hash)
 
-        new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database callection documents
-        self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id) # set the pdf_master_id in the database for that collection
-        self.pdf_master_repository.increment_ref_count(pdf_master_id) # increas by one the number of references of the pdf master
+        #document_name = document_name_generator(document_path)
+        self.create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
-    def create_document(self, name, project_id, pdf_master_id):
-        #Creates a new document in the database
-        note = None #= NotebookService.create_notebook() #TODO: create new note for document's
-        new_document = DocumentRepository(
-            project_id = project_id,
-            name = name,
-            pdf_master_id = pdf_master_id,
-            note = note
-        )
-        new_document.new_document()
+
+
+
 
 
     def get_document(self, document_id):

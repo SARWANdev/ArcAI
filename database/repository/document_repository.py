@@ -3,7 +3,8 @@ from bson import ObjectId
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
-from pdf_master_repository import PdfMaster
+from database.repository.pdf_master_repository import PdfMasterDataBase
+
 #from utils.db_setup import es
 
 from model.document_reader.document import Document
@@ -47,7 +48,7 @@ class DocumentDataBase:
             result = db.documents.insert_one(document_data)
             # Add document to Elasticsearch
             document_id = result.inserted_id
-            author = PdfMaster.get_first_author(self.pdf_master_id)
+            author = PdfMasterDataBase.get_first_author(self.pdf_master_id)
             es.index("documents", id=document_id, body={
                 "name": self.name,
                 "author": author,
