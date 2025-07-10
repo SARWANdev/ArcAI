@@ -16,21 +16,22 @@ class Project:
 
         self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
-
-    def new_project(self):
+    
+    @staticmethod
+    def new_project(user_id, project_name, note=None) -> str:
         project_data = {
-            "user_id": self.user_id,  # Google's unique 'sub'
-            "project_name": self.project_name,
-            "note": self.note,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "user_id": user_id,  # Google's unique 'sub'
+            "project_name": project_name,
+            "note": note,
+            "created_at": get_utc_zulu_timestamp(),
+            "updated_at": get_utc_zulu_timestamp()
         }
         with mongo_connection() as db:
             try:
                 result = db.projects.insert_one(project_data)
                 return str(result.inserted_id)
             except pymongo.errors.DuplicateKeyError:
-                print(f"Project {self.project_name} already exists")
+                print(f"Project {project_name} already exists")
                 return None
 
 

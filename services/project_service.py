@@ -17,14 +17,8 @@ class ProjectService:
             user_id=user_id,
         )
 
-        # 2. Create a database object (repository) for persistence
-        project_repo = ProjectRepository(
-            user_id=user_id,
-            project_name=project_name,
-        )
-
-        # 3. Insert into DB and retrieve the generated ID
-        project_id = project_repo.new_project()
+        # 2. 2. Save to DB using static repository
+        project_id = self.project_repository.new_project(user_id, project_name)
         project_model.id = project_id  # assign back the ID
 
         return project_model  # or wrap this in a DTO if needed

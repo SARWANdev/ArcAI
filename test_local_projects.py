@@ -8,7 +8,7 @@ if __name__ == "__main__":
     service = ProjectService()
 
     # 1) Create a project using the service
-    created_proj = service.create_project(user_id=1234, project_name="Santiago")
+    created_proj = service.create_project(user_id=1234, project_name="Shrawan")
     print(f"\nCreated Project: id={created_proj.id}, name={created_proj.project_name}, user_id={created_proj.user_id}")
 
     # 2) Fetch the created project by ID (using service.get_project)
@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     # 4) Rename the project using the service.rename_project
     if fetched_proj:
-        rename_result = service.rename_project(ObjectId(str(fetched_proj.id)), "Wait oh no")
+        rename_result = service.rename_project(ObjectId(str(fetched_proj.id)), "BMTH Concert")
         print(f"\nRename Result: {rename_result}")
 
         # 5) Fetch the project again after renaming
