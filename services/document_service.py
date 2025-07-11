@@ -1,3 +1,4 @@
+from email.mime import text
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
@@ -5,6 +6,10 @@ from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
 import io
+from PyPDF2 import PdfReader
+from langchain_community.vectorstores import FAISS
+from langchain.text_splitter import CharacterTextSplitter
+from services.ai_service import AIService
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.server_conection import upload_document
@@ -46,7 +51,31 @@ class DocumentService:
         #document_name = document_name_generator(document_path)
         self.create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
+        #generate embeddings and vector store
+        text = self.__get_pdf_text(document_path)
+        text_chunks = self.__get_text_chunks(text)
+        ai_service = AIService()
+        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
+
+    def __get_pdf_text(self, document_path:str) -> str:
+        pdf_reader = PdfReader(document_path)
+        text = ""
+        for page in pdf_reader.pages:
+            text += page.extract_text()
+
+        return text
+    
+    def __get_text_chunks(self, text:str):
+        text_splitter = CharacterTextSplitter(
+        separator="\n",
+        chunk_size = 1000,
+        chunk_overlap = 200,
+        length_function = len
+        )
+    
+        chunks = text_splitter.split_text(text)
+        return chunks
 
 
 
