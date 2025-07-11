@@ -11,7 +11,7 @@ class PdfMasterDataBase:
     @staticmethod
     def save(pdf: PdfMaster):
         with mongo_connection() as db:
-            pdf_master_id = db.pdf_master.insert_one(pdf.to_dict())
+            pdf_master_id = db.pdf_master.insert_one(pdf.new_pdf_master_dict())
             return str(pdf_master_id.inserted_id)
 
     @staticmethod

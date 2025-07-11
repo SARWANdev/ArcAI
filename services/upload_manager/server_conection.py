@@ -13,6 +13,7 @@ ssh_port = int(os.getenv("SSH_PORT"))  # convert to integer
 ssh_user = os.getenv("SSH_USER")
 ssh_password = os.getenv("SSH_PASSWORD")
 
+#test case if the instance in mongo is deleted but not in the server it creates problems
 def upload_document(local_path: str, relative_path: str, pdf_hash: str):
     # relative path is user_id/project_id
 
@@ -58,3 +59,52 @@ def upload_document(local_path: str, relative_path: str, pdf_hash: str):
     except Exception as e:
         print(f"❌ Error: {e}")
         return None
+
+
+def download_document(remote_file_path: str, parent_local_folder: str, document_name: str):
+    """
+    Downloads a file from the remote server into a designated local subfolder,
+    and renames the file to match the local_folder_name (keeping the original extension).
+
+    Args:
+        remote_file_path (str): Full path to the file on the remote server.
+        parent_local_folder (str): Parent directory where a subfolder will be created.
+        document_name (str): Name of the subfolder to be created to store the file.
+    """
+    try:
+        # Get the file extension from the remote path
+        _, file_extension = os.path.splitext(remote_file_path)
+
+        # Full path to new local folder (inside parent folder)
+        full_local_folder_path = os.path.join(parent_local_folder, document_name)
+
+        # Create local folder if it doesn't exist
+        os.makedirs(full_local_folder_path, exist_ok=True)
+
+        # New local filename: same as local_folder_name + original extension
+        renamed_file_name = f"{document_name}{file_extension}"
+        local_file_path = os.path.join(full_local_folder_path, renamed_file_name)
+
+        # Setup SSH connection
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(
+            hostname=ssh_host,
+            port=ssh_port,
+            username=ssh_user,
+            password=ssh_password
+        )
+
+        # Download the file
+        with SCPClient(ssh.get_transport()) as scp:
+            scp.get(remote_file_path, local_path=local_file_path)
+
+        print(f"✅ Downloaded to: {local_file_path}")
+        ssh.close()
+
+        return local_file_path
+
+    except Exception as e:
+        print(f"❌ Error downloading file: {e}")
+        return None
+

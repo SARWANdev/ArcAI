@@ -24,11 +24,11 @@ class DocumentDataBase:
         self.created_at = get_utc_zulu_timestamp()
         self.updated_at = self.created_at
 
-    # this method store an object Document and returns teh Mong _id.
+    # this method store an object Document and returns the Mong _id.
     @staticmethod
     def save(document: Document) -> str:
         with mongo_connection() as db:
-            doc_id = db.documents.insert_one(document.to_dict())
+            doc_id = db.documents.insert_one(document.new_document_dict())
             return str(doc_id.inserted_id)
 
 
