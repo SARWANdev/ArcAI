@@ -17,6 +17,7 @@ def init_es():
         es.indices.create(index = "conversations", body={
             "mappings": {
                 "properties": {
+                    "user_id":{"type": "text"}, 
                     "name": {"type": "text"},
                     "suggest": {"type": "completion"}
                 }

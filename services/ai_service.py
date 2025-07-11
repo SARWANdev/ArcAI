@@ -5,6 +5,7 @@ from typing import Callable
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OllamaEmbeddings
 from model.ai_chat.conversation import Conversation
+from database.repository.conversation_repository import ConversationRepository
 
 class AIService:
     """
@@ -63,7 +64,7 @@ class AIService:
 
 
     def __init__(self, base_url:str|None = None, llm_name:str|None = None, embedding_model_name:str|None = None):
-        #self.conversation_repository = ConversationRepository
+        self.conversation_repository = ConversationRepository
         self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
         self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
         self.__base_url = base_url if base_url else self.__DEFAULT_BASE_URL
@@ -201,24 +202,31 @@ class AIService:
    
 
     def get_chat_history(self, user_id):
-        # TODO: Fetch all chat sessions for the user
-        pass
+        conversations = self.conversation_repository.get_conversations_by_user_id(user_id)
+        if not conversations: 
+            return None
+        history = []
+        for conversation in conversations:
+            #TODO: wrap conversations data into model
+            history.append(conversation)
+        return history
 
     def get_chat(self, conversation_id):
+        conversation_data = self.conversation_repository.get_conversation_by_id(conversation_id)
         # TODO: Fetch the conversation for the chat
         pass
 
-    def rename_chat(self, conversation_id, new_title):
-        # TODO: Rename the chat in DB
-        pass
+    def rename_chat(self, conversation_id, new_name):
+        return self.conversation_repository.update_conversation_name(conversation_id, new_name)
 
-    def delete_chat(self, cconversation_id):
-        # TODO: Hard-delete or soft-delete the chat session
-        pass
+    def delete_chat(self, conversation_id):
+        return self.conversation_repository.delete_conversation(conversation_id)
 
     def delete_all_chats(self, user_id):
-        # TODO: Delete all chat sessions for the user
-        pass
+        return self.conversation_repository.delete_all_conversations(user_id)
+    
+    def search_conversations(self, user_id, search):
+        result = self.conversation_repository.search_conversation(user_id, search)
 
 
     def get_vector_store(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 

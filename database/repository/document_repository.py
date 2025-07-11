@@ -91,7 +91,7 @@ class DocumentDataBase:
                                         {"$set": {"name": name, "updated_at": get_utc_zulu_timestamp()}})
                 #Update in Elastic
                 es.update(index = "documents", id = document_id, body={
-                    "doc": {"title": name}
+                    "doc": {"name": name}
                 })
                 return result.modified_count > 0
         except Exception as e:
