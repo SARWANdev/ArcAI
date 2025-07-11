@@ -1,5 +1,12 @@
 import streamlit as st
 from PyPDF2 import PdfReader
+import sys
+import os
+
+# Add the project root to the Python path
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
 from services.ai_service import AIService
 from model.ai_chat.conversation import Conversation
 import time
@@ -14,6 +21,16 @@ def get_pdf_text(pdf_docs):
             text += page.extract_text()
     #st.write(text)
     return text
+
+def get_metadata(pdf_docs):
+    all_metadata = []
+    for pdf in pdf_docs:
+        pdf_reader = PdfReader(pdf)
+        metadata = pdf_reader.metadata
+        all_metadata.append("Metadata = " + str(metadata))
+    return "\n".join(all_metadata)
+
+    
 
 def get_text_chunks(text):
     text_splitter = CharacterTextSplitter(
@@ -70,7 +87,9 @@ def main():
 
             with st.spinner("Splitting Text into chunks"):
                 #get the text chunks
+                metadata = get_metadata(pdf_docs=pdf_docs)
                 text_chunks = get_text_chunks(raw_text)
+                text_chunks.insert(0,metadata)
                 text_chunked = time.perf_counter()
                 st.write(f"Text split into chunks in {(text_chunked-text_parsed):.4f}s")     
 

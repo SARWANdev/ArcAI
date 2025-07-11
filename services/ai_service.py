@@ -232,7 +232,7 @@ class AIService:
         Returns:
             FAISS: The created FAISS vector store containing the embedded text chunks.
         """
-        embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name)
+        embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name, show_progress=True)
         vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
         if embedding_path:
             vector_store.save_local(embedding_path)
