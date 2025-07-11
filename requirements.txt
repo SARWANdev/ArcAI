@@ -19,7 +19,7 @@ langchain-experimental==0.0.45
 
 # Bibliography Management
 bibtexparser==1.4.0
-habanero==1.2.5
+habanero==2.3.0
 
 # HTTP Requests
 requests==2.31.0
