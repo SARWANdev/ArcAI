@@ -52,8 +52,11 @@ class DocumentService:
         self.create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
         #generate embeddings and vector store
+        metadata = self.get_pdf_metadata(document_path=document_path)
+        metadata_text = str(metadata)
         text = self.__get_pdf_text(document_path)
         text_chunks = self.__get_text_chunks(text)
+        text_chunks.insert(0, metadata_text)
         ai_service = AIService()
         embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
@@ -66,6 +69,10 @@ class DocumentService:
 
         return text
     
+    def get_pdf_metadata(self, document_path:str):
+        pdf_reader = PdfReader(document_path)
+        metadata = pdf_reader.metadata
+
     def __get_text_chunks(self, text:str):
         text_splitter = CharacterTextSplitter(
         separator="\n",
