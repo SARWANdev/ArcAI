@@ -9,13 +9,6 @@ from bson import ObjectId
 
 
 class Project:
-    def __init__(self, user_id, project_name, note=None):
-        self.user_id = user_id
-        self.project_name = project_name
-        self.note = note
-
-        self.created_at = get_utc_zulu_timestamp()
-        self.updated_at = self.created_at
     
     @staticmethod
     def new_project(user_id, project_name, note=None) -> str:
