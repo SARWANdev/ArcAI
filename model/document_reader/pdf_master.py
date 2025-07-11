@@ -8,7 +8,7 @@ class PdfMaster:
         self.hash = pdf_hash
         self.user_id = user_id
 
-    def to_dict(self) -> dict:
+    def new_pdf_master_dict(self) -> dict:
         pdf_master_data = {
             "user_id": self.user_id,
             "path": self.path,
