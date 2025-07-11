@@ -27,7 +27,7 @@ class BibTeX_Service:
         return bibtex_str
     
     def save_to_file(self, path:str):
-        id = self.__bibtex_library.entries[0].get("ID")+".bib"
+        id = self.__bibtex_library.entries[0].get("ID")
         with open(path + id + ".bib", "w") as file:
             file.write(self.__formatted_bibtex_string)
 
@@ -38,9 +38,10 @@ class BibTeX_Service:
         return self.__bibtex_library
 
     def get_paper_name(self)->str:
-        return self.__paper_name        
+        return self.__paper_name
+
 
 
 bib = BibTeX_Service("Blending Immersive Gameplay with Intense Exercise Using Asynchronous Exergaming")
-bib.save_to_file(bib.get_paper_name()+".bib")
+bib.save_to_file(bib.get_paper_name())
 print("done")
