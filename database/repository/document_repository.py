@@ -57,7 +57,12 @@ class DocumentDataBase:
                 }
             })
             return document_id
-        
+
+    @staticmethod
+    def get_name(document_id):
+        with mongo_connection() as db:
+            return db.documents.find_one({"_id": ObjectId(document_id)}, {"name": 1}).get("name")
+
     @staticmethod
     def set_pdf_master_id(document_id, pdf_master_id):
         try:
@@ -69,7 +74,8 @@ class DocumentDataBase:
     @staticmethod
     def get_pdf_master_id(document_id):
         with mongo_connection() as db:
-            db.documents.find_one({"_id": ObjectId(document_id)}, {"pdf_master_id": 1}).get("pdf_master_id")
+            pdf_master_id = db.documents.find_one({"_id": ObjectId(document_id)}, {"pdf_master_id": 1}).get("pdf_master_id")
+            return pdf_master_id
 
     @staticmethod
     def get_documents_by_project(project_id) -> list[Dict]:

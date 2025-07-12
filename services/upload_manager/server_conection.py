@@ -2,7 +2,6 @@ import paramiko
 from scp import SCPClient
 import os
 import posixpath
-
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -24,7 +23,7 @@ def upload_document(local_path: str, relative_path: str, pdf_hash: str):
 
         original_extension = os.path.splitext(local_path)[1]  # Returns for example ".pdf"
         hashed_filename = f"{pdf_hash}{original_extension}"
-        remote_dir_path = posixpath.join(remote_dir, relative_path)
+        remote_dir_path = posixpath.join(remote_dir, relative_path, pdf_hash)
         remote_file_path = posixpath.join(remote_dir_path, hashed_filename)
 
         # Setup SSH
@@ -107,4 +106,46 @@ def download_document(remote_file_path: str, parent_local_folder: str, document_
     except Exception as e:
         print(f"❌ Error downloading file: {e}")
         return None
+
+def delete_remote_directory(file_path: str):
+    """
+    Deletes a directory and its contents on a remote server via SSH.
+
+    Args:
+        file_path (str): Full path to the directory on the remote server.
+
+    Returns:
+        bool: True if deletion was successful, False otherwise.
+    """
+    try:
+        # Setup SSH connection
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(
+            hostname=ssh_host,
+            port=ssh_port,
+            username=ssh_user,
+            password=ssh_password
+        )
+        #get
+        remote_directory_path = os.path.dirname(file_path)
+        # Build the command to delete the directory recursively
+        command = f"rm -rf '{remote_directory_path}'"
+        stdin, stdout, stderr = ssh.exec_command(command)
+
+        # Wait for the command to finish and check for errors
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status == 0:
+            print(f"🗑️ Successfully deleted remote directory: {remote_directory_path}")
+            ssh.close()
+            return True
+        else:
+            error = stderr.read().decode()
+            print(f"❌ Error deleting remote directory: {error}")
+            ssh.close()
+            return False
+
+    except Exception as e:
+        print(f"❌ SSH error deleting: {e}")
+        return False
 
