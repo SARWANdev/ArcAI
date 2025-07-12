@@ -15,6 +15,18 @@ class PdfMasterDataBase:
             return str(pdf_master_id.inserted_id)
 
     @staticmethod
+    def delete_pdf_master(pdf_master_id) -> bool:
+        try:
+            with mongo_connection() as db:
+                # Deletion in Mongo
+                result = db.pdf_master.delete_one({"_id": ObjectId(pdf_master_id)})
+
+                return result.deleted_count > 0
+        except Exception as e:
+            print(f"Pdf master could not be deleted: {e}")
+            return False
+
+    @staticmethod
     def increment_ref_count(pdf_master_id):
         try:
             with mongo_connection() as db:
