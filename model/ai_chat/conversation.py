@@ -1,10 +1,9 @@
 from langchain_community.vectorstores import FAISS
 class Conversation:
-    def __init__(self, id, name, vector_store:FAISS):
+    def __init__(self, id, vector_store:FAISS):
         self.__id = id
-        self.__name = name
+        
         self.__vector_store = vector_store
-        self.__list_of_documents = []
         self.__messages = []
 
     def rename(self, name):

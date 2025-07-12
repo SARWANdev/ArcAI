@@ -11,7 +11,7 @@ if __name__ == "__main__":
     project_id = input("Enter project_id to attach document to: ").strip()
 
     # 1) Create a new document with dummy data
-    created_doc = service.create_document(
+    created_doc = service.__create_document(
         name="qotsa",
         project_id=project_id,
         path="/fake/path/to/doc.pdf",

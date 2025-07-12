@@ -16,20 +16,22 @@ from services.upload_manager.server_conection import upload_document
 
 
 class DocumentService:
-   
+
+
     def __init__(self):
         self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository
         self.pdf_master_repository = PdfMasterDataBase
 
-    def create_document(self, document_name, project_id, pdf_master_id):
+
+    def __create_document(self, document_name, project_id, pdf_master_id):
         #Creates a new document in the database
         new_document_instance = DocumentModel(name=document_name, project_id=project_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
         self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
-    def create_pdf_master(self, document_path, user_id, project_id, pdf_hash):
+    def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash):
         relative_path = relative_path_generator(user_id, project_id)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
@@ -46,12 +48,13 @@ class DocumentService:
         if existing_pdf_master:
             pdf_master_id = str(existing_pdf_master.get("_id"))
         else:
-            pdf_master_id = self.create_pdf_master(document_path, user_id, project_id, pdf_hash)
+            pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash)
 
         #document_name = document_name_generator(document_path)
-        self.create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
+        self.__create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
         #generate embeddings and vector store
+
         metadata = self.get_pdf_metadata(document_path=document_path)
         metadata_text = str(metadata)
         text = self.__get_pdf_text(document_path)
@@ -136,7 +139,39 @@ class DocumentService:
         return documents_list
 
     def delete_document(self, document_id):
-        return self.document_repository.delete_document(document_id)
+        """
+        to this method first we need to see if
+        1. Check if the instance document exists ++
+        2. Delete the instance document ++
+        3. Decrease the reference in the pdf master ++
+        4. Check how many references has the pdf master ++
+        5. if the reference is 0, delete the document from the server
+        6. Delete the pdf master instance ++
+        7. if the project has no files , delete the directory in the server and teh instance of that project
+
+
+        :param document_id:
+        :return: boolean value
+        """
+        document_data = self.document_repository.delete_document(document_id)
+
+        if not document_data:
+            print("Document with id {} was not found".format(document_id))
+            return False
+        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        #TODO get the path from the file in the server
+        self.document_repository.delete_document(document_id)
+
+        self.pdf_master_repository.decrement_ref_count(pdf_master_id)
+
+        ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
+
+        if ref_count == 0:
+            #TODO method that deletes from the server that file with the given path
+            self.pdf_master_repository.delete_pdf_master(pdf_master_id)
+            # TODO method that manages the project directories
+
+        return True
 
     def mark_as_read(self, document_id):
         return self.document_properties_repo.mark_as_read(document_id)
