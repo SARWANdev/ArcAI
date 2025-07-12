@@ -13,7 +13,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
-from services.upload_manager.server_conection import upload_document, download_document, delete_remote_directory
+from services.upload_manager.server_conection import upload_document
 
 
 class DocumentService:
@@ -56,13 +56,13 @@ class DocumentService:
 
         #generate embeddings and vector store
 
-        #metadata = self.get_pdf_metadata(document_path=document_path)
-        #metadata_text = str(metadata)
-        #text = self.__get_pdf_text(document_path)
-        #text_chunks = self.__get_text_chunks(text)
-        #text_chunks.insert(0, metadata_text)
-        #ai_service = AIService()
-        #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        metadata = self.get_pdf_metadata(document_path=document_path)
+        metadata_text = str(metadata)
+        text = self.__get_pdf_text(document_path)
+        text_chunks = self.__get_text_chunks(text)
+        text_chunks.insert(0, metadata_text)
+        ai_service = AIService()
+        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
     def __get_pdf_text(self, document_path:str) -> str:
@@ -161,7 +161,6 @@ class DocumentService:
             return False
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
         #TODO get the path from the file in the server
-        file_path = self.pdf_master_repository.get_path(pdf_master_id)
         self.document_repository.delete_document(document_id)
 
         self.pdf_master_repository.decrement_ref_count(pdf_master_id)
@@ -170,9 +169,8 @@ class DocumentService:
 
         if ref_count == 0:
             #TODO method that deletes from the server that file with the given path
-            delete_remote_directory(file_path)
             self.pdf_master_repository.delete_pdf_master(pdf_master_id)
-
+            # TODO method that manages the project directories
 
         return True
 
@@ -206,25 +204,13 @@ class DocumentService:
             return TagModel(name=tag_name, color=tag_color)
         return None
     
-    def download_document(self, document_id, local_path):
-        """
-        1. check id document exists
-        2. pull the pdf_master id
-        3. get the path in the server
-        4. execute the download proces from download_document
-
-        :param local_path:
-        :param document_id:
-        :return: if the download was successful or not
-        """
-        document_name =self.document_repository.get_name(document_id)
-        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-        remote_path = self.pdf_master_repository.get_path(pdf_master_id)
-
-        download_document(remote_path, local_path, document_name)
-
-
-
+    def download_document(self, document_id):
+        document_data = self.document_repository.get_by_document_id(document_id)
+        if not document_data:
+            return None
+        path = document_data.get('path')
+        pdf = self.document_repository.get_pdf(document_id, path)
+        return pdf
 
     def highlight_document(self, document_id, text):
         pass

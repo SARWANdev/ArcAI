@@ -195,7 +195,7 @@ class AIService:
         relevant_chunks = self.__perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=5)
         response = self.generate(f"Give me an objective summary of the following in 50 words: {relevant_chunks}")
         return response
-        pass
+        
 
     
 
