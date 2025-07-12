@@ -57,8 +57,8 @@ class DocumentService:
         #generate embeddings and vector store
 
         metadata = self.get_pdf_metadata(document_path=document_path)
-        metadata_text = str(metadata)
-        text = self.__get_pdf_text(document_path)
+        metadata_text = str(metadata) 
+        text = self.__get_pdf_text(document_path) #TODO
         text_chunks = self.__get_text_chunks(text)
         text_chunks.insert(0, metadata_text)
         ai_service = AIService()
