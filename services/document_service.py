@@ -72,6 +72,7 @@ class DocumentService:
     def get_pdf_metadata(self, document_path:str):
         pdf_reader = PdfReader(document_path)
         metadata = pdf_reader.metadata
+        return metadata
 
     def __get_text_chunks(self, text:str):
         text_splitter = CharacterTextSplitter(
