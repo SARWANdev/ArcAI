@@ -1,7 +1,7 @@
 import pymongo
 from pymongo.errors import DuplicateKeyError
 from database.utils.mongo_connector import mongo_connection
-from utils.db_setup import es
+from database.utils.db_setup import es
 
 class ConversationRepository:
     def __init__(self, user_id, name, last_opened):

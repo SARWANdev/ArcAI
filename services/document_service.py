@@ -1,3 +1,4 @@
+import os
 from email.mime import text
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
@@ -51,7 +52,7 @@ class DocumentService:
             pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash)
 
         #document_name = document_name_generator(document_path)
-        self.__create_document("dummy_document_name", project_id, pdf_master_id) #TODO method the generate the name according bibtex
+        self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
         #generate embeddings and vector store
 
