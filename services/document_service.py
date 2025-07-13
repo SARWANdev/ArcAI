@@ -61,7 +61,7 @@ class DocumentService:
         #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
-    def __get_pdf_text(self, document_path:str) -> str:
+    def get_pdf_text(self, document_path:str) -> str:
         pdf_reader = PdfReader(document_path)
         text = ""
         for page in pdf_reader.pages:
@@ -76,7 +76,7 @@ class DocumentService:
 
     def __get_text_chunks(self, document_path:str)->list[str]:
         metadata = str(self.get_pdf_metadata(document_path=document_path))
-        text = self.__get_pdf_text(document_path) 
+        text = self.get_pdf_text(document_path) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,
@@ -238,9 +238,12 @@ class DocumentService:
         buffer.write(bibtex.encode('utf-8'))
         return buffer, title
 
-    def name_assigner(self):
-        #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
-        return str()
+    def document_name_generator(self, document_path:str):
+        title = self.get_title(document_path=document_path)
+        if title:
+            first_5_words = title.split(" ")[:5]
+            return " ".join(first_5_words)
+        return "Unnamed Document"
     
     def search_documents(self, prefix):
         found_documents = self.document_repository.search(prefix)
