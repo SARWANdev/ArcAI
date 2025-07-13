@@ -24,15 +24,15 @@ class ConversationService:
             id = conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),
             name = conversation_data.get("name"),
+            messages = conversation_data.get("messages"),
             list_of_documents = conversation_data.get("list_of_documents"),
             vector_store = conversation_data.get("vector_store"),
             created_at = conversation_data.get("created_at"),
             updated_at = conversation_data.get("updated_at")
         )
-        #TODO: add messages into model's message list
         return conversation_model
         
-
+    
     def rename_chat(self, conversation_id, new_name):
         return self.conversation_repository.update_conversation_name(conversation_id, new_name)
 
@@ -44,3 +44,4 @@ class ConversationService:
     
     def search_conversations(self, user_id, search):
         result = self.conversation_repository.search_conversation(user_id, search)
+        return result
