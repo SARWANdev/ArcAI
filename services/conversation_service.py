@@ -12,8 +12,8 @@ class ConversationService:
             return None
         history = []
         for conversation in conversations:
-            #TODO: wrap conversations data into model
-            history.append(conversation)
+            conversation_model = conversation.get("_id")
+            history.append(conversation_model)
         return history
     
     def get_chat(self, conversation_id):
@@ -25,14 +25,13 @@ class ConversationService:
             user_id = conversation_data.get("user_id"),
             name = conversation_data.get("name"),
             messages = conversation_data.get("messages"),
-            list_of_documents = conversation_data.get("list_of_documents"),
             vector_store = conversation_data.get("vector_store"),
             created_at = conversation_data.get("created_at"),
             updated_at = conversation_data.get("updated_at")
         )
         return conversation_model
         
-    
+
     def rename_chat(self, conversation_id, new_name):
         return self.conversation_repository.update_conversation_name(conversation_id, new_name)
 

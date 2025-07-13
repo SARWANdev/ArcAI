@@ -4,13 +4,12 @@ from datetime import datetime
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, created_at=None, updated_at=None):
+    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None):
 
         self.conversation_id = conversation_id
         self.user_id = user_id
         self.name = name
-        self.messages =[]
- 
+        self.messages = messages
         self.vector_store = vector_store
         self.created_at = created_at
         self.updated_at = updated_at
