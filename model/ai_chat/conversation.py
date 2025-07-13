@@ -24,8 +24,8 @@ class Conversation:
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""  
 
-                    1. Use ONLY the context below.  
-                    3. Keep answers under 4 sentences.  
+                    1. Use the context below.  
+                    3. Keep answers concise.  
                     4. if you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
                     
 
