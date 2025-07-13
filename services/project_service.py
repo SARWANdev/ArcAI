@@ -83,11 +83,10 @@ class ProjectService:
 
         return documents
 
+    #SHRAWAN
     def get_project_embeddings(self, project_id, document_ids=None):
         pass
 
-    def process_project_metadata(self, project_id):
-        pass
-
+    #SHRAWAN
     def generate_project_summary(self, project_id):
         pass
