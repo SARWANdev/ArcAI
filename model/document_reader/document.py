@@ -6,8 +6,8 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 class Document:
     def __init__(self, name, project_id, pdf_master_id: Optional[str] = None, note: Optional[str] = None,
                  tag: Optional[str] = None, tag_color: Optional[str] = None, read: Optional[bool] = None,
-                 favorite: Optional[bool] = None, created_at = None, updated_at = None, id: Optional[str] = None):
-        self.id = id
+                 favorite: Optional[bool] = None, created_at = None, updated_at = None, _id: Optional[str] = None):
+        self._id = _id
         self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern Last name from the author,
         self.project_id = project_id
         self.pdf_master_id = pdf_master_id
