@@ -84,7 +84,9 @@ def upload_documents_to_created_users():
     DocumentService().upload_document(path_2, user_id_1, project_id_1_2)
     DocumentService().upload_document(path_3, user_id_1, project_id_1_2)
 
-
+def delete_document_from_an_id(document_id):
+    DocumentService().delete_document(document_id)
+    #DocumentService().delete_document("6873a4241dfb5bc8f597d4f6")
 
 
 def method_upload_document_TEST():
@@ -132,5 +134,6 @@ if __name__ == "__main__":
     create_two_users()
     create_projects()
     upload_documents_to_created_users()
-
+    #from mongo get the document_id you want to delete and set it as an argument
+    #delete_document_from_an_id()
 
