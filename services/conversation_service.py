@@ -1,4 +1,6 @@
 from database.repository.conversation_repository import ConversationRepository
+from model.ai_chat.conversation import Conversation as ConversationModel
+
 class ConversationService:
 
     def __init__(self):
@@ -16,8 +18,15 @@ class ConversationService:
     
     def get_chat(self, conversation_id):
         conversation_data = ConversationRepository.get_conversation_by_id(conversation_id)
-        # TODO: Fetch the conversation for the chat
+        if not conversation_data:
+            return None
+        conversation_model = ConversationModel(
+            id = conversation_data.get("_id"),
+            vector_store = None #TODO: add vectors
+        )
+        #TODO: add messages into model's message list
         pass
+        
 
     def rename_chat(self, conversation_id, new_name):
         return self.conversation_repository.update_conversation_name(conversation_id, new_name)
