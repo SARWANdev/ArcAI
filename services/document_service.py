@@ -56,13 +56,13 @@ class DocumentService:
 
         #generate embeddings and vector store
 
-        metadata = self.get_pdf_metadata(document_path=document_path)
-        metadata_text = str(metadata)
-        text = self.__get_pdf_text(document_path)
-        text_chunks = self.__get_text_chunks(text)
-        text_chunks.insert(0, metadata_text)
-        ai_service = AIService()
-        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        #metadata = self.get_pdf_metadata(document_path=document_path)
+        #metadata_text = str(metadata)
+        #text = self.__get_pdf_text(document_path)
+        #text_chunks = self.__get_text_chunks(text)
+        #text_chunks.insert(0, metadata_text)
+        #ai_service = AIService()
+        #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
     def __get_pdf_text(self, document_path:str) -> str:

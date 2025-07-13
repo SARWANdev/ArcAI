@@ -35,9 +35,11 @@ class User:
 
         with mongo_connection() as database_connection:
             try:
-                database_connection.users.insert_one(user_data)
+                result = database_connection.users.insert_one(user_data)
+                return str(result.inserted_id)
             except pymongo.errors.DuplicateKeyError:
                 print(f"User {self.sub_id} already exists")
+                return str()
 
     @staticmethod
     def get_all_users() -> List[Dict]:

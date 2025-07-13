@@ -1,16 +1,17 @@
 from database.repository.user_repository import User
 from services.document_service import DocumentService
+from services.project_service import ProjectService
 from services.upload_manager.document_upload_service import get_pdf_sha256
 from services.upload_manager.server_conection import download_document, upload_document, delete_remote_directory
 
-"""
-1. create some users
-2. create some documents
 
-"""
-
+user_id_1 = ""
+user_id_2 = ""
+project_id_1 = ""
+project_id_2 = ""
 
 def create_two_users():
+    # create users in mongo db
     user_data_1 = {
         # Google's unique ID
         "first_name": "John",
@@ -42,16 +43,20 @@ def create_two_users():
     )
 
     try:
-        user_1.new_user()
+        global user_id_1
+        user_id_1= user_1.new_user()
         print(f"Successfully created user: {user_data_1['email']}")
-        user_2.new_user()
+        global user_id_2
+        user_id_2 = user_2.new_user()
         print(f"Successfully created user: {user_data_2['email']}")
     except Exception as e:
         print(f"Error creating user: {str(e)}")
 
-def create_projects():
+project_id_1_1 = ""
+project_id_1_2 = ""
+project_id_2_1 = ""
+project_id_2_2 = ""
 
-    pass
 path_1 = r"C:\Users\User\PycharmProjects\arcai\papers\Automatic_Visual_Detection_of_Fresh_Poultry_Egg_Quality_Inspection_using_Image_Processing.pdf"
 path_2 = r"C:\Users\User\PycharmProjects\arcai\papers\Blending_Immersive_Gameplay_with_Intense_Exercise_Using_Asynchronous_Exergaming.pdf"
 path_3 = r"C:\Users\User\PycharmProjects\arcai\papers\Efficient_Embedding_of_Scale-Free_Graphs_in_the_Hyperbolic_Plane.pdf"
@@ -59,26 +64,41 @@ path_4 = r"C:\Users\User\PycharmProjects\arcai\papers\Online_level_generation_in
 
 rel_path = "user_1/project_1"
 
+def create_projects():
+    global project_id_1_1, project_id_1_2, project_id_2_1, project_id_2_2
+    #create projects for the user above in mongo db
 
-def upload_docs():
-    DocumentService.upload_document(path_1, user_id="1076915035000615071530", project_id="project_1")
+    project_id_1_1 = ProjectService().create_project(user_id_1, "project_1_1").to_dict().get("_id")
+    project_id_1_2 = ProjectService().create_project(user_id_1, "project_1_2").to_dict().get("_id")
+
+    project_id_2_1 = ProjectService().create_project(user_id_2, "project_2_1").to_dict().get("_id")
+    project_id_2_2 = ProjectService().create_project(user_id_2, "project_2_2").to_dict().get("_id")
+
+def upload_documents_to_created_users():
+    #DocumentService().upload_document(path_1, "user_id_1", "project_id_1_1")
+    DocumentService().upload_document(path_1, user_id_1, project_id_1_1)
+    DocumentService().upload_document(path_2, user_id_1, project_id_1_1)
+    DocumentService().upload_document(path_3, user_id_1, project_id_1_1)
+
+    DocumentService().upload_document(path_1, user_id_1, project_id_1_2)
+    DocumentService().upload_document(path_2, user_id_1, project_id_1_2)
+    DocumentService().upload_document(path_3, user_id_1, project_id_1_2)
 
 
-if __name__ == "__main__":
-    #create_two_users()
-    #upload_docs()
 
-    #download_document(r"/home/pse03/user_3/project_1/e9f590b807ce6db83d7f266a1198ec883f96506348b8b6790076eb4784b28133.xlsx", r"C:\Users\User\Documents", "kit_manager")
-    #DocumentService().download_document("68705790bb6a40dd34395f97", r"C:\Users\User\Desktop\testArcAi")
 
-    #upload_document(path_1, rel_path, get_pdf_sha256(path_1))
-    #upload_document(path_2, rel_path, get_pdf_sha256(path_2))
-    #upload_document(path_3, rel_path, get_pdf_sha256(path_3))
-    #upload_document(path_4, rel_path, get_pdf_sha256(path_4))
+def method_upload_document_TEST():
+    #this test the direct method to the server not in mongo
+    upload_document(path_1, rel_path, get_pdf_sha256(path_1))
+    upload_document(path_2, rel_path, get_pdf_sha256(path_2))
+    upload_document(path_3, rel_path, get_pdf_sha256(path_3))
+    upload_document(path_4, rel_path, get_pdf_sha256(path_4))
 
-    download_document(r"/home/pse03/user_1/project_1/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2.pdf",
-                      r"C:\Users\User\Desktop\testArcAi",
-                      "paper_1")
+def method_download_document_TEST():
+    download_document(
+        r"/home/pse03/user_1/project_1/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2.pdf",
+        r"C:\Users\User\Desktop\testArcAi",
+        "paper_1")
     download_document(
         r"/home/pse03/user_1/project_1/b04ab48891f0e905ac304e21ffa503841c3f7fac295d417ba069e873c72db80e/b04ab48891f0e905ac304e21ffa503841c3f7fac295d417ba069e873c72db80e.pdf",
         r"C:\Users\User\Desktop\testArcAi",
@@ -92,4 +112,25 @@ if __name__ == "__main__":
         r"C:\Users\User\Desktop\testArcAi",
         "paper_4")
 
-    delete_remote_directory(r"/home/pse03/user_1/project_1/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2")
+def method_delete_remote_directory_TEST():
+    delete_remote_directory(
+        r"/home/pse03/user_1/project_1/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2/3b00398ebdc88c0975005cabd8b193c52c58daffd2625d3a0964f107725d87c2.pdf")
+    delete_remote_directory(
+        r"/home/pse03/user_1/project_1/b04ab48891f0e905ac304e21ffa503841c3f7fac295d417ba069e873c72db80e/b04ab48891f0e905ac304e21ffa503841c3f7fac295d417ba069e873c72db80e.pdf")
+    delete_remote_directory(
+        r"/home/pse03/user_1/project_1/6fdd936612ea3210f5bbbd2ad98ececed412400a2dd84d562b992258fbe9f417/6fdd936612ea3210f5bbbd2ad98ececed412400a2dd84d562b992258fbe9f417.pdf")
+    delete_remote_directory(
+        r"/home/pse03/user_1/project_1/898b29a276747664ddb4b2c9aece69e117eb475d76a5fb63fbdf8bbfd4a76faf/898b29a276747664ddb4b2c9aece69e117eb475d76a5fb63fbdf8bbfd4a76faf.pdf")
+
+if __name__ == "__main__":
+    #method_upload_document_TEST()
+    #method_download_document_TEST()
+    #method_delete_remote_directory_TEST()
+
+
+
+    create_two_users()
+    create_projects()
+    upload_documents_to_created_users()
+
+
