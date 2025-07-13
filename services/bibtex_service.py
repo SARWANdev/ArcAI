@@ -13,10 +13,17 @@ class BibTeX_Service:
         if __unformatted_bibtex_string:
             self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
             self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+            return
         
+        
+    def set_bibtex(self, bibtex:str):
+        self.__bibtex_library = bibtexparser.loads(bibtex, parser=bibtexparser.bparser.BibTexParser())
+        self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
 
-
-
+    def set_required_fields(self, author:str, title:str, year:int, citekey:str):
+        bibtex = f"@misc{{{citekey}, author = {{{author}}}, title = {{{title}}}, year = {{{year}}}}}"
+        self.__bibtex_library = bibtexparser.loads(bibtex, parser=bibtexparser.bparser.BibTexParser())
+        self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
         
 
     def __get_bibtex_str(self, paper_name:str)->str:
@@ -26,8 +33,8 @@ class BibTeX_Service:
         similarity_score = res['message']['items'][0]['score']
         doi = res['message']['items'][0]['DOI']
         title = res['message']['items'][0]['title']
-        #correct = input(f"found {title}  with simscore {similarity_score} accept this?").lower() in ("yes","y") #TODO forward this to front end
-        correct = True
+        correct = input(f"found {title}  with simscore {similarity_score} accept this?").lower() in ("yes","y") #TODO forward this to front end
+        
         if correct:
             doi = res['message']['items'][0]['DOI'] 
             bibtex = requests.get(f"https://doi.org/{doi}", headers={"Accept": "application/x-bibtex"}, stream=False)
@@ -65,32 +72,47 @@ class BibTeX_Service:
             if field in bib_dict and bib_dict[field]:
                 return bib_dict[field]
 
-        pass
+        
+    def get_document_name(self):
+        #author1lastname_year_citekey
+        bib_dict = self.get_bibtex_library_dict()
+        if(bib_dict):
+            year = bib_dict['year']
+            citekey = bib_dict['citekey']
+            return f"{self.get_author1_last_name}_{year}_{citekey}"
 
 
 
 
 
+
+s = BibTeX_Service(paper_name="peter")
+s.set_required_fields(author="Devkota, Shrawan", title="Paper Schmaper", year=2022, citekey="schmaper2022")
+s.save_to_file(s.get_paper_name())
 
 bibs = [BibTeX_Service("Efficient_Embedding_of_Scale-Free_Graphs_in_the_Hyperbolic_Plane"),
        BibTeX_Service("Automatic Visual Detection of Fresh Poultry Egg Quality Inspection using Image Processing"),
        BibTeX_Service("Blending Immersive Gameplay with Intense Exercise using Asynchronous Exergaming"),
        BibTeX_Service("Online Level Generation in Super Mario Bros via Learning Constructive Primitives"),
-       BibTeX_Service("Quantum Mechanics")]
+       BibTeX_Service("Quantum Mechanics"), s]
 
 for bib in bibs:
     bib.save_to_file(bib.get_paper_name())
     bib_dict = bib.get_bibtex_library_dict()
+    print(bib_dict)
 
     author = str(bib.get_authors())
     author1 = bib.get_author1_last_name()
     year = bib_dict['year']
     title = bib_dict['title']
     source = bib.get_source()
+    document_name = bib.get_document_name()
     print(f"Authors: {str(author)}")
     print(f"Author 1 last name: {author1}")
     print(f"publication year: {year}")
     print(f"source: {source}")
+    print(f"document name: {document_name}")
     print(f"title: {title}\n\n")
+    
 
 
