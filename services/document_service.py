@@ -72,6 +72,7 @@ class DocumentService:
     def get_pdf_metadata(self, document_path:str):
         pdf_reader = PdfReader(document_path)
         metadata = pdf_reader.metadata
+        return metadata
 
     def __get_text_chunks(self, document_path:str)->list[str]:
         metadata = str(self.get_pdf_metadata(document_path=document_path))
@@ -260,4 +261,9 @@ class DocumentService:
             if document_model:
                 documents_list.append(document_model)
         return documents_list
+    
+    def get_title(self, document_path:str):
+        metadata = self.get_pdf_metadata(document_path=document_path)
+        if metadata:
+            return metadata.title
 

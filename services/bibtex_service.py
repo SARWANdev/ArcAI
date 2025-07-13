@@ -1,6 +1,5 @@
 from habanero import Crossref
 import bibtexparser
-from bibtexparser.bibdatabase import BibDatabase
 import requests
  
 
@@ -78,8 +77,8 @@ class BibTeX_Service:
         bib_dict = self.get_bibtex_library_dict()
         if(bib_dict):
             year = bib_dict['year']
-            citekey = bib_dict['citekey']
-            return f"{self.get_author1_last_name}_{year}_{citekey}"
+            title = bib_dict['title']
+            return f"{self.get_author1_last_name()}_{year}_{title.split(" ")[:5]}"
 
 
 
