@@ -1,25 +1,23 @@
 from langchain_community.vectorstores import FAISS
 class Conversation:
-    def __init__(self, id, vector_store:FAISS):
-        self.__id = id
-        
-        self.__vector_store = vector_store
-        self.__messages = []
+    def __init__(self, conversation_id=None, user_id=None, name=None, list_of_documents=None,
+                  human_messages=None, ai_messages=None, vector_store=None):
+        self.conversation_id = conversation_id
+        self.user_id = user_id
+        self.name = name
+        self.list_of_documents = list_of_documents or []
+        self.human_messages = human_messages or []
+        self.ai_messages = ai_messages or []
+        self.vector_store = vector_store
 
     def rename(self, name):
         self.name = name
 
-    def add_user_message(self, message:str):
-        self.__messages.append({"role": "user",
-                                "content": message})
-    
-    def add_ai_message(self, message:str):
-        self.__messages.append({"role": "ai",
-                                "content": message})
-        
-    def add_system_message(self, message: str):
-        self.__messages.append({"role": "system",
-                                "content": message})
+    def add_human_message(self, msg: str):
+        self.human_messages.append(msg)
+
+    def add_ai_message(self, msg: str):
+        self.ai_messages.append(msg)
         
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""  
