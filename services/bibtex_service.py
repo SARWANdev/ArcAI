@@ -25,7 +25,7 @@ class BibTeX_Service:
         self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
         
 
-    def __get_bibtex_str(self, paper_name:str)->str:
+    def __get_bibtex_str(self, paper_name:str):
         cr = Crossref()
         cr.timeout=1200
         res = cr.works(query=paper_name, limit=1)
@@ -98,12 +98,10 @@ for bib in bibs:
     year = bib_dict['year']
     title = bib_dict['title']
     source = bib.get_source()
-    document_name = bib.get_document_name()
     print(f"Authors: {str(author)}")
     print(f"Author 1 last name: {author1}")
     print(f"publication year: {year}")
     print(f"source: {source}")
-    print(f"document name: {document_name}")
     print(f"title: {title}\n\n")
     
 
