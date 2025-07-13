@@ -55,6 +55,34 @@ class ProjectService:
     def download_project(self, project_id):
         pass
 
+    def sort_project_documents(self, project_id, sort_criteria):
+        """
+        Sort documents of a project by multiple criteria.
+        Each entry in sort_criteria is a tuple: (field_name, order)
+        Example: [('title', 'asc'), ('year', 'desc')]
+        """
+        valid_fields = {
+            'title': lambda doc: doc.name.lower(),
+            'author': lambda doc: (doc.author or '').lower(),
+            'year': lambda doc: doc.year or 0,
+            'journal': lambda doc: (doc.journal or '').lower(),
+            'created_at': lambda doc: doc.created_at or '',
+        }
+
+        # Step 1: Get all documents of the project
+        documents = self.document_service.get_project_documents(project_id)
+        if not documents:
+            return []
+
+        # Step 2: Apply multiple sorts in reverse order (Python's stable sort)
+        for field, order in reversed(sort_criteria):
+            if field not in valid_fields:
+                raise ValueError(f"Invalid sort field: {field}")
+            reverse = (order == 'desc')
+            documents.sort(key=valid_fields[field], reverse=reverse)
+
+        return documents
+
     def get_project_embeddings(self, project_id, document_ids=None):
         pass
 
