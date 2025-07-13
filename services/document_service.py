@@ -56,11 +56,7 @@ class DocumentService:
 
         #generate embeddings and vector store
 
-        metadata = self.get_pdf_metadata(document_path=document_path)
-        metadata_text = str(metadata) 
-        text = self.__get_pdf_text(document_path) #TODO
-        text_chunks = self.__get_text_chunks(text)
-        text_chunks.insert(0, metadata_text)
+        text_chunks = self.__get_text_chunks(document_path=document_path)       
         ai_service = AIService()
         embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
@@ -78,7 +74,9 @@ class DocumentService:
         metadata = pdf_reader.metadata
         return metadata
 
-    def __get_text_chunks(self, text:str):
+    def __get_text_chunks(self, document_path:str)->list[str]:
+        metadata = str(self.get_pdf_metadata(document_path=document_path))
+        text = self.__get_pdf_text(document_path) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,
@@ -87,6 +85,7 @@ class DocumentService:
         )
     
         chunks = text_splitter.split_text(text)
+        chunks.insert(0, metadata)
         return chunks
 
 
