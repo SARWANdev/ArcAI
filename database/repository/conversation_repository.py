@@ -4,22 +4,33 @@ from database.utils.mongo_connector import mongo_connection
 from database.utils.db_setup import es
 
 class ConversationRepository:
- 
-    @staticmethod
-    def save(conversation_data: dict) -> str:
-        with mongo_connection() as db:
+    def __init__(self, user_id, name, last_opened):
+        self.user_id = user_id
+        self.name = name
+        #TODO solve how the convos are gonna be stored
+        self.list_of_documents = []       # List of document IDs or paths
+        self.human_messages = []          # List of strings
+        self.ai_messages = []
+        self.last_opened = last_opened
+
+    def new_conversation(self):
+        conversation_data = {"user_id": self.user_id, "name": self.name, "last_opened": self.last_opened,
+                             "list_of_documents": self.list_of_documents, "human_messages": self.human_messages}
+        with mongo_connection as db:
             try:
+                #Add to MongoDB
                 result = db.conversations.insert_one(conversation_data)
-                conversation_id = str(result.inserted_id)
-                es.index(index="conversations", id=conversation_id, body={
-                    "user_id": conversation_data["user_id"],
-                    "name": conversation_data["name"],
-                    "suggest": {"input": conversation_data["name"]}
+                id = result.inserted_id
+                #Add to Elasticsearch
+                es.index("conversations", id=id, body={
+                    "user_id": self.user_id,
+                    "name": self.name,
+                    "suggest": {
+                        "input": self.name
+                    }
                 })
-                return conversation_id
-            except DuplicateKeyError:
+            except pymongo.errors.DuplicateKeyError:
                 print("Conversation already exists")
-                return ""
 
 
     @staticmethod
@@ -86,11 +97,12 @@ class ConversationRepository:
             return False
 
     @staticmethod
-    def update_human_messages(conversation_id, human_messages) -> bool:
+    def add_user_message(conversation_id, message) -> bool:
         try:
             with mongo_connection() as db:
+                new_message = {"role": "user", "content": message}
                 result = db.conversations.update_one({"_id": conversation_id},
-                                                     {"human_messages": human_messages})
+                                                     {"$push": {"messages": new_message}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating human messages {e}")
@@ -98,11 +110,12 @@ class ConversationRepository:
 
 
     @staticmethod
-    def update_ai_messages(conversation_id, ai_messages):
+    def add_ai_message(conversation_id, message):
         try:
             with mongo_connection() as db:
+                new_message = {"role": "ai", "content": message}                
                 result = db.conversations.update_one({"_id": conversation_id},
-                                                     {"ai_messages": ai_messages})
+                                                     {"$push": {"messages": new_message}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating ai messages {e}")
