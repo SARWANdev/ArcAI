@@ -13,7 +13,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
-from services.upload_manager.server_conection import upload_document
+from services.upload_manager.server_conection import upload_document, delete_remote_directory
 
 
 class DocumentService:
@@ -154,23 +154,26 @@ class DocumentService:
         :param document_id:
         :return: boolean value
         """
-        document_data = self.document_repository.delete_document(document_id)
+        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        document_data = self.document_repository.delete_document( document_id )
 
         if not document_data:
-            print("Document with id {} was not found".format(document_id))
+            print("Document with id {} was not found".format( document_id) )
             return False
-        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-        #TODO get the path from the file in the server
-        self.document_repository.delete_document(document_id)
 
-        self.pdf_master_repository.decrement_ref_count(pdf_master_id)
+        remote_path = self.pdf_master_repository.get_path( pdf_master_id )
 
-        ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
+        self.document_repository.delete_document( document_id )
+
+        self.pdf_master_repository.decrement_ref_count( pdf_master_id )
+
+        ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
 
         if ref_count == 0:
-            #TODO method that deletes from the server that file with the given path
-            self.pdf_master_repository.delete_pdf_master(pdf_master_id)
-            # TODO method that manages the project directories
+
+            delete_remote_directory( remote_path )
+            self.pdf_master_repository.delete_pdf_master( pdf_master_id )
+
 
         return True
 

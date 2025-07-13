@@ -48,7 +48,7 @@ class PdfMasterDataBase:
     def get_ref_count(pdf_master_id):
         try:
             with mongo_connection() as db:
-                ref_count = db.pdf_master.find({"_id": ObjectId(pdf_master_id)}, {"ref_count": 1}).get("ref_count")
+                ref_count = db.pdf_master.find_one({"_id": ObjectId(pdf_master_id)}, {"ref_count": 1}).get("ref_count")
                 return ref_count
         except Exception as e:
             print(f"count reference could not be retrieved: {e}")
