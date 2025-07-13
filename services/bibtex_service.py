@@ -71,14 +71,7 @@ class BibTeX_Service:
             if field in bib_dict and bib_dict[field]:
                 return bib_dict[field]
 
-        
-    def get_document_name(self):
-        #author1lastname_year_citekey
-        bib_dict = self.get_bibtex_library_dict()
-        if(bib_dict):
-            year = bib_dict['year']
-            title = bib_dict['title']
-            return f"{self.get_author1_last_name()}_{year}_{title.split(" ")[:5]}"
+    
 
 
 
