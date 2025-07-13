@@ -6,7 +6,8 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 class Document:
     def __init__(self, name, project_id, pdf_master_id: Optional[str] = None, note: Optional[str] = None,
                  tag: Optional[str] = None, tag_color: Optional[str] = None, read: Optional[bool] = None,
-                 favorite: Optional[bool] = None, created_at = None, updated_at = None):
+                 favorite: Optional[bool] = None, created_at = None, updated_at = None, id: Optional[str] = None):
+        self.id = id
         self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern Last name from the author,
         self.project_id = project_id
         self.pdf_master_id = pdf_master_id
@@ -34,6 +35,34 @@ class Document:
             "updated_at": get_utc_zulu_timestamp(),
         }
         return document_dic
+
+
+    #TODO: Make sure that the read and favorite functions are to a certain convention, 
+    # either setters and getters or just functions
+    
+    def mark_read(self):
+        self.read = True
+
+    def mark_unread(self):
+        self.read = False
+
+    def is_read(self):
+        return self.read
+
+    def add_favorite(self):
+        self.favorite = True
+
+    def remove_favorite(self):
+        self.favorite = False
+
+    def is_favorite(self):
+        return self.favorite
+
+    def set_tag(self, tag_obj):
+        self.tag = tag_obj
+
+    def get_tag(self):
+        return self.tag
 
 
 

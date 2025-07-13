@@ -72,7 +72,6 @@ class DocumentService:
     def get_pdf_metadata(self, document_path:str):
         pdf_reader = PdfReader(document_path)
         metadata = pdf_reader.metadata
-        return metadata
 
     def __get_text_chunks(self, document_path:str)->list[str]:
         metadata = str(self.get_pdf_metadata(document_path=document_path))
@@ -98,14 +97,17 @@ class DocumentService:
             return None
         
         document_model = DocumentModel(
-            name = document_data.get('name'),
-            id = document_id,
-            project_id = document_data.get('project_id'),
-            vector_store_path = document_data.get('vector_store_path'),
-            author = document_data.get('first_author'),
-            year = document_data.get('year'),
-            journal = document_data.get('journal'),
-            pages = document_data.get('pages')
+            id=document_id,
+            name=document_data.get('name'),
+            project_id=document_data.get('project_id'),
+            pdf_master_id=document_data.get('pdf_master_id'),
+            note=document_data.get('note'),
+            tag=document_data.get('tag'),
+            tag_color=document_data.get('tag_color'),
+            read=document_data.get('read'),
+            favorite=document_data.get('favorite'),
+            created_at=document_data.get('created_at'),
+            updated_at=document_data.get('updated_at')
         )
         
         # Update state using explicit methods

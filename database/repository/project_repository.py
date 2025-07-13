@@ -25,7 +25,7 @@ class Project:
                 return str(result.inserted_id)
             except pymongo.errors.DuplicateKeyError:
                 print(f"Project {project_name} already exists")
-                return None
+                return ""
 
 
     @staticmethod
