@@ -56,13 +56,9 @@ class DocumentService:
 
         #generate embeddings and vector store
 
-        #metadata = self.get_pdf_metadata(document_path=document_path)
-        #metadata_text = str(metadata)
-        #text = self.__get_pdf_text(document_path)
-        #text_chunks = self.__get_text_chunks(text)
-        #text_chunks.insert(0, metadata_text)
-        #ai_service = AIService()
-        #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        text_chunks = self.__get_text_chunks(document_path=document_path)       
+        ai_service = AIService()
+        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
     def __get_pdf_text(self, document_path:str) -> str:
@@ -77,7 +73,9 @@ class DocumentService:
         pdf_reader = PdfReader(document_path)
         metadata = pdf_reader.metadata
 
-    def __get_text_chunks(self, text:str):
+    def __get_text_chunks(self, document_path:str)->list[str]:
+        metadata = str(self.get_pdf_metadata(document_path=document_path))
+        text = self.__get_pdf_text(document_path) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,
@@ -86,6 +84,7 @@ class DocumentService:
         )
     
         chunks = text_splitter.split_text(text)
+        chunks.insert(0, metadata)
         return chunks
 
 
@@ -98,14 +97,17 @@ class DocumentService:
             return None
         
         document_model = DocumentModel(
-            name = document_data.get('name'),
-            id = document_id,
-            project_id = document_data.get('project_id'),
-            vector_store_path = document_data.get('vector_store_path'),
-            author = document_data.get('first_author'),
-            year = document_data.get('year'),
-            journal = document_data.get('journal'),
-            pages = document_data.get('pages')
+            id=document_id,
+            name=document_data.get('name'),
+            project_id=document_data.get('project_id'),
+            pdf_master_id=document_data.get('pdf_master_id'),
+            note=document_data.get('note'),
+            tag=document_data.get('tag'),
+            tag_color=document_data.get('tag_color'),
+            read=document_data.get('read'),
+            favorite=document_data.get('favorite'),
+            created_at=document_data.get('created_at'),
+            updated_at=document_data.get('updated_at')
         )
         
         # Update state using explicit methods
