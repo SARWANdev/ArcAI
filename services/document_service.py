@@ -210,6 +210,27 @@ class DocumentService:
             return TagModel(name=tag_name, color=tag_color)
         return None
     
+    def filter_documents(self, project_id: str, read: bool = None, favorite: bool = None, tag: str = None):
+        all_docs = self.get_project_documents(project_id)
+        if not all_docs:
+            return []
+
+        filtered = []
+        for doc in all_docs:
+            if read is not None and doc.is_read() != read:
+                continue
+            if favorite is not None and doc.is_favorite() != favorite:
+                continue
+            if tag is not None:
+                doc_tag = doc.get_tag()
+                tag_name = doc_tag.name if hasattr(doc_tag, "name") else doc_tag
+                if tag_name != tag:
+                    continue
+            filtered.append(doc)
+
+        return filtered
+
+    
     def download_document(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:

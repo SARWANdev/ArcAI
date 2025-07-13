@@ -1,7 +1,7 @@
 import os
 from bson import ObjectId
 from services.document_service import DocumentService
-from services.project_service import ProjectService  # NEW
+from services.project_service import ProjectService
 from model.document_reader.tag_manager.color import Color
 
 def prompt_sort_criteria():
@@ -28,6 +28,19 @@ def prompt_sort_criteria():
 
     return criteria
 
+def prompt_filter_criteria():
+    print("\nFilter Options:")
+    read_str = input("Filter by read status? (yes/no/skip): ").strip().lower()
+    favorite_str = input("Filter by favorite status? (yes/no/skip): ").strip().lower()
+    tag = input("Filter by tag (exact match)? Leave blank to skip: ").strip()
+
+    def parse_bool(val):
+        return True if val == "yes" else False if val == "no" else None
+
+    read = parse_bool(read_str)
+    favorite = parse_bool(favorite_str)
+    return read, favorite, tag if tag else None
+
 if __name__ == "__main__":
     document_service = DocumentService()
     project_service = ProjectService()
@@ -44,10 +57,14 @@ if __name__ == "__main__":
     )
     print("✔️ Upload complete.\n")
 
-    current_sort = []  # to keep current sort applied
+    current_sort = []
+    current_filter = None  # Tuple: (read, fav, tag)
 
     while True:
-        if current_sort:
+        if current_filter:
+            read, favorite, tag = current_filter
+            docs = document_service.filter_documents(project_id, read=read, favorite=favorite, tag=tag)
+        elif current_sort:
             docs = project_service.sort_project_documents(project_id, current_sort)
         else:
             docs = document_service.get_project_documents(project_id)
@@ -62,6 +79,7 @@ if __name__ == "__main__":
 
         print("\n0) Quit")
         print("Type 'sort' to change sorting")
+        print("Type 'filter' to apply filter")
 
         user_input = input("Select document (number) or action: ").strip().lower()
 
@@ -69,6 +87,11 @@ if __name__ == "__main__":
             break
         elif user_input == "sort":
             current_sort = prompt_sort_criteria()
+            current_filter = None  # clear filter when sorting
+            continue
+        elif user_input == "filter":
+            current_filter = prompt_filter_criteria()
+            current_sort = []  # clear sort when filtering
             continue
 
         try:
