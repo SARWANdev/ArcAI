@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
         print(f"\nFound {len(docs)} documents in project {project_id}:")
         for i, doc in enumerate(docs, 1):
-            print(f"{i}. id={doc.id}, name={doc.name}, read={doc.is_read()}, fav={doc.is_favorite()}")
+            print(f"{i}. id={doc.document_id}, name={doc.name}, read={doc.is_read()}, fav={doc.is_favorite()}")
 
         print("\n0) Quit")
         try:
@@ -45,7 +45,7 @@ if __name__ == "__main__":
             continue
 
         selected_doc = docs[choice - 1]
-        doc_oid = ObjectId(str(selected_doc.id))
+        doc_oid = ObjectId(str(selected_doc.document_id))
 
         action = input(
             "\nChoose action: read | unread | fav | unfav | tag | untag | showtag | bibtex | delete\n> "

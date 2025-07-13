@@ -42,8 +42,5 @@ class LibraryService:
 
         return projects_list
 
-    def filter_library(self, filters):
-        pass
-
     def get_item_metadata(self, item_id, item_type):
         pass
