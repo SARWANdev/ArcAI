@@ -5,7 +5,8 @@ from model.document_reader.project import Project
 class LibraryService:
     def __init__(self):
         self.library_repository = LibraryRepository
-
+        
+    #SHRAWAN    
     def get_embeddings(self, item_ids=None):
         pass
 
@@ -42,5 +43,3 @@ class LibraryService:
 
         return projects_list
 
-    def get_item_metadata(self, item_id, item_type):
-        pass

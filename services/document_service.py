@@ -221,20 +221,11 @@ class DocumentService:
     def highlight_document(self, document_id, text):
         pass
 
-    def process_document_metadata(self, document_id):
-        pass
-
     def duplicate_document(self, document_id):
         #TODO: duplicate the document in the database
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
-
-    def extract_text_from_document(self, document_id):
-        pass
-
-    def get_text_chunks_from_document(self, document_id):
-        pass
 
     def download_bibtex(self, document_id):
         # Get a document's bibtex and returns it as a buffer, with it's name
@@ -246,7 +237,6 @@ class DocumentService:
         buffer = io.BytesIO()
         buffer.write(bibtex.encode('utf-8'))
         return buffer, title
-        
 
     def name_assigner(self):
         #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
