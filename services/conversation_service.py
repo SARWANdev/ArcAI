@@ -22,10 +22,15 @@ class ConversationService:
             return None
         conversation_model = ConversationModel(
             id = conversation_data.get("_id"),
-            vector_store = None #TODO: add vectors
+            user_id = conversation_data.get("user_id"),
+            name = conversation_data.get("name"),
+            list_of_documents = conversation_data.get("list_of_documents"),
+            vector_store = conversation_data.get("vector_store"),
+            created_at = conversation_data.get("created_at"),
+            updated_at = conversation_data.get("updated_at")
         )
         #TODO: add messages into model's message list
-        pass
+        return conversation_model
         
 
     def rename_chat(self, conversation_id, new_name):
