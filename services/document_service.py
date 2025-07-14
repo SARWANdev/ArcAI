@@ -110,7 +110,7 @@ class DocumentService:
             return None
         
         document_model = DocumentModel(
-            id=document_id,
+            document_id=document_id,
             name=document_data.get('name'),
             project_id=document_data.get('project_id'),
             pdf_master_id=document_data.get('pdf_master_id'),
