@@ -4,7 +4,7 @@ from datetime import datetime
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None):
+    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None, list_of_documents=None):
 
         self.conversation_id = conversation_id
         self.user_id = user_id
@@ -13,6 +13,7 @@ class Conversation:
         self.vector_store = vector_store
         self.created_at = created_at
         self.updated_at = updated_at
+        self.list_of_documents = list_of_documents or []
 
     def rename(self, name):
         self.name = name
@@ -67,9 +68,7 @@ class Conversation:
                                 "content": formatted_message})
         return formatted_messages
 
-
-
-        
+       
     def get_messages(self):
         return self.messages
     
