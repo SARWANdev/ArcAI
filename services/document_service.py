@@ -38,13 +38,20 @@ class DocumentService:
         title = os.path.basename(document_path)
         bibtex_instance = BibTeX_Service(title)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
-        new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
+        new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
+                                                 year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
+                                                 authors = bibtex_instance.get_authors())
         # TODO eather update the instance or the database described with the bibtex
-        year = bibtex_instance.get_year()
-        source = bibtex_instance.get_source()
-        authors = bibtex_instance.get_authors()   # string type
+
+
+           # string type
         pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
         return pdf_master_id
+
+    def file_to_path(self, file, user_id, project_id):
+        pass
+
+
 
 
     def upload_document(self, document_path: str, user_id: str, project_id: str):
