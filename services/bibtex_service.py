@@ -8,6 +8,8 @@ class BibTeX_Service:
     
     def __init__(self, paper_name: str) -> None:
         self.__paper_name = paper_name.replace("_", " ")
+        if self.__paper_name.lower().endswith('.pdf'):
+            self.__paper_name = self.__paper_name[:-4]
         __unformatted_bibtex_string = self.__get_bibtex_str(paper_name=self.__paper_name)
         if __unformatted_bibtex_string:
             self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
@@ -57,7 +59,7 @@ class BibTeX_Service:
     def get_authors(self):
         author_string = self.__bibtex_library.entries[0]['author']
         authors = author_string.split(" and ")
-        return authors
+        return str(authors)
     
     def get_author1_last_name(self):
         authors = self.get_authors()
@@ -72,7 +74,8 @@ class BibTeX_Service:
                 return bib_dict[field]
 
     
-
+    def get_year(self):
+        return self.get_bibtex_library_dict()['year']   
 
 
 

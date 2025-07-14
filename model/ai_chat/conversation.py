@@ -9,7 +9,7 @@ class Conversation:
         self.conversation_id = conversation_id
         self.user_id = user_id
         self.name = name
-        self.messages = messages
+        self.messages = messages or []
         self.vector_store = vector_store
         self.created_at = created_at
         self.updated_at = updated_at
