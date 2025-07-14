@@ -11,18 +11,6 @@ from model.document_reader.document import Document
 
 
 class DocumentDataBase:
-    def __init__(self, project_id: str, name: str, pdf_master_id, note: Optional[str] = None,
-                  tag: Optional[str] = None, tag_color: Optional[str] = None):
-
-        self.project_id = project_id
-        self.pdf_master_id = pdf_master_id #TODO(santiago) make the manager method for this attribute
-        self.name = name
-        self.note = note
-        self.tag = tag
-        self.tag_color = tag_color
-
-        self.created_at = get_utc_zulu_timestamp()
-        self.updated_at = self.created_at
 
     # this method store an object Document and returns the Mong _id.
     @staticmethod
@@ -30,34 +18,6 @@ class DocumentDataBase:
         with mongo_connection() as db:
             doc_id = db.documents.insert_one(document.new_document_dict())
             return str(doc_id.inserted_id)
-
-
-    def new_document(self):
-        document_data = {
-            "project_id": self.project_id,
-            "name": self.name,
-            "note": self.note,
-            "tag": self.tag,
-            "tag_color": self.tag_color,
-            "read": False,
-            "favorite": False,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-        }
-        with mongo_connection() as db:
-            result = db.documents.insert_one(document_data)
-            # Add document to Elasticsearch
-            document_id = result.inserted_id
-            author = PdfMasterDataBase.get_first_author(self.pdf_master_id)
-            es.index("documents", id=document_id, body={
-                "name": self.name,
-                "author": author,
-                "suggest": {
-                    "input": [self.name, author]
-                }
-            })
-            return document_id
-
 
     @staticmethod
     def get_year( document_id ):
