@@ -21,7 +21,7 @@ class ConversationService:
         if not conversation_data:
             return None
         conversation_model = ConversationModel(
-            id = conversation_data.get("_id"),
+            conversation_id= conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),
             name = conversation_data.get("name"),
             messages = conversation_data.get("messages"),
