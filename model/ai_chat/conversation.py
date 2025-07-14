@@ -45,14 +45,15 @@ class Conversation:
         formatted_message = f"""  
 
                     1. Use the context below.  
-                    2. Make sure that the answer makes sense based on the question
+                    2. The Question: is the most important part of the answer, make sure that the answer makes sense based on the question
                     3. Keep answers concise but friendly.  
                     4. if you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    6 is more important than 5
                     
 
-                    Context: {context}  
+                    5: Context: {context}  
 
-                    Question: {message}  
+                    6: Question: {message}  
 
                     Answer:  
                     """
