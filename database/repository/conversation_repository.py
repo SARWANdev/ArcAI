@@ -97,11 +97,12 @@ class ConversationRepository:
             return False
 
     @staticmethod
-    def update_human_messages(conversation_id, human_messages) -> bool:
+    def add_user_message(conversation_id, message) -> bool:
         try:
             with mongo_connection() as db:
+                new_message = {"role": "user", "content": message}
                 result = db.conversations.update_one({"_id": conversation_id},
-                                                     {"human_messages": human_messages})
+                                                     {"$push": {"messages": new_message}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating human messages {e}")
@@ -109,11 +110,12 @@ class ConversationRepository:
 
 
     @staticmethod
-    def update_ai_messages(conversation_id, ai_messages):
+    def add_ai_message(conversation_id, message):
         try:
             with mongo_connection() as db:
+                new_message = {"role": "ai", "content": message}                
                 result = db.conversations.update_one({"_id": conversation_id},
-                                                     {"ai_messages": ai_messages})
+                                                     {"$push": {"messages": new_message}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating ai messages {e}")

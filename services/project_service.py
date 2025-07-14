@@ -1,11 +1,14 @@
 from database.repository.project_repository import Project as ProjectRepository
 from model.document_reader.project import Project as ProjectModel
 from database.repository.library_repository import Library as LibraryRepository
+from model.document_reader.document import Document as DocumentModel
+from services.document_service import DocumentService
 
 class ProjectService:
     def __init__(self):
         self.project_repository = ProjectRepository
         self.library_repository = LibraryRepository
+        self.document_service = DocumentService()
 
     #TODO: When thge user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
     #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
@@ -55,11 +58,38 @@ class ProjectService:
     def download_project(self, project_id):
         pass
 
+    def sort_project_documents(self, project_id: str, sort_criteria: list[tuple[str, str]]) -> list[DocumentModel]:
+        """
+        Sort documents of a project by multiple criteria.
+        Each entry in sort_criteria is a tuple: (field_name, order)
+        e.g., [('author', 'asc'), ('year', 'desc'), ('title', 'asc')]
+        """
+        documents = self.document_service.get_project_documents(project_id)
+        if not documents:
+            return []
+
+        valid_fields = {
+            "title": lambda d: getattr(d, 'name', '').lower() if getattr(d, 'name', None) else "",
+            "author": lambda d: getattr(d, 'author', '').lower() if getattr(d, 'author', None) else "",
+            "year": lambda d: getattr(d, 'year', None) if getattr(d, 'year', None) is not None else -1,
+            "source": lambda d: getattr(d, 'source', '').lower() if getattr(d, 'source', None) else "",
+            "created_at": lambda d: getattr(d, 'created_at', '') if getattr(d, 'created_at', None) else ""
+        }
+
+
+        for field, order in reversed(sort_criteria):
+            if field not in valid_fields:
+                raise ValueError(f"Invalid sort field: {field}")
+            reverse = (order == "desc")
+            documents.sort(key=valid_fields[field], reverse=reverse)
+
+        return documents
+
+
+    #SHRAWAN
     def get_project_embeddings(self, project_id, document_ids=None):
         pass
 
-    def process_project_metadata(self, project_id):
-        pass
-
+    #SHRAWAN
     def generate_project_summary(self, project_id):
         pass
