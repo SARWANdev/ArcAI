@@ -11,7 +11,7 @@ from PyPDF2 import PdfReader
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
-from services.bibtex_service import title, BibTeX_Service
+from services.bibtex_service import BibTeX_Service
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.server_conection import upload_document, delete_remote_directory
@@ -112,7 +112,7 @@ class DocumentService:
             return None
         
         document_model = DocumentModel(
-            id=document_id,
+            document_id=document_id,
             name=document_data.get('name'),
             project_id=document_data.get('project_id'),
             pdf_master_id=document_data.get('pdf_master_id'),
