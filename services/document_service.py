@@ -48,7 +48,9 @@ class DocumentService:
         pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
         return pdf_master_id
 
-    def file_to_path(self, file, user_id, project_id):
+    # this method is possibly the one that has to be called
+    def upload_file(self, file, user_id, project_id):
+
         pass
 
 

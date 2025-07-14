@@ -1,0 +1,14 @@
+langchain-community~=0.3.27
+PyPDF2~=3.0.1
+langchain~=0.3.26
+pytest~=8.4.1
+pymongo~=4.13.2
+elasticsearch~=9.0.2
+utils~=1.0.2
+requests~=2.32.3
+paramiko~=3.5.1
+scp~=0.15.0
+python-dotenv~=1.1.1
+pathlib~=1.0.1
+bibtexparser~=1.4.3
+habanero~=2.3.0
