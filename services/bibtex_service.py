@@ -5,26 +5,39 @@ import requests
 
 class BibTeX_Service:
 
-    
+    # gotta clean up on frontend connection
     def __init__(self, paper_name: str) -> None:
         self.__paper_name = paper_name.replace("_", " ")
         if self.__paper_name.lower().endswith('.pdf'):
             self.__paper_name = self.__paper_name[:-4]
         __unformatted_bibtex_string = self.__get_bibtex_str(paper_name=self.__paper_name)
-        if __unformatted_bibtex_string:
-            self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
-            self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
-            return
+        if not __unformatted_bibtex_string:
+            match input("Couldnt parse BibTex, enter Bibtex[1] or make miscellaneous doc with req fields[2]"):
+                case 1:
+                    __unformatted_bibtex_string = input("Paste BibTeX")
+                case 2:
+                    citekey = input("Citekey: ")
+                    author = input("Authors: ")
+                    title = input("Title: ")
+                    year = input("Year: ")
+                    __unformatted_bibtex_string = self.create_misc_bibtex(author=author, title=title, year=year, citekey=citekey)  
+                case _:
+                    print("Meow")
+                    __unformatted_bibtex_string = "@misc{schmaper2022, author = {Devkota, Shrawan}, title = {Paper Schmaper}, year = {2022}}"    
+        
+        self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
+        self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+        return
+
         
         
     def set_bibtex(self, bibtex:str):
         self.__bibtex_library = bibtexparser.loads(bibtex, parser=bibtexparser.bparser.BibTexParser())
         self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
 
-    def set_required_fields(self, author:str, title:str, year:int, citekey:str):
+    def create_misc_bibtex(self, author:str, title:str, year:int, citekey:str):
         bibtex = f"@misc{{{citekey}, author = {{{author}}}, title = {{{title}}}, year = {{{year}}}}}"
-        self.__bibtex_library = bibtexparser.loads(bibtex, parser=bibtexparser.bparser.BibTexParser())
-        self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+        return bibtex
         
 
     def __get_bibtex_str(self, paper_name:str):
@@ -77,15 +90,13 @@ class BibTeX_Service:
         return self.get_bibtex_library_dict()['year']   
 
 
-s = BibTeX_Service(paper_name="peter")
-s.set_required_fields(author="Devkota, Shrawan", title="Paper Schmaper", year=2022, citekey="schmaper2022")
-s.save_to_file(s.get_paper_name())
+
 
 bibs = [BibTeX_Service("Efficient_Embedding_of_Scale-Free_Graphs_in_the_Hyperbolic_Plane"),
        BibTeX_Service("Automatic Visual Detection of Fresh Poultry Egg Quality Inspection using Image Processing"),
        BibTeX_Service("Blending Immersive Gameplay with Intense Exercise using Asynchronous Exergaming"),
        BibTeX_Service("Online Level Generation in Super Mario Bros via Learning Constructive Primitives"),
-       BibTeX_Service("Quantum Mechanics"), s]
+       BibTeX_Service("Quantum Mechanics")]
 
 for bib in bibs:
     bib.save_to_file(bib.get_paper_name())
