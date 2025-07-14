@@ -47,7 +47,6 @@ class BibTeX_Service:
     def get_bibtex_string(self)->str:
         return self.__formatted_bibtex_string
 
-
     def get_paper_name(self)->str:
         return self.__paper_name
     
@@ -72,9 +71,6 @@ class BibTeX_Service:
                 return bib_dict[field]
 
     
-
-
-
 
 
 

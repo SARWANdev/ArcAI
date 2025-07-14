@@ -62,7 +62,7 @@ class ProjectService:
         """
         Sort documents of a project by multiple criteria.
         Each entry in sort_criteria is a tuple: (field_name, order)
-        e.g., [('first_author', 'asc'), ('year', 'desc'), ('title', 'asc')]
+        e.g., [('author', 'asc'), ('year', 'desc'), ('title', 'asc')]
         """
         documents = self.document_service.get_project_documents(project_id)
         if not documents:
@@ -70,9 +70,9 @@ class ProjectService:
 
         valid_fields = {
             "title": lambda d: getattr(d, 'name', '').lower() if getattr(d, 'name', None) else "",
-            "first_author": lambda d: getattr(d, 'first_author', '').lower() if getattr(d, 'first_author', None) else "",
+            "author": lambda d: getattr(d, 'author', '').lower() if getattr(d, 'author', None) else "",
             "year": lambda d: getattr(d, 'year', None) if getattr(d, 'year', None) is not None else -1,
-            "journal": lambda d: getattr(d, 'journal', '').lower() if getattr(d, 'journal', None) else "",
+            "source": lambda d: getattr(d, 'source', '').lower() if getattr(d, 'source', None) else "",
             "created_at": lambda d: getattr(d, 'created_at', '') if getattr(d, 'created_at', None) else ""
         }
 
