@@ -85,28 +85,18 @@ class ConversationRepository:
             print(f"ERROR: Updating conversation list of documents {e}")
             return False
 
+
     @staticmethod
-    def update_human_messages(conversation_id, human_messages) -> bool:
+    def update_messages(conversation_id, messages: list) -> bool:
         try:
             with mongo_connection() as db:
                 result = db.conversations.update_one({"_id": conversation_id},
-                                                     {"human_messages": human_messages})
+                                                    {"$set": {"messages": messages}})
                 return result.modified_count > 0
         except Exception as e:
-            print(f"ERROR: Updating human messages {e}")
+            print(f"ERROR: Updating conversation messages {e}")
             return False
 
-
-    @staticmethod
-    def update_ai_messages(conversation_id, ai_messages):
-        try:
-            with mongo_connection() as db:
-                result = db.conversations.update_one({"_id": conversation_id},
-                                                     {"ai_messages": ai_messages})
-                return result.modified_count > 0
-        except Exception as e:
-            print(f"ERROR: Updating ai messages {e}")
-            return False
 
     @staticmethod
     def search_conversation(user_id, prefix):

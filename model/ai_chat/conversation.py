@@ -4,7 +4,7 @@ from datetime import datetime
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None):
+    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None, list_of_documents=None):
 
         self.conversation_id = conversation_id
         self.user_id = user_id
@@ -13,6 +13,7 @@ class Conversation:
         self.vector_store = vector_store
         self.created_at = created_at
         self.updated_at = updated_at
+        self.list_of_documents = list_of_documents or []
 
     def rename(self, name):
         self.name = name
@@ -45,14 +46,15 @@ class Conversation:
         formatted_message = f"""  
 
                     1. Use the context below.  
-                    2. Make sure that the answer makes sense based on the question
+                    2. The Question: is the most important part of the answer, make sure that the answer makes sense based on the question
                     3. Keep answers concise but friendly.  
                     4. if you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    6 is more important than 5
                     
 
-                    Context: {context}  
+                    5: Context: {context}  
 
-                    Question: {message}  
+                    6: Question: {message}  
 
                     Answer:  
                     """
@@ -67,9 +69,7 @@ class Conversation:
                                 "content": formatted_message})
         return formatted_messages
 
-
-
-        
+       
     def get_messages(self):
         return self.messages
     

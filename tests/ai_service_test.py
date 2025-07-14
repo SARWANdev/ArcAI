@@ -11,7 +11,6 @@ from services.ai_service import AIService
 from model.ai_chat.conversation import Conversation
 import time
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_experimental.text_splitter import SemanticChunker 
 
 def get_pdf_text(pdf_docs):
     text = ""
@@ -39,7 +38,6 @@ def get_text_chunks(text):
         chunk_overlap = 200,
         length_function = len
         )
-    #text_splitter = SemanticChunker(embeddings = embeddings)
     
     chunks = text_splitter.split_text(text)
     return chunks
@@ -95,7 +93,7 @@ def main():
 
             with st.spinner("Embedding"):           
                 #create vector store
-                st.session_state.vector_store = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path="F:/PSE/arcai/tests/embedings")    
+                st.session_state.vector_store = ai_service.get_vector_store(text_chunks=text_chunks)    
                 st.session_state.conversation = Conversation(conversation_id="penisman", vector_store=st.session_state.vector_store)
                 ai_service.send_system_message(system_message= """You are a helpful AI Assistant Arc AI 
                                                you assist with answering questions for documents users upload, you will get the relevant part of the document with each question""",
