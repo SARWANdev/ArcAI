@@ -11,7 +11,7 @@ from PyPDF2 import PdfReader
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
-from services.bibtex_service import title, BibTeX_Service
+from services.bibtex_service import BibTeX_Service
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.server_conection import upload_document, delete_remote_directory
@@ -38,13 +38,22 @@ class DocumentService:
         title = os.path.basename(document_path)
         bibtex_instance = BibTeX_Service(title)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
-        new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
+        new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
+                                                 year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
+                                                 authors = bibtex_instance.get_authors())
         # TODO eather update the instance or the database described with the bibtex
-        year = bibtex_instance.get_year()
-        source = bibtex_instance.get_source()
-        authors = bibtex_instance.get_authors()   # string type
+
+
+           # string type
         pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
         return pdf_master_id
+
+    # this method is possibly the one that has to be called
+    def upload_file(self, file, user_id, project_id):
+
+        pass
+
+
 
 
     def upload_document(self, document_path: str, user_id: str, project_id: str):
@@ -103,7 +112,7 @@ class DocumentService:
             return None
         
         document_model = DocumentModel(
-            id=document_id,
+            document_id=document_id,
             name=document_data.get('name'),
             project_id=document_data.get('project_id'),
             pdf_master_id=document_data.get('pdf_master_id'),

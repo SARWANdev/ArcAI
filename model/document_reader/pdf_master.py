@@ -8,13 +8,13 @@ class PdfMaster:
         self.path = path
         self.hash = pdf_hash
         self.user_id = user_id
-        self.vector_store_path = vector_store_path
-        self.journal = journal
-        self.authors = authors
-        self.first_author = first_author
-        self.year = year
-        self.source = source
-        self.bibtex = bibtex
+        self.vector_store_path = vector_store_path or ""
+        self.journal = journal or ""
+        self.authors = authors or ""
+        self.first_author = first_author or ""
+        self.year = year or ""
+        self.source = source or ""
+        self.bibtex = bibtex or ""
 
     def new_pdf_master_dict(self) -> dict:
         pdf_master_data = {
@@ -22,14 +22,13 @@ class PdfMaster:
             "path": self.path,
             "ref_count": 0,
             "hash": self.hash,
-            "vector_store_path": "",
-            "journal": "",
-            "authors": "",
-            "first_author": "",
-            "year": "",
-            "pages": "",
-            "source": "",
-            "bibtex": "",
+            "vector_store_path": self.vector_store_path,
+            "journal": self.journal,
+            "authors": self.authors,
+            "first_author": self.first_author,
+            "year": self.year,
+            "source": self.source,
+            "bibtex": self.bibtex,
 
             "created_at": get_utc_zulu_timestamp(),
             "updated_at": get_utc_zulu_timestamp(),

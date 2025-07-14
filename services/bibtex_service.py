@@ -90,29 +90,3 @@ class BibTeX_Service:
         return self.get_bibtex_library_dict()['year']   
 
 
-
-
-bibs = [BibTeX_Service("Efficient_Embedding_of_Scale-Free_Graphs_in_the_Hyperbolic_Plane"),
-       BibTeX_Service("Automatic Visual Detection of Fresh Poultry Egg Quality Inspection using Image Processing"),
-       BibTeX_Service("Blending Immersive Gameplay with Intense Exercise using Asynchronous Exergaming"),
-       BibTeX_Service("Online Level Generation in Super Mario Bros via Learning Constructive Primitives"),
-       BibTeX_Service("Quantum Mechanics")]
-
-for bib in bibs:
-    bib.save_to_file(bib.get_paper_name())
-    bib_dict = bib.get_bibtex_library_dict()
-    print(bib_dict)
-
-    author = str(bib.get_authors())
-    author1 = bib.get_author1_last_name()
-    year = bib_dict['year']
-    title = bib_dict['title']
-    source = bib.get_source()
-    print(f"Authors: {str(author)}")
-    print(f"Author 1 last name: {author1}")
-    print(f"publication year: {year}")
-    print(f"source: {source}")
-    print(f"title: {title}\n\n")
-    
-
-
