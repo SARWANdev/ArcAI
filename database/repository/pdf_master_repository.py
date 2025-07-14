@@ -197,6 +197,25 @@ class PdfMasterDataBase:
             result = db.pdf_master.find_one({"hash": pdf_hash, "user_id": user_id})
             return result
 
+    @staticmethod
+    def get_authors(pdf_master_id):
+        try:
+            with mongo_connection() as db:
+                authors = db.pdf_master.find_one({"_id": ObjectId(pdf_master_id)}, {"authors": 1}).get("authors")
+                return authors
+        except Exception as e:
+            print(f"authors can not be retrieved: {e}")
+            return ""
+
+    @staticmethod
+    def get_source(pdf_master_id):
+        try:
+            with mongo_connection() as db:
+                source = db.pdf_master.find_one({"_id": ObjectId(pdf_master_id)}, {"source": 1}).get("source")
+                return source
+        except Exception as e:
+            print(f"source can not be retrieved: {e}")
+            return ""
 
 
 
