@@ -45,7 +45,8 @@ class Conversation:
         formatted_message = f"""  
 
                     1. Use the context below.  
-                    3. Keep answers concise.  
+                    2. Make sure that the answer makes sense based on the question
+                    3. Keep answers concise but friendly.  
                     4. if you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
                     
 
