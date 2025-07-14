@@ -4,7 +4,7 @@ from utils.db_setup import es
 
 def init_es():
     # Creates Elasticsearch indices
-    if not (es.indices.exists(index = "documents") & es.indices.exists("conversations")):
+    if not (es.indices.exists(index = "documents") and es.indices.exists(index = "conversations")):
         es.indices.create(index="documents", body={
             "mappings": {
                 "properties": {
@@ -68,6 +68,7 @@ def init_mongo():
 
 if __name__ == "__main__":
     init_mongo()
+    init_es()
 
 
 
