@@ -16,6 +16,7 @@ class PdfMaster:
             "hash": self.hash,
             "vector_store_path": "",
             "journal": "",
+            "authors": "",
             "first_author": "",
             "year": None,
             "pages": None,

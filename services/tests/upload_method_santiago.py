@@ -131,9 +131,14 @@ if __name__ == "__main__":
 
 
 
-    create_two_users()
-    create_projects()
-    upload_documents_to_created_users()
+    #create_two_users()
+    #create_projects()
+    #upload_documents_to_created_users()
+
+
     #from mongo get the document_id you want to delete and set it as an argument
     #delete_document_from_an_id()
+
+    #TEST : duplicate
+    DocumentService().duplicate_document("6873c120f80e5fabd720b5eb", "6873c119f80e5fabd720b5e3")
 

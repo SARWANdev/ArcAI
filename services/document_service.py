@@ -11,6 +11,7 @@ from PyPDF2 import PdfReader
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
+from services.bibtex_service import BibTeX_Service
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.server_conection import upload_document, delete_remote_directory
@@ -26,6 +27,7 @@ class DocumentService:
 
 
     def __create_document(self, document_name, project_id, pdf_master_id):
+        #TODO(santiago) make a validation if the project_id exists and if pdf_master_id exist
         #Creates a new document in the database
         new_document_instance = DocumentModel(name=document_name, project_id=project_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
@@ -34,10 +36,20 @@ class DocumentService:
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash):
         relative_path = relative_path_generator(user_id, project_id)
+        title = os.path.basename(document_path)
+        bibtex_service_instance = BibTeX_Service( title )
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id)
         # TODO eather update the instance or the database described with the bibtex
+        # year
+        #year = bibtex_service_instance
+        # source
+        source = bibtex_service_instance.get_source()
+        # authors
+        author = bibtex_service_instance.get_authors()
         pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
+
+
         return pdf_master_id
 
 
@@ -56,9 +68,9 @@ class DocumentService:
 
         #generate embeddings and vector store
 
-        text_chunks = self.__get_text_chunks(document_path=document_path)       
-        ai_service = AIService()
-        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        #text_chunks = self.__get_text_chunks(document_path=document_path)
+        #ai_service = AIService()
+        #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
     def __get_pdf_text(self, document_path:str) -> str:
@@ -97,7 +109,7 @@ class DocumentService:
             return None
         
         document_model = DocumentModel(
-            id=document_id,
+            document_id=document_id,
             name=document_data.get('name'),
             project_id=document_data.get('project_id'),
             pdf_master_id=document_data.get('pdf_master_id'),
@@ -223,11 +235,32 @@ class DocumentService:
     def process_document_metadata(self, document_id):
         pass
 
-    def duplicate_document(self, document_id):
-        #TODO: duplicate the document in the database
-        document_data = self.document_repository.get_by_document_id(document_id)
+    def duplicate_document(self, document_id, target_project_id):
+        """
+        1. create a document instance
+        2. increase the ref_cound in the pdf master
+        3. set the
+        :param target_project_id:
+        :param document_id:
+        :return:
+        """
+        document_data = self.document_repository.get_by_document_id( document_id )
         if not document_data:
-            return None
+            pass
+        pdf_master_id = self.document_repository.get_pdf_master_id( document_id )
+        ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
+        document_name = self.document_repository.get_name( document_id )
+        document_name = self.name_ref_count_formating(document_name, ref_count)
+
+        self.__create_document(document_name, target_project_id, pdf_master_id)
+
+    @staticmethod
+    def name_ref_count_formating(document_name, ref_count):
+        if ref_count > 1:
+            name, ext = os.path.splitext( document_name )
+            new_name = f"{name}_({ref_count - 1}){ext}"
+            return new_name
+        return document_name
 
     def extract_text_from_document(self, document_id):
         pass
