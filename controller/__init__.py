@@ -1,14 +1,17 @@
+import os
+
 from flask import Flask
 from dotenv import find_dotenv, load_dotenv
 from os import environ as env
 from flask_cors import CORS
 
 import controller.library_controller
+from controller.chat_controller import ChatController
 from controller.project_controller import ProjectController
 from services.user_management.authentication_service import AuthenticationService
 from controller.user_controller import UserController
 from controller.library_controller import LibraryController
-
+from controller.document_controller import DocumentController
 
 # Load environment variables
 ENV_FILE = find_dotenv()
@@ -29,6 +32,8 @@ authentication_service.init_oauth(app)
 user_controller = UserController(authentication_service, app)
 library_controller = LibraryController(app)
 project_controller = ProjectController(app)
+chat_controller = ChatController(app)
+document_controller = DocumentController(app)
 
 # Run the server
 if __name__ == "__main__":

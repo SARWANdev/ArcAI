@@ -1,13 +1,15 @@
 from bson import ObjectId
 
+from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from services.project_service import ProjectService
 from services.document_service import DocumentService
-from flask import Blueprint, Flask, jsonify, request
+from flask import Blueprint, Flask, jsonify, request, json
 
 class ProjectController:
     def __init__(self, app : Flask):
         self.project_service = ProjectService()
         self.document_service = DocumentService()
+        self.document_repository = DocumentRepository
         # To create routes for project related method's endpoints
         self.project = Blueprint('project', __name__)
         self.register_project_routes(app)
@@ -40,19 +42,36 @@ class ProjectController:
         try:
             # Get parameters from query string
             user_id = request.args.get("user_id")
-            project_id = ObjectId(request.args.get("project_id"))
-
+            project_id = request.args.get("project_id")
+            sort_states = json.loads(request.args.get("sort_states"))
+            filter_state = request.args.get("filter_state")
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            documents = self.document_service.get_project_documents(project_id)
-            print(documents)
-            print(f"The user {user_id} wants document from the project {project_id}")
+            sort_criteria = []
+            document_list = []
+            if not sort_states:
+                documents = self.document_service.get_project_documents(project_id)
+            else:
+                for sort_state in sort_states:
+
+                    sort_tuple = (sort_state["field"].lower(), sort_state["order"])
+                    sort_criteria.append(sort_tuple)
+                documents = self.project_service.sort_project_documents(project_id, sort_criteria)
+            for document in documents:
+                document_object = {"DocumentId": str(document.document_id), "ProjectId": str(document.project_id),
+                                   "Title": document.name, "Read": document.read,
+                                   "CreatedAt": document.created_at, "Favorite": document.favorite,
+                                   "Year": self.document_repository.get_year(str(document.document_id)),
+                                   "Source": self.document_repository.get_source(str(document.document_id)),
+                                   "Authors": self.document_repository.get_authors(str(document.document_id))}
+                document_list.append(document_object)
 
             # Return both success message AND the project data
             return jsonify({
                 "status": "success",
+                "documents": document_list,
                 "message": "Documents retrieved successfully",
             }), 200
 
