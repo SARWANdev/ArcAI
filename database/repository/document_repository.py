@@ -58,6 +58,22 @@ class DocumentDataBase:
             })
             return document_id
 
+
+    @staticmethod
+    def get_year( document_id ):
+        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
+        return PdfMasterDataBase.get_year( pdf_master_id )
+
+    @staticmethod
+    def get_authors(document_id):
+        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        return PdfMasterDataBase.get_authors( pdf_master_id )
+
+    @staticmethod
+    def get_source( document_id ):
+        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
+        return PdfMasterDataBase.get_source( pdf_master_id )
+
     @staticmethod
     def get_name(document_id):
         with mongo_connection() as db:
