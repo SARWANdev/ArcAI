@@ -1,4 +1,5 @@
 import os
+import tempfile
 from email.mime import text
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
@@ -50,8 +51,20 @@ class DocumentService:
 
     # this method is possibly the one that has to be called
     def upload_file(self, file, user_id, project_id):
+        if hasattr(file, 'name'):
+            filename = os.path.basename(file.name)
+        else:
+            raise ValueError("Uploaded file does not have a 'name' attribute.")
 
-        pass
+        suffix = os.path.splitext(filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            tmp.write(file.read())
+            tmp_path = tmp.name
+
+        self.upload_document(document_path = tmp_path, user_id = user_id, project_id = project_id)
+
+        os.remove(tmp_path)
+
 
 
 
