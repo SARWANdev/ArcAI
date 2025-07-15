@@ -20,6 +20,12 @@ class DocumentDataBase:
             return str(doc_id.inserted_id)
 
     @staticmethod
+    def get_path( document_id ):
+        with mongo_connection() as db:
+            pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
+            return PdfMasterDataBase.get_path( pdf_master_id )
+
+    @staticmethod
     def get_year( document_id ):
         pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
         return PdfMasterDataBase.get_year( pdf_master_id )
