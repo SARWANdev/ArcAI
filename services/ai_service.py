@@ -68,6 +68,7 @@ class AIService:
         self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
         self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
         self.__base_url = base_url if base_url else self.__DEFAULT_BASE_URL
+        self.embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name, show_progress=True)
 
     def set_ollama_url(self, ollama_url:str):
         self.__ollama_api_url = ollama_url
@@ -197,7 +198,7 @@ class AIService:
         return response
         
 
-    def get_vector_store(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
+    def get_embedding(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
         """
         Creates a FAISS vector store from a list of text chunks using Ollama embeddings.
 
@@ -208,8 +209,7 @@ class AIService:
         Returns:
             FAISS: The created FAISS vector store containing the embedded text chunks.
         """
-        embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name, show_progress=True)
-        vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+        vector_store = FAISS.from_texts(text_chunks, embedding=self.embeddings)
         if embedding_path:
             vector_store.save_local(embedding_path)
         return vector_store
@@ -230,5 +230,15 @@ class AIService:
         relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
         context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
         return context
+    
+    
+    def load_embedding_from_path(self, embedding_path:str):
+        loaded_vector_store = FAISS.load_local(
+        "faiss_index", self.embeddings, allow_dangerous_deserialization=True
+        )
+        return loaded_vector_store
+
+
+
 
 
