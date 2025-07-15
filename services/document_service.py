@@ -97,7 +97,7 @@ class DocumentService:
         pdf_reader = PdfReader(document_path)
         metadata = pdf_reader.metadata
 
-    def __get_text_chunks(self, document_path:str)->list[str]:
+    def get_text_chunks(self, document_path:str)->list[str]:
         metadata = str(self.get_pdf_metadata(document_path=document_path))
         text = self.__get_pdf_text(document_path) 
         text_splitter = CharacterTextSplitter(
