@@ -68,7 +68,7 @@ class DocumentPropertiesRepository:
     def update_tag(document_id, tag_name) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.documents.update_one({"_id": document_id}, {"$set": {"tag": tag_name}})
+                result = db.documents.update_one({"_id": document_id}, {"$set": {"tag_name": tag_name}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"Tag name could not be update: {e}")

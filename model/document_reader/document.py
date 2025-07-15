@@ -5,14 +5,14 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 class Document:
     def __init__(self, name, project_id, pdf_master_id: Optional[str] = None, note: Optional[str] = None,
-                 tag: Optional[str] = None, tag_color: Optional[str] = None, read: Optional[bool] = None,
+                 tag_name: Optional[str] = None, tag_color: Optional[str] = None, read: Optional[bool] = None,
                  favorite: Optional[bool] = None, created_at = None, updated_at = None, document_id: Optional[str] = None):
         self.document_id = document_id
         self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern Last name from the author,
         self.project_id = project_id
         self.pdf_master_id = pdf_master_id
         self.note = note
-        self.tag = tag
+        self.tag_name = tag_name
         self.tag_color = tag_color
         self.read = read
         self.favorite = favorite
@@ -27,7 +27,7 @@ class Document:
             "project_id": self.project_id,
             "pdf_master_id": "",
             "note": "",
-            "tag": "",
+            "tag_name": "",
             "tag_color": "",
             "read": False,
             "favorite": False,
@@ -59,10 +59,11 @@ class Document:
         return self.favorite
 
     def set_tag(self, tag_obj):
-        self.tag = tag_obj
+        self.tag_name = tag_obj.get_name()
+        self.tag_color = tag_obj.get_color()
 
     def get_tag(self):
-        return self.tag
+        return self.tag_name
 
 
 
