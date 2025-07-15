@@ -11,11 +11,13 @@ class ConversationRepository:
             try:
                 result = db.conversations.insert_one(conversation_data)
                 conversation_id = str(result.inserted_id)
+                """
                 es.index(index="conversations", id=conversation_id, body={
                     "user_id": conversation_data["user_id"],
                     "name": conversation_data["name"],
                     "suggest": {"input": conversation_data["name"]}
                 })
+                """
                 return conversation_id
             except DuplicateKeyError:
                 print("Conversation already exists")
@@ -28,6 +30,28 @@ class ConversationRepository:
             return list (db.projects.find({"user_id": user_id}))
 
     @staticmethod
+    def get_history(user_id):
+        query = {
+            "query": {
+                "match": {
+                    "user_id": user_id
+                }
+            }
+        }
+        result = es.search(index="conversations", body=query)
+        return [doc['_source'] for doc in result['hits']['hits']]
+
+    @staticmethod
+    def add_to_history(conversation_data: dict):
+        id = conversation_data.get("_id")
+        result = es.index(index="conversations", id=id, body={
+                    "user_id": conversation_data["user_id"],
+                    "name": conversation_data["name"],
+                    "suggest": {"input": conversation_data["name"]}
+                })
+        return result["result"] == "created" or result["result"] == "updated"
+
+    @staticmethod
     def get_conversation_by_id(conversation_id):
         with mongo_connection() as db:
             return db.conversations.find_one({"_id": conversation_id})
@@ -37,12 +61,27 @@ class ConversationRepository:
         try:
             with mongo_connection() as db:
                 result = db.conversations.delete_one({"_id": conversation_id})
-                es.delete(index = "conversations", id = conversation_id)
+                if es.exists(index="conversations", id=conversation_id):
+                    es.delete(index = "conversations", id = conversation_id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Conversation could not be deleted: {e}")
             return False
-        
+    
+    @staticmethod
+    def clear_history(self, user_id):
+        history = self.get_history(user_id)
+        try:
+            with mongo_connection() as db:
+                for conversation in history:
+                    id = conversation["_id"]
+                    result = db.conversations.delete_one({"_id": id})
+                    es.delete(index = "conversations", id = id)
+                return result.deleted_count > 0
+        except Exception as e:
+            print(f"History could not be cleared: {e}")
+            return False
+
     @staticmethod
     def delete_all_conversations(user_id):
         try:
@@ -66,9 +105,10 @@ class ConversationRepository:
             with mongo_connection() as db:
                 result = db.conversations.update_one({"_id": conversation_id},
                                                      {"$set": {"name": new_name}})
-                es.update(index = "conversations", id = conversation_id, body={
-                    "doc": {"name": new_name}
-                })
+                if es.exists(index="conversations", id=conversation_id):
+                    es.update(index = "conversations", id = conversation_id, body={
+                        "doc": {"name": new_name}
+                    })
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating conversation name {e}")

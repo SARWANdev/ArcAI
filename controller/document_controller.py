@@ -40,27 +40,60 @@ class DocumentController:
         pass
 
     def upload_document(self):
-        home_dir = os.path.expanduser("~")
-        document_dir = os.path.join(home_dir, 'Documents')
-        upload_folder = os.path.join(document_dir, 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
+        try:
+            # Validate file part
+            if "file" not in request.files:
+                return jsonify({"error": "No file part in the request"}), 400
 
-        if "file" not in request.files:
-            return jsonify({"error": "No file part"}), 400
+            file = request.files["file"]
+            user_sub = request.form.get("user_sub")
+            project_id = request.form.get("project_id")
 
-        file = request.files["file"]
-        if file.filename == "":
-            return jsonify({"error": "No selected file"}), 400
+            if not file or file.filename.strip() == "":
+                return jsonify({"error": "No selected file"}), 400
 
-        safe_filename = secure_filename(file.filename)
-        save_path = os.path.join(upload_folder, safe_filename)
-        file.save(save_path)
+            print(f"The user : {user_sub} wants in the project : {project_id} the file {file.filename} has been uploaded")
 
-        return jsonify({
-            "message": "File uploaded successfully",
-            "saved_path": save_path
-        }), 200
+            self.document_service.upload_file(file, file.filename, user_sub, project_id)
+
+            return jsonify({
+                "status": "success",
+                "message": "The document has been uploaded successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error to get upload the document: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to upload the document in the server",
+                "error": str(e)
+            }), 500
+
+
+
+    def get_document_path(self):
+        try:
+            # Get parameters from query string
+            user_id = request.args.get("user_id")
+            document_id = request.args.get("document_id")
+
+
+            print(f"The user {user_id} and want the path of the document id {document_id}")
+            return jsonify({
+                "status": "success",
+                "message": "Documents path retrieved successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error to get path of the document: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to retrieve the path of the document",
+                "error": str(e)
+            }), 500
+
 
     def register_document_routes(self, app):
         app.add_url_rule("/document/upload", view_func=self.upload_document, methods=["POST"])
+        app.add_url_rule("/document/getpath", view_func=self.get_document_path)
         app.register_blueprint(self.document)
