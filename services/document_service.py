@@ -4,6 +4,7 @@ from email.mime import text
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
+from database.repository.tag_registry_repository import TagRegistryRepository
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
@@ -125,7 +126,7 @@ class DocumentService:
             project_id=document_data.get('project_id'),
             pdf_master_id=document_data.get('pdf_master_id'),
             note=document_data.get('note'),
-            tag=document_data.get('tag'),
+            tag_name=document_data.get('tag_name'),
             tag_color=document_data.get('tag_color'),
             read=document_data.get('read'),
             favorite=document_data.get('favorite'),
@@ -144,7 +145,7 @@ class DocumentService:
         else:
             document_model.remove_favorite()
 
-        tag_name = document_data.get('tag')
+        tag_name = document_data.get('tag_name')
         tag_color = document_data.get('tag_color')
         if tag_name is not None and tag_color is not None:
             tag_obj = TagModel(tag_name, tag_color)
@@ -215,22 +216,84 @@ class DocumentService:
         return self.document_properties_repo.mark_as_not_favorite(document_id)
 
     def add_tag(self, document_id, tag_name, tag_color):
+        tag_obj = TagModel(tag_name, tag_color)
+        tag_name = tag_obj.get_name()
+        tag_color = tag_obj.get_color()
+
+
+        existing_tag = TagRegistryRepository.get_tag(tag_name)
+        if existing_tag:
+            if existing_tag["color"] != tag_color:
+                print(f"Tag with name '{tag_name}' already exists with a different color.")
+                return False
+           
+        else:
+            TagRegistryRepository.create_or_verify_tag(tag_name, tag_color)
+
+
         success_name = self.document_properties_repo.update_tag(document_id, tag_name)
         success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
         return success_name and success_color
 
+
     def remove_tag(self, document_id):
-        return self.document_properties_repo.update_tag(document_id, None) & self.document_properties_repo.update_tag_color(document_id, None)
+        # Step 1: Get tag_name before removal
+        document_data = self.document_repository.get_by_document_id(document_id)
+        if not document_data:
+            return False
+
+
+        tag_name = document_data.get("tag_name")
+
+
+        # Step 2: Remove tag from document
+        success_name = self.document_properties_repo.update_tag(document_id, None)
+        success_color = self.document_properties_repo.update_tag_color(document_id, None)
+        success = success_name and success_color
+
+
+        # Step 3: If tag removed and tag_name existed, check if it’s unused now
+        if success and tag_name:
+            from database.utils.mongo_connector import mongo_connection
+            with mongo_connection() as db:
+                count = db.documents.count_documents({"tag_name": tag_name})
+                if count == 0:
+                    db.tag_registry.delete_one({"name": tag_name})
+                    print(f"Tag '{tag_name}' deleted from tag_registry (no longer used).")
+
+
+        return success
 
     def get_document_tag(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
-        tag_name = document_data.get('tag')
+        tag_name = document_data.get('tag_name')
         tag_color = document_data.get('tag_color')
         if tag_name and tag_color:
             return TagModel(name=tag_name, color=tag_color)
         return None
+    
+
+    def filter_documents(self, project_id: str, read: bool = None, favorite: bool = None, tag: str = None):
+        all_docs = self.get_project_documents(project_id)
+        if not all_docs:
+            return []
+
+        filtered = []
+        for doc in all_docs:
+            if read is not None and doc.is_read() != read:
+                continue
+            if favorite is not None and doc.is_favorite() != favorite:
+                continue
+            if tag is not None:
+                doc_tag = doc.get_tag_name()
+                tag_name = doc_tag.tag_name if hasattr(doc_tag, "tag_name") else doc_tag
+                if tag_name != tag:
+                    continue
+            filtered.append(doc)
+
+        return filtered
     
     def download_document(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)
