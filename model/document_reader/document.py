@@ -62,7 +62,7 @@ class Document:
         self.tag_name = tag_obj.get_name()
         self.tag_color = tag_obj.get_color()
 
-    def get_tag(self):
+    def get_tag_name(self):
         return self.tag_name
 
 
