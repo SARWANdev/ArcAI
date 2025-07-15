@@ -34,10 +34,10 @@ class DocumentService:
         self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
-    def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash):
+    def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
         relative_path = relative_path_generator(user_id, project_id)
-        title = os.path.basename(document_path)
-        bibtex_instance = BibTeX_Service(title)
+
+        bibtex_instance = BibTeX_Service(original_name)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
@@ -50,12 +50,13 @@ class DocumentService:
         return pdf_master_id
 
     # this method is possibly the one that has to be called
-    def upload_file(self, file, filename, user_id, project_id):
-        suffix = os.path.splitext(filename)[1]
+    def upload_file(self, file, user_id, project_id):
+        original_name = file.filename
+        suffix = "." + file.filename.split(".")[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
             tmp.write(file.read())
             tmp_path = tmp.name
-        self.upload_document(document_path = tmp_path, user_id = user_id, project_id = project_id)
+        self.upload_document(document_path = tmp_path, user_id = user_id, project_id = project_id, original_name=original_name)
 
         os.remove(tmp_path)
 
@@ -63,7 +64,7 @@ class DocumentService:
 
 
 
-    def upload_document(self, document_path: str, user_id: str, project_id: str):
+    def upload_document(self, document_path: str, user_id: str, project_id: str, original_name: str):
 
         pdf_hash = get_pdf_sha256(document_path)
         existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash, user_id)
@@ -71,7 +72,7 @@ class DocumentService:
         if existing_pdf_master:
             pdf_master_id = str(existing_pdf_master.get("_id"))
         else:
-            pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash)
+            pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
 
         #document_name = document_name_generator(document_path)
         self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
