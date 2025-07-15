@@ -44,7 +44,7 @@ class ChatController:
             # 1st step : Getting text chunks using get_text_chunks
             text_chunks = self.document_service.get_text_chunks(document_path)
             # 2nd step : Get_vector_store in ai_service and use it on the text chunks
-            vector_store = self.ai_service.get_vector_store(text_chunks)
+            vector_store = self.ai_service.get_embedding(text_chunks)
             # 3rd step : Initialise conversation instance and give it embedding as an argument
             # and generate a random id
             self.new_conversation = Conversation(vector_store, user_id)

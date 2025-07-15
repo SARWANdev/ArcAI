@@ -73,7 +73,7 @@ class DocumentService:
 
         text_chunks = self.__get_text_chunks(document_path=document_path)       
         ai_service = AIService()
-        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        embeddings = ai_service.get_embedding(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
     def __get_pdf_text(self, document_path:str) -> str:

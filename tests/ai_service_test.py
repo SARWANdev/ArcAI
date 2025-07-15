@@ -93,7 +93,7 @@ def main():
 
             with st.spinner("Embedding"):           
                 #create vector store
-                st.session_state.vector_store = ai_service.get_vector_store(text_chunks=text_chunks)    
+                st.session_state.vector_store = ai_service.get_embedding(text_chunks=text_chunks)    
                 st.session_state.conversation = Conversation(conversation_id="penisman", vector_store=st.session_state.vector_store)
                 ai_service.send_system_message(system_message= """You are a helpful AI Assistant Arc AI 
                                                you assist with answering questions for documents users upload, you will get the relevant part of the document with each question""",
