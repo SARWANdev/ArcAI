@@ -1,4 +1,5 @@
 import os
+import tempfile
 from email.mime import text
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
@@ -49,9 +50,15 @@ class DocumentService:
         return pdf_master_id
 
     # this method is possibly the one that has to be called
-    def upload_file(self, file, user_id, project_id):
+    def upload_file(self, file, filename, user_id, project_id):
+        suffix = os.path.splitext(filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            tmp.write(file.read())
+            tmp_path = tmp.name
+        self.upload_document(document_path = tmp_path, user_id = user_id, project_id = project_id)
 
-        pass
+        os.remove(tmp_path)
+
 
 
 
@@ -71,9 +78,9 @@ class DocumentService:
 
         #generate embeddings and vector store
 
-        text_chunks = self.__get_text_chunks(document_path=document_path)       
-        ai_service = AIService()
-        embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        #text_chunks = self.__get_text_chunks(document_path=document_path)
+        #ai_service = AIService()
+        #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
     def __get_pdf_text(self, document_path:str) -> str:
