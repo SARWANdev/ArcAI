@@ -198,7 +198,7 @@ class AIService:
         return response
         
 
-    def get_embedding(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
+    def get_vector_store(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
         """
         Creates a FAISS vector store from a list of text chunks using Ollama embeddings.
 
@@ -238,7 +238,54 @@ class AIService:
         )
         return loaded_vector_store
     
-    
+    def merge_vector_stores(self, vector_stores: list[FAISS]) -> FAISS:
+        """
+        Merges multiple FAISS vector stores into a single consolidated vector store.
+        
+        Args:
+            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
+            
+        Returns:
+            FAISS: A single merged FAISS vector store containing all documents from the input stores.
+            
+        Raises:
+            ValueError: If the input list is empty or contains non-FAISS objects.
+        """
+        if not vector_stores:
+            raise ValueError("Cannot merge empty list of vector stores")
+        
+        if len(vector_stores) == 1:
+            return vector_stores[0]
+        
+        # Start with the first vector store
+        merged_vector_store = vector_stores[0]
+        
+        # Merge each subsequent vector store
+        for i in range(1, len(vector_stores)):
+            try:
+                merged_vector_store.merge_from(vector_stores[i])
+            except Exception as e:
+                print(f"Error merging vector store {i}: {e}")
+                continue
+        
+        return merged_vector_store
+
+    def merge_and_save_vector_stores(self, vector_stores: list[FAISS], save_path: str) -> FAISS:
+        """
+        Merges multiple FAISS vector stores and saves the result to a specified path.
+        
+        Args:
+            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
+            save_path (str): Path where the merged vector store will be saved.
+            
+        Returns:
+            FAISS: The merged vector store.
+        """
+        merged_store = self.merge_vector_stores(vector_stores)
+        merged_store.save_local(save_path)
+        return merged_store
+
+
 
 
 
