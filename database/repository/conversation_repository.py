@@ -27,7 +27,7 @@ class ConversationRepository:
     @staticmethod
     def get_conversations_by_user_id(user_id):
         with mongo_connection() as db:
-            return list (db.projects.find({"user_id": user_id}))
+            return list (db.conversations.find({"user_id": user_id}))
 
     @staticmethod
     def get_history(user_id):
