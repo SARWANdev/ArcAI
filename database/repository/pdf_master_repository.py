@@ -227,6 +227,13 @@ class PdfMasterDataBase:
         except Exception as e:
             print(f"source can not be retrieved: {e}")
             return ""
+    @staticmethod
+    def set_source(pdf_master_id, new_source):
+        try:
+            with mongo_connection() as db:
+                db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"source": new_source}})
+        except Exception as e:
+            print(f"Failed to set source for PDF {pdf_master_id}: {e}")
 
 
 
