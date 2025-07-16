@@ -64,11 +64,9 @@ class TestConversationRepository(unittest.TestCase):
 
     def tearDown(self):
         with mongo_connection() as db:
-            es.delete_by_query(
-                index="conversations",
-                body={"query": {"term": {"user_id": self.user_id_1}}},
-                conflicts="proceed"
-            )            
+            if es.indices.exists(index="conversations"):
+                es.indices.delete(index="conversations")
+                es.indices.create(index="conversations")
             db.conversations.delete_many({"user_id": self.user_id_1})
             db.conversations.delete_many({"user_id": self.user_id_2})
 

@@ -31,6 +31,7 @@ class ConversationRepository:
 
     @staticmethod
     def get_history(user_id):
+        es.indices.refresh(index="conversations")
         query = {
             "query": {
                 "match": {
@@ -141,6 +142,7 @@ class ConversationRepository:
     @staticmethod
     def search_conversation(user_id, prefix):
         # Searchs for a conversation by its title
+        es.indices.refresh(index="conversations")
         result = es.search(index="conversations", body={
             "size": 4,
             "query": {
