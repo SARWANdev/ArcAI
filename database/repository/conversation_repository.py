@@ -27,10 +27,11 @@ class ConversationRepository:
     @staticmethod
     def get_conversations_by_user_id(user_id):
         with mongo_connection() as db:
-            return list (db.projects.find({"user_id": user_id}))
+            return list (db.conversations.find({"user_id": user_id}))
 
     @staticmethod
     def get_history(user_id):
+        es.indices.refresh(index="conversations")
         query = {
             "query": {
                 "match": {
@@ -141,6 +142,7 @@ class ConversationRepository:
     @staticmethod
     def search_conversation(user_id, prefix):
         # Searchs for a conversation by its title
+        es.indices.refresh(index="conversations")
         result = es.search(index="conversations", body={
             "size": 4,
             "query": {

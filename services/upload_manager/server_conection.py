@@ -149,3 +149,37 @@ def delete_remote_directory(file_path: str):
         print(f"❌ SSH error deleting: {e}")
         return False
 
+def retrieve_document_content(remote_file_path: str) -> bytes | None:
+    """
+    Retrieves a file from the remote server and returns its binary content.
+
+    Args:
+        remote_file_path (str): Full path to the file on the remote server.
+
+    Returns:
+        bytes | None: The file content in bytes if successful, otherwise None.
+    """
+    try:
+        # Setup SSH connection
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(
+            hostname=ssh_host,
+            port=ssh_port,
+            username=ssh_user,
+            password=ssh_password
+        )
+
+        # Open an SFTP session
+        sftp = ssh.open_sftp()
+        with sftp.file(remote_file_path, mode='rb') as remote_file:
+            file_content = remote_file.read()
+
+        ssh.close()
+
+        return file_content
+
+    except Exception as e:
+        print(f"❌ Error retrieving file content: {e}")
+        return None
+
