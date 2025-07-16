@@ -68,6 +68,7 @@ class AIService:
         self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
         self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
         self.__base_url = base_url if base_url else self.__DEFAULT_BASE_URL
+        self.embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name, show_progress=True)
 
     def set_ollama_url(self, ollama_url:str):
         self.__ollama_api_url = ollama_url
@@ -208,8 +209,7 @@ class AIService:
         Returns:
             FAISS: The created FAISS vector store containing the embedded text chunks.
         """
-        embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name, show_progress=True)
-        vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
+        vector_store = FAISS.from_texts(text_chunks, embedding=self.embeddings)
         if embedding_path:
             vector_store.save_local(embedding_path)
         return vector_store
@@ -230,5 +230,64 @@ class AIService:
         relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
         context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
         return context
+    
+    
+    def load_embedding_from_path(self, embedding_path:str):
+        loaded_vector_store = FAISS.load_local(
+        "faiss_index", self.embeddings, allow_dangerous_deserialization=True
+        )
+        return loaded_vector_store
+    
+    def merge_vector_stores(self, vector_stores: list[FAISS]) -> FAISS:
+        """
+        Merges multiple FAISS vector stores into a single consolidated vector store.
+        
+        Args:
+            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
+            
+        Returns:
+            FAISS: A single merged FAISS vector store containing all documents from the input stores.
+            
+        Raises:
+            ValueError: If the input list is empty or contains non-FAISS objects.
+        """
+        if not vector_stores:
+            raise ValueError("Cannot merge empty list of vector stores")
+        
+        if len(vector_stores) == 1:
+            return vector_stores[0]
+        
+        # Start with the first vector store
+        merged_vector_store = vector_stores[0]
+        
+        # Merge each subsequent vector store
+        for i in range(1, len(vector_stores)):
+            try:
+                merged_vector_store.merge_from(vector_stores[i])
+            except Exception as e:
+                print(f"Error merging vector store {i}: {e}")
+                continue
+        
+        return merged_vector_store
+
+    def merge_and_save_vector_stores(self, vector_stores: list[FAISS], save_path: str) -> FAISS:
+        """
+        Merges multiple FAISS vector stores and saves the result to a specified path.
+        
+        Args:
+            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
+            save_path (str): Path where the merged vector store will be saved.
+            
+        Returns:
+            FAISS: The merged vector store.
+        """
+        merged_store = self.merge_vector_stores(vector_stores)
+        merged_store.save_local(save_path)
+        return merged_store
+
+
+
+
+
 
 
