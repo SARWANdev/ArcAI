@@ -42,7 +42,7 @@ class DocumentService:
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
-                                                 authors = bibtex_instance.get_authors())
+                                                 authors = bibtex_instance.get_authors(), bibtex=bibtex_instance.get_bibtex_string())
         # TODO eather update the instance or the database described with the bibtex
 
 
@@ -85,7 +85,7 @@ class DocumentService:
         #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
-    def __get_pdf_text(self, document_path:str) -> str:
+    def get_pdf_text(self, document_path:str) -> str:
         pdf_reader = PdfReader(document_path)
         text = ""
         for page in pdf_reader.pages:
@@ -99,7 +99,7 @@ class DocumentService:
 
     def get_text_chunks(self, document_path:str)->list[str]:
         metadata = str(self.get_pdf_metadata(document_path=document_path))
-        text = self.__get_pdf_text(document_path) 
+        text = self.get_pdf_text(document_path) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,
@@ -110,8 +110,6 @@ class DocumentService:
         chunks = text_splitter.split_text(text)
         chunks.insert(0, metadata)
         return chunks
-
-
 
 
     def get_document(self, document_id):
@@ -315,11 +313,6 @@ class DocumentService:
         if not document_data:
             return None
 
-    def extract_text_from_document(self, document_id):
-        pass
-
-    def get_text_chunks_from_document(self, document_id):
-        pass
 
     def download_bibtex(self, document_id):
         # Get a document's bibtex and returns it as a buffer, with it's name
@@ -349,4 +342,15 @@ class DocumentService:
     
     def get_document_vector_store(self, document_id):
         pass
+
+    def update_bibtex(self, document_id, new_bibtex):
+        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        bibtex_model = BibTeX_Service()
+        bibtex_model.set_bibtex(new_bibtex)
+        PdfMasterDataBase.set_bibtex(new_bibtex=new_bibtex, pdf_master_id=pdf_master_id)
+        PdfMasterDataBase.set_first_author(pdf_master_id=pdf_master_id, new_first_author=bibtex_model.get_author1_last_name())
+        PdfMasterDataBase.set_year(pdf_master_id=pdf_master_id, new_year=bibtex_model.get_year)
+        
+        
+
 

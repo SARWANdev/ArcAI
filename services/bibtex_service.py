@@ -6,28 +6,16 @@ import requests
 class BibTeX_Service:
 
     # gotta clean up on frontend connection
-    def __init__(self, paper_name: str) -> None:
-        self.__paper_name = paper_name.replace("_", " ")
-        if self.__paper_name.lower().endswith('.pdf'):
-            self.__paper_name = self.__paper_name[:-4]
-        __unformatted_bibtex_string = self.__get_bibtex_str(paper_name=self.__paper_name)
-        if not __unformatted_bibtex_string:
-            match input("Couldnt parse BibTex, enter Bibtex[1] or make miscellaneous doc with req fields[2]"):
-                case 1:
-                    __unformatted_bibtex_string = input("Paste BibTeX")
-                case 2:
-                    citekey = input("Citekey: ")
-                    author = input("Authors: ")
-                    title = input("Title: ")
-                    year = input("Year: ")
-                    __unformatted_bibtex_string = self.create_misc_bibtex(author=author, title=title, year=year, citekey=citekey)  
-                case _:
-                    print("Meow")
-                    __unformatted_bibtex_string = "@misc{schmaper2022, author = {Devkota, Shrawan}, title = {Paper Schmaper}, year = {2022}}"    
-        
-        self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
-        self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
-        return
+    def __init__(self, paper_name = None) -> None:
+        if paper_name:
+            self.__paper_name = paper_name.replace("_", " ")
+            if self.__paper_name.lower().endswith('.pdf'):
+                self.__paper_name = self.__paper_name[:-4]
+            __unformatted_bibtex_string = self.__get_bibtex_str(paper_name=self.__paper_name)
+            if __unformatted_bibtex_string:        
+                self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
+                self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+                return
 
         
         
