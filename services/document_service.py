@@ -30,19 +30,21 @@ class DocumentService:
 
     def __create_document(self, document_name, project_id, pdf_master_id):
         #Creates a new document in the database
-        new_document_instance = DocumentModel(name=document_name, project_id=project_id)  # instance of the model Document
+        new_name = self.__rename_according_ref_count(document_name, pdf_master_id)
+        new_document_instance = DocumentModel(name=new_name, project_id=project_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
         self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
+
+
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
         relative_path = relative_path_generator(user_id, project_id)
-
         bibtex_instance = BibTeX_Service(original_name)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
-                                                 authors = bibtex_instance.get_authors(), bibtex=bibtex_instance.get_bibtex_string())
+                                                 authors = bibtex_instance.get_authors())
         # TODO eather update the instance or the database described with the bibtex
 
 
@@ -85,7 +87,7 @@ class DocumentService:
         #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
 
 
-    def get_pdf_text(self, document_path:str) -> str:
+    def __get_pdf_text(self, document_path:str) -> str:
         pdf_reader = PdfReader(document_path)
         text = ""
         for page in pdf_reader.pages:
@@ -99,7 +101,7 @@ class DocumentService:
 
     def get_text_chunks(self, document_path:str)->list[str]:
         metadata = str(self.get_pdf_metadata(document_path=document_path))
-        text = self.get_pdf_text(document_path) 
+        text = self.__get_pdf_text(document_path) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,
@@ -110,6 +112,8 @@ class DocumentService:
         chunks = text_splitter.split_text(text)
         chunks.insert(0, metadata)
         return chunks
+
+
 
 
     def get_document(self, document_id):
@@ -309,16 +313,26 @@ class DocumentService:
 
     def duplicate_document(self, document_id, project_id):
         """
-        1. create a new instance in mongo for a docuemtn with the previous
-        2.
+        1. gets the pdf_master_id
+        2. gets the name of teh document_name
+        3. cretaes and new document
+        :param project_id:
         :param document_id:
         :return:
         """
-        #TODO: duplicate the document in the database
-        document_data = self.document_repository.get_by_document_id(document_id)
-        if not document_data:
-            return None
+        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        pdf_name = self.document_repository.get_name( document_id )
+        self.__create_document(document_name = pdf_name, project_id = project_id, pdf_master_id = pdf_master_id)
 
+
+
+
+
+    def extract_text_from_document(self, document_id):
+        pass
+
+    def get_text_chunks_from_document(self, document_id):
+        pass
 
     def download_bibtex(self, document_id):
         # Get a document's bibtex and returns it as a buffer, with it's name
@@ -349,15 +363,13 @@ class DocumentService:
     def get_document_vector_store(self, document_id):
         pass
 
-    def update_bibtex(self, document_id, new_bibtex):
-        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-        bibtex_model = BibTeX_Service()
-        bibtex_model.set_bibtex(new_bibtex)
-        PdfMasterDataBase.set_bibtex(pdf_master_id=pdf_master_id, new_bibtex=bibtex_model.get_bibtex_string())
-        PdfMasterDataBase.set_first_author(pdf_master_id=pdf_master_id, new_first_author=bibtex_model.get_author1_last_name())
-        PdfMasterDataBase.set_year(pdf_master_id=pdf_master_id, new_year=bibtex_model.get_year())
-        PdfMasterDataBase.set_authors(pdf_master_id=pdf_master_id, new_authors=bibtex_model.get_authors())
-        PdfMasterDataBase.set_source(pdf_master_id=pdf_master_id, new_source=bibtex_model.get_source())
-        
+    def __rename_according_ref_count(self, document_name: str, pdf_master_id: str) -> str:
+        ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
+        if ref_count == 0:
+            return document_name
 
+        base_name, extension = os.path.splitext(document_name)
+        new_name = f"{base_name}_({ref_count}){extension}"
+
+        return new_name
 
