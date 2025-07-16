@@ -246,7 +246,13 @@ class DocumentService:
     def process_document_metadata(self, document_id):
         pass
 
-    def duplicate_document(self, document_id):
+    def duplicate_document(self, document_id, project_id):
+        """
+        1. create a new instance in mongo for a docuemtn with the previous
+        2.
+        :param document_id:
+        :return:
+        """
         #TODO: duplicate the document in the database
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
