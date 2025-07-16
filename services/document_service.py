@@ -346,4 +346,7 @@ class DocumentService:
             if document_model:
                 documents_list.append(document_model)
         return documents_list
+    
+    def get_document_vector_store(self, document_id):
+        pass
 
