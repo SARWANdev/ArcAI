@@ -353,10 +353,11 @@ class DocumentService:
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
         bibtex_model = BibTeX_Service()
         bibtex_model.set_bibtex(new_bibtex)
-        PdfMasterDataBase.set_bibtex(new_bibtex=new_bibtex, pdf_master_id=pdf_master_id)
+        PdfMasterDataBase.set_bibtex(pdf_master_id=pdf_master_id, new_bibtex=bibtex_model.get_bibtex_string())
         PdfMasterDataBase.set_first_author(pdf_master_id=pdf_master_id, new_first_author=bibtex_model.get_author1_last_name())
-        PdfMasterDataBase.set_year(pdf_master_id=pdf_master_id, new_year=bibtex_model.get_year)
-        
+        PdfMasterDataBase.set_year(pdf_master_id=pdf_master_id, new_year=bibtex_model.get_year())
+        PdfMasterDataBase.set_authors(pdf_master_id=pdf_master_id, new_authors=bibtex_model.get_authors())
+        PdfMasterDataBase.set_source(pdf_master_id=pdf_master_id, new_source=bibtex_model.get_source())
         
 
 
