@@ -183,3 +183,39 @@ def retrieve_document_content(remote_file_path: str) -> bytes | None:
         print(f"❌ Error retrieving file content: {e}")
         return None
 
+def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
+    """
+    Saves the provided file content to the remote server at the specified path.
+
+    Args:
+        remote_file_path (str): Full path to the file on the remote server.
+        file_content (bytes): The content to write to the file.
+
+    Returns:
+        bool: True if the operation succeeded, False otherwise.
+    """
+    try:
+        # Setup SSH connection
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(
+            hostname=ssh_host,
+            port=ssh_port,
+            username=ssh_user,
+            password=ssh_password
+        )
+
+        # Open an SFTP session
+        sftp = ssh.open_sftp()
+        with sftp.file(remote_file_path, mode='wb') as remote_file:
+            remote_file.write(file_content)
+
+        ssh.close()
+
+        print(f"✅ File successfully saved to: {remote_file_path}")
+        return True
+
+    except Exception as e:
+        print(f"❌ Error saving file: {e}")
+        return False
+
