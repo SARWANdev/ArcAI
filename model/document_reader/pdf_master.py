@@ -1,5 +1,5 @@
 from database.repository.date_time_utils import get_utc_zulu_timestamp
-from services.upload_manager.document_upload_service import get_pdf_sha256
+from services.upload_manager.hash_manager import get_pdf_sha256
 
 
 class PdfMaster:

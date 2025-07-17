@@ -15,7 +15,7 @@ from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 from services.bibtex_service import BibTeX_Service
 
-from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
+from services.upload_manager.hash_manager import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.upload_manager.server_conection import upload_document, delete_remote_directory, save_embeddings
 from services.notebook_service import NotebookService
@@ -88,7 +88,7 @@ class DocumentService:
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
 
-        text_chunks = self.__get_text_chunks(document_path=document_path)
+        text_chunks = self.get_text_chunks(document=document_path)
         embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
         serialized_vector_store = EmbeddingsManager.serialize_vector_store( embeddings )
         path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
