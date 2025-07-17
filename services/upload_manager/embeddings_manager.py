@@ -1,9 +1,13 @@
 import io
 import os
 import pickle
+import posixpath
 import tempfile
 import faiss
 from langchain_community.vectorstores import FAISS
+
+from services.ai_service import AIService
+from services.upload_manager.server_conection import ssh_connection
 
 
 class EmbeddingsManager:
@@ -29,14 +33,42 @@ class EmbeddingsManager:
             os.remove(temp_index_path)
 
         # --- Serialize metadata ---
-        metadata = {
-            "docstore": vector_store.docstore,
-            "index_to_docstore_id": vector_store.index_to_docstore_id,
-            "embedding_function": None  # Usually can't be serialized
-        }
+        #metadata = {
+        #    "docstore": vector_store.docstore,
+        #    "index_to_docstore_id": vector_store.index_to_docstore_id,
+        #    "embedding_function": None  # Usually can't be serialized
+        #}
 
         metadata_buffer = io.BytesIO()
-        pickle.dump(metadata, metadata_buffer)
+        pickle.dump((vector_store.index_to_docstore_id, vector_store.docstore), metadata_buffer)
         metadata_buffer.seek(0)
 
         return faiss_index_buffer, metadata_buffer
+
+    @staticmethod
+    def load_remote_faiss_index(remote_index_path: str) -> bytes | None:
+        remote_index_path = os.path.dirname(remote_index_path)
+        print("remote_index_dir:  ", remote_index_path)
+        # Step 1: Create a temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            ssh = ssh_connection()
+            sftp = ssh.open_sftp()
+
+            # Step 2: Download index.faiss and index.pkl
+            for file in ["index.faiss", "index.pkl"]:
+                remote_file = posixpath.join(remote_index_path, file)
+                print("remote_file:  ", remote_file)
+                local_file = os.path.join(temp_dir, file)
+                print("local_file:  ", local_file)
+                sftp.get(remote_file, local_file)
+
+            print("temp_dir:  ", temp_dir)
+            input('Hi')
+            sftp.close()
+            ssh.close()
+
+            faiss_index = AIService().load_vector_store_from_path(temp_dir)
+
+
+            return faiss_index

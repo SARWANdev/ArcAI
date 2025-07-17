@@ -2,6 +2,7 @@ import hashlib
 from pathlib import Path
 
 
+
 def get_pdf_sha256(pdf_path: str) -> str:
     """
     Calculates the SHA-256 hash of a PDF file.
