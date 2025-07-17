@@ -18,10 +18,11 @@ class ProjectService:
         project_model = ProjectModel(
             project_name=project_name,
             user_id=user_id,
+            note=""
         )
 
         # 2. 2. Save to DB using static repository
-        project_id = self.project_repository.new_project(user_id, project_name)
+        project_id = self.project_repository.new_project(user_id, project_name, note="")
         project_model.id = project_id  # assign back the ID
 
         return project_model  # or wrap this in a DTO if needed

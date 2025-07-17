@@ -59,6 +59,20 @@ class Project:
             print(f"Error getting project by name: {str(e)}")
             raise
 
+
+    # MIGHT BE REDUNDNAT GOTTA CHECK
+    @staticmethod
+    def get_project_by_name_and_user(project_name: str, user_id: str) -> dict:
+        try:
+            with mongo_connection() as db:
+                return db.projects.find_one({
+                    "project_name": project_name,
+                    "user_id": user_id
+                })
+        except Exception as e:
+            print(f"Error finding project by name and user: {e}")
+            return None
+
     @staticmethod
     def update_name(project_id, new_name) -> bool:
         try:
