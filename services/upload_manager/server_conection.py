@@ -14,6 +14,17 @@ ssh_port = int(os.getenv("SSH_PORT"))  # convert to integer
 ssh_user = os.getenv("SSH_USER")
 ssh_password = os.getenv("SSH_PASSWORD")
 
+def ssh_connection():
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(
+        hostname=ssh_host,
+        port=ssh_port,
+        username=ssh_user,
+        password=ssh_password
+    )
+    return ssh
+
 #test case if the instance in mongo is deleted but not in the server it creates problems
 def upload_document(local_path: str, relative_path: str, pdf_hash: str):
     # relative path is user_id/project_id
@@ -247,18 +258,11 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     Returns:
         bool: True if the operation succeeded, False otherwise.
     """
+    ssh = None
     try:
-        # Setup SSH connection
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
 
         # Open an SFTP session
+        ssh = ssh_connection()
         sftp = ssh.open_sftp()
         with sftp.file(remote_file_path, mode='wb') as remote_file:
             remote_file.write(file_content)
@@ -271,24 +275,21 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     except Exception as e:
         print(f"❌ Error saving file: {e}")
         return False
+    finally:
+        if ssh: ssh.close()
+
 
 def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffer: io.BytesIO) -> bool:
+    ssh = None
     try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
+        ssh = ssh_connection()
         sftp = ssh.open_sftp()
 
         # Ensure directory exists
         print(1)
         remote_directory = os.path.dirname(remote_index_path)
         #TODO take care with the paths
-        remote_directory = posixpath.join(remote_dir, remote_directory)
+        #remote_directory = posixpath.join(remote_dir, remote_directory)
         print(remote_directory)
 
         print(2)
@@ -328,6 +329,8 @@ def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffe
     except Exception as e:
         print(f"Error uploading the embeddings: {e}")
         return False
+    finally:
+        if ssh: ssh.close()
 
 
 
