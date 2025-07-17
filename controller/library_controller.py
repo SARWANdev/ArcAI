@@ -118,7 +118,7 @@ class LibraryController:
             print(f"Error in delete_project: {str(e)}")
             return jsonify({
                 "status": "error",
-                "message": "Failed to retrieve projects",
+                "message": "Failed to delete the projects",
                 "error": str(e)
             }), 500
 
