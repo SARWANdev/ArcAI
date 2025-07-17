@@ -17,7 +17,7 @@ from services.bibtex_service import BibTeX_Service
 
 from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.server_conection import upload_document, delete_remote_directory
-
+from services.notebook_service import NotebookService
 
 class DocumentService:
 
@@ -26,6 +26,7 @@ class DocumentService:
         self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository
         self.pdf_master_repository = PdfMasterDataBase
+        self.notebook_service = NotebookService()
 
 
     def __create_document(self, document_name, project_id, pdf_master_id):
@@ -36,6 +37,8 @@ class DocumentService:
         self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
+        # Create an empty notebook for the document
+        self.notebook_service.update_document_notebook(new_document_id, "")
 
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):

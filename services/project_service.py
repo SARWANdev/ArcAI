@@ -4,6 +4,7 @@ from model.document_reader.project import Project as ProjectModel
 from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel
 from services.document_service import DocumentService
+from services.notebook_service import NotebookService
 
 class ProjectService:
     def __init__(self):
@@ -11,6 +12,7 @@ class ProjectService:
         self.library_repository = LibraryRepository
         self.document_service = DocumentService()
         self.document_repository = DocumentRepository
+        self.notebook_service = NotebookService()
 
     #TODO: When thge user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
     #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
@@ -26,6 +28,7 @@ class ProjectService:
         # 2. 2. Save to DB using static repository
         project_id = self.project_repository.new_project(user_id, project_name, note="")
         project_model.id = project_id  # assign back the ID
+        self.notebook_service.update_project_notebook(project_id, "")
 
         return project_model  # or wrap this in a DTO if needed
 
@@ -59,8 +62,9 @@ class ProjectService:
 
         for document_data in documents_in_project:
             document_id = document_data.get('_id')
+            document_path = self.document_repository.get_path(document_id)
             self.document_service.delete_document(document_id)
-        #TODO check if the directory of project in the server is empty and if thats the case , delete the project directory
+            #TODO check if the directory of project in the server is empty and if that's the case , delete the project directory
 
 
 

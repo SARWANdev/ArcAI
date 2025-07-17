@@ -45,16 +45,16 @@ class Conversation:
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""  
 
-                    1. Use the context below.  
-                    2. The Question: is the most important part of the answer, make sure that the answer makes sense based on the question
+                    1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
+                    2. Your job is to reply to User Message.
+                    3. If necessary look at the attached Context
                     3. Keep answers concise but friendly.  
-                    4. if you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
-                    6 is more important than 5
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
                     
 
                     5: Context: {context}  
 
-                    6: Question: {message}  
+                    6: User Message: {message}  
 
                     Answer:  
                     """
