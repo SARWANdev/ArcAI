@@ -59,8 +59,9 @@ class ProjectService:
 
         for document_data in documents_in_project:
             document_id = document_data.get('_id')
+            document_path = self.document_repository.get_path(document_id)
             self.document_service.delete_document(document_id)
-        #TODO check if the directory of project in the server is empty and if thats the case , delete the project directory
+            #TODO check if the directory of project in the server is empty and if that's the case , delete the project directory
 
 
 

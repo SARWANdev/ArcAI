@@ -1,3 +1,5 @@
+import io
+
 import paramiko
 from scp import SCPClient
 import os
@@ -149,6 +151,57 @@ def delete_remote_directory(file_path: str):
         print(f"❌ SSH error deleting: {e}")
         return False
 
+def delete_remote_directory_if_empty(file_path: str) -> bool:
+    """
+    Deletes a directory on a remote server via SSH only if it is empty.
+
+    Args:
+        file_path (str): Full path to a file inside the directory on the remote server.
+
+    Returns:
+        bool: True if the directory was empty and deleted, False otherwise.
+    """
+    try:
+        # Setup SSH connection
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(
+            hostname=ssh_host,
+            port=ssh_port,
+            username=ssh_user,
+            password=ssh_password
+        )
+
+        remote_directory_path = os.path.dirname(file_path)
+
+        # Check if directory is empty
+        check_command = f"if [ -d '{remote_directory_path}' ] && [ -z \"$(ls -A '{remote_directory_path}')\" ]; then echo 'EMPTY'; else echo 'NOT_EMPTY'; fi"
+        stdin, stdout, stderr = ssh.exec_command(check_command)
+        result = stdout.read().decode().strip()
+
+        if result == "EMPTY":
+            delete_command = f"rmdir '{remote_directory_path}'"
+            stdin, stdout, stderr = ssh.exec_command(delete_command)
+            exit_status = stdout.channel.recv_exit_status()
+
+            if exit_status == 0:
+                print(f"🗑️ Successfully deleted empty directory: {remote_directory_path}")
+                ssh.close()
+                return True
+            else:
+                error = stderr.read().decode()
+                print(f"❌ Error deleting directory: {error}")
+                ssh.close()
+                return False
+        else:
+            print(f"ℹ️ Directory not empty: {remote_directory_path}")
+            ssh.close()
+            return False
+
+    except Exception as e:
+        print(f"❌ SSH error: {e}")
+        return False
+
 def retrieve_document_content(remote_file_path: str) -> bytes | None:
     """
     Retrieves a file from the remote server and returns its binary content.
@@ -218,4 +271,41 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     except Exception as e:
         print(f"❌ Error saving file: {e}")
         return False
+
+def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffer: io.BytesIO) -> bool:
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(
+            hostname=ssh_host,
+            port=ssh_port,
+            username=ssh_user,
+            password=ssh_password
+        )
+        sftp = ssh.open_sftp()
+
+        # Ensure directory exists
+
+        remote_directory = os.path.dirname(remote_index_path)
+        try:
+            sftp.stat(remote_directory)
+        except IOError:
+            sftp.mkdir(remote_directory)
+
+        # Upload both buffers
+        with sftp.open(remote_directory, 'wb') as remote_index_file:
+            remote_index_file.write(index_buffer.read())
+
+        with sftp.open(remote_directory, 'wb') as remote_meta_file:
+            remote_meta_file.write(meta_buffer.read())
+
+        sftp.close()
+        ssh.close()
+        return True
+    except Exception as e:
+        print(f"Error uploading the embeddings: {e}")
+        return False
+
+
+
 
