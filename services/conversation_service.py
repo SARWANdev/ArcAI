@@ -1,5 +1,7 @@
 from database.repository.conversation_repository import ConversationRepository
 from model.ai_chat.conversation import Conversation as ConversationModel
+from bson import ObjectId
+
 
 class ConversationService:
 
