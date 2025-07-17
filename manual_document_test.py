@@ -3,6 +3,7 @@ from bson import ObjectId
 from services.document_service import DocumentService
 from services.project_service import ProjectService
 from model.document_reader.tag_manager.color import Color
+from services.notebook_service import NotebookService
 
 def prompt_sort_criteria():
     fields = ["title", "first_author", "year", "journal", "created_at"]
@@ -44,6 +45,7 @@ def prompt_filter_criteria():
 if __name__ == "__main__":
     document_service = DocumentService()
     project_service = ProjectService()
+    notebook_service = NotebookService()
 
     pdf_path = input("Enter full path to PDF file: ").strip()
     user_id = input("Enter user_id (Google sub): ").strip()
@@ -109,7 +111,7 @@ if __name__ == "__main__":
         doc_oid = ObjectId(str(selected_doc.document_id))
 
         action = input(
-            "\nChoose action: read | unread | fav | unfav | tag | untag | showtag | bibtex | delete\n> "
+            "\nChoose action: read | unread | fav | unfav | tag | untag | showtag | bibtex | delete | show note | update note\n> "
         ).strip().lower()
 
         if action == "read":
@@ -147,5 +149,17 @@ if __name__ == "__main__":
                 print("✔️ Deleted:", document_service.delete_document(doc_oid))
             else:
                 print("❎ Canceled.")
+        elif action == "shownote":
+            note = notebook_service.get_documents_notebook(doc_oid)
+            print(f"📝 Note:\n{note}" if note else "📭 No note found.")
+
+        elif action == "updatenote":
+            print("Enter new note content (leave empty to cancel):")
+            new_note = input("Note:\n")
+            if new_note.strip() == "":
+                print("❎ Update canceled.")
+            else:
+                success = notebook_service.update_document_notebook(doc_oid, new_note)
+                print("✔️ Note updated." if success else "❌ Failed to update note.")
         else:
             print("❌ Invalid action.")
