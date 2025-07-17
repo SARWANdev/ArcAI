@@ -232,9 +232,9 @@ class AIService:
         return context
     
     
-    def load_embedding_from_path(self, embedding_path:str):
+    def load_vector_store_from_path(self, embedding_path:str):
         loaded_vector_store = FAISS.load_local(
-        "faiss_index", self.embeddings, allow_dangerous_deserialization=True
+        folder_path=embedding_path, embeddings=self.embeddings, allow_dangerous_deserialization=True
         )
         return loaded_vector_store
     
