@@ -285,23 +285,46 @@ def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffe
         sftp = ssh.open_sftp()
 
         # Ensure directory exists
-
+        print(1)
         remote_directory = os.path.dirname(remote_index_path)
+        #TODO take care with the paths
+        remote_directory = posixpath.join(remote_dir, remote_directory)
+        print(remote_directory)
+
+        print(2)
         try:
             sftp.stat(remote_directory)
+            print(3)
         except IOError:
             sftp.mkdir(remote_directory)
+            print(4)
 
         # Upload both buffers
-        with sftp.open(remote_directory, 'wb') as remote_index_file:
-            remote_index_file.write(index_buffer.read())
+        # Prepare full remote file paths
+        print(5)
+        remote_index_path = posixpath.join(remote_directory, "index.faiss")
+        print(6)
+        remote_meta_path = posixpath.join(remote_directory, "index.pkl")
 
-        with sftp.open(remote_directory, 'wb') as remote_meta_file:
-            remote_meta_file.write(meta_buffer.read())
+        # Upload the FAISS index
+        print(7)
+        index_buffer.seek(0)
+        with sftp.open(remote_index_path, 'wb') as f_index:
+            print(8)
+            f_index.write(index_buffer.read())
+
+        # Upload the metadata
+        print(9)
+        meta_buffer.seek(0)
+        with sftp.open(remote_meta_path, 'wb') as f_meta:
+            print(10)
+            f_meta.write(meta_buffer.read())
 
         sftp.close()
         ssh.close()
         return True
+
+
     except Exception as e:
         print(f"Error uploading the embeddings: {e}")
         return False
