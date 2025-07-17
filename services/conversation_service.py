@@ -13,8 +13,7 @@ class ConversationService:
         if not conversations: 
             return None
         history = []
-        for conversation in conversations:
-            conversation_data = ConversationRepository.get_conversation_by_id(conversation.get("_id"))
+        for conversation_data in conversations:
             conversation_model = ConversationModel(
             conversation_id= conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),

@@ -76,20 +76,17 @@ def clean_up():
 
 # Main loop
 if __name__ == '__main__':
-    while True:
-        for user in users:
+    for user in users:
             service.delete_all_chats(user)
-        save_chats()
+    save_chats()
+    while True:
         user = choose_user()
         show_user_conversations(user)
         search_conversations(user)
-        again = input("\nDo you want to switch user? (y/n): ")
-        if again.lower() != "y":
+        again = input("\nDo you want to end the test? (y/n): ")
+        if again.lower() == "y":
             break
-
-    cleanup = input("\nDo you want to delete all test data? (y/n): ")
-    if cleanup.lower() == "y":
-        clean_up()
+    clean_up()
 
 
         

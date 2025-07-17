@@ -59,12 +59,12 @@ class ConversationRepository:
     @staticmethod
     def get_user_conversations(user_id):
         with mongo_connection() as db:
-            return db.conversations.find({"user_id": user_id})
+            return list(db.conversations.find({"user_id": user_id}))
         
     @staticmethod
     def get_conversation_by_name(name):
         with mongo_connection() as db:
-            return db.conversations.find({"name": name})
+            return db.conversations.find_one({"name": name})
         
     @staticmethod
     def delete_conversation(conversation_id):
