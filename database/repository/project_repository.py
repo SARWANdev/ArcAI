@@ -15,7 +15,7 @@ class Project:
         project_data = {
             "user_id": user_id,  # Google's unique 'sub'
             "project_name": project_name,
-            "note": note,
+            "note": "",
             "created_at": get_utc_zulu_timestamp(),
             "updated_at": get_utc_zulu_timestamp()
         }
