@@ -29,6 +29,7 @@ class ConversationRepository:
 
     @staticmethod
     def get_history(user_id):
+        
         es.indices.refresh(index="conversations")
         query = {
             "query": {
@@ -54,6 +55,16 @@ class ConversationRepository:
     def get_conversation_by_id(conversation_id):
         with mongo_connection() as db:
             return db.conversations.find_one({"_id": conversation_id})
+
+    @staticmethod
+    def get_user_conversations(user_id):
+        with mongo_connection() as db:
+            return db.conversations.find({"user_id": user_id})
+        
+    @staticmethod
+    def get_conversation_by_name(name):
+        with mongo_connection() as db:
+            return db.conversations.find({"name": name})
         
     @staticmethod
     def delete_conversation(conversation_id):

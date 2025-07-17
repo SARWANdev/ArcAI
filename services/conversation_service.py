@@ -8,7 +8,7 @@ class ConversationService:
         self.conversation_repository = ConversationRepository
 
     def get_chat_history(self, user_id):
-        conversations = ConversationRepository.get_history(user_id)
+        conversations = ConversationRepository.get_user_conversations(user_id)
         if not conversations: 
             return None
         history = []
@@ -28,6 +28,21 @@ class ConversationService:
     
     def get_chat(self, conversation_id):
         conversation_data = ConversationRepository.get_conversation_by_id(conversation_id)
+        if not conversation_data:
+            return None
+        conversation_model = ConversationModel(
+            conversation_id= conversation_data.get("_id"),
+            user_id = conversation_data.get("user_id"),
+            name = conversation_data.get("name"),
+            messages = conversation_data.get("messages"),
+            vector_store = conversation_data.get("vector_store"),
+            created_at = conversation_data.get("created_at"),
+            updated_at = conversation_data.get("updated_at")
+        )
+        return conversation_model
+    
+    def get_chat_by_name(self, name):
+        conversation_data = ConversationRepository.get_conversation_by_name(name)
         if not conversation_data:
             return None
         conversation_model = ConversationModel(

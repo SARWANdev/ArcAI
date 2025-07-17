@@ -17,20 +17,21 @@ conversations_by_user = {
 }
 
 # Save conversations in MongoDB and index in Elasticsearch
-for user, titles in conversations_by_user.items():
-    for title in titles:
-        conv_id = str(ObjectId())
-        conversation_data = {
-            "_id": conv_id,
-            "user_id": user,
-            "name": title,
-            "messages": [],
-            "vector_store": None,
-            "created_at": datetime.now(timezone.utc),
-            "updated_at": datetime.now(timezone.utc)
-        }
-        ConversationRepository.save(conversation_data)
-        ConversationRepository.add_to_history(conversation_data)
+def save_chats():
+    for user, titles in conversations_by_user.items():
+        for title in titles:
+            conv_id = str(ObjectId())
+            conversation_data = {
+                "_id": conv_id,
+                "user_id": user,
+                "name": title,
+                "messages": [],
+                "vector_store": None,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }
+            ConversationRepository.save(conversation_data)
+            #ConversationRepository.add_to_history(conversation_data)
 
 # === Interactive CLI ===
 
@@ -78,6 +79,7 @@ if __name__ == '__main__':
     while True:
         for user in users:
             service.delete_all_chats(user)
+        save_chats()
         user = choose_user()
         show_user_conversations(user)
         search_conversations(user)
