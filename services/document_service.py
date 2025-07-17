@@ -30,14 +30,16 @@ class DocumentService:
 
     def __create_document(self, document_name, project_id, pdf_master_id):
         #Creates a new document in the database
-        new_document_instance = DocumentModel(name=document_name, project_id=project_id)  # instance of the model Document
+        new_name = self.__rename_according_ref_count(document_name, pdf_master_id)
+        new_document_instance = DocumentModel(name=new_name, project_id=project_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
         self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
+
+
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
         relative_path = relative_path_generator(user_id, project_id)
-
         bibtex_instance = BibTeX_Service(original_name)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
@@ -309,11 +311,22 @@ class DocumentService:
     def process_document_metadata(self, document_id):
         pass
 
-    def duplicate_document(self, document_id):
-        #TODO: duplicate the document in the database
-        document_data = self.document_repository.get_by_document_id(document_id)
-        if not document_data:
-            return None
+    def duplicate_document(self, document_id, project_id):
+        """
+        1. gets the pdf_master_id
+        2. gets the name of teh document_name
+        3. cretaes and new document
+        :param project_id:
+        :param document_id:
+        :return:
+        """
+        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        pdf_name = self.document_repository.get_name( document_id )
+        self.__create_document(document_name = pdf_name, project_id = project_id, pdf_master_id = pdf_master_id)
+
+
+
+
 
     def extract_text_from_document(self, document_id):
         pass
@@ -349,4 +362,14 @@ class DocumentService:
     
     def get_document_vector_store(self, document_id):
         pass
+
+    def __rename_according_ref_count(self, document_name: str, pdf_master_id: str) -> str:
+        ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
+        if ref_count == 0:
+            return document_name
+
+        base_name, extension = os.path.splitext(document_name)
+        new_name = f"{base_name}_({ref_count}){extension}"
+
+        return new_name
 

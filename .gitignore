@@ -7,3 +7,4 @@ test_data/UB03.pdf
 test_data/TagModel.pdf
 test_data/UB04.pdf
 database/utils/mongo_configuration.py
+services/tests/upload_method_santiago.py

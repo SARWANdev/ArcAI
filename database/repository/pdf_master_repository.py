@@ -197,6 +197,17 @@ class PdfMasterDataBase:
             result = db.pdf_master.find_one({"hash": pdf_hash, "user_id": user_id})
             return result
 
+
+    @staticmethod
+    def set_authors(pdf_master_id, new_authors):
+        try:
+            with mongo_connection() as db:
+                db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"authors": new_authors}})
+        except Exception as a:
+            print(f"Failed to set authors for PDF {pdf_master_id}: {a}")
+
+
+
     @staticmethod
     def get_authors(pdf_master_id):
         try:
@@ -216,6 +227,13 @@ class PdfMasterDataBase:
         except Exception as e:
             print(f"source can not be retrieved: {e}")
             return ""
+    @staticmethod
+    def set_source(pdf_master_id, new_source):
+        try:
+            with mongo_connection() as db:
+                db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"source": new_source}})
+        except Exception as e:
+            print(f"Failed to set source for PDF {pdf_master_id}: {e}")
 
 
 

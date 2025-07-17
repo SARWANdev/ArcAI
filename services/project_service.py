@@ -1,4 +1,5 @@
 from database.repository.project_repository import Project as ProjectRepository
+from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from model.document_reader.project import Project as ProjectModel
 from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel
@@ -9,6 +10,7 @@ class ProjectService:
         self.project_repository = ProjectRepository
         self.library_repository = LibraryRepository
         self.document_service = DocumentService()
+        self.document_repository = DocumentRepository
 
     #TODO: When thge user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
     #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
@@ -50,6 +52,19 @@ class ProjectService:
         return projects_list
 
     def delete_project(self, project_id):
+        documents_in_project = self.document_repository.get_documents_by_project( project_id )
+        project_path = self.project_repository.get_project_by_id(project_id) #get the path of the project
+        if not documents_in_project:
+            return None
+
+        for document_data in documents_in_project:
+            document_id = document_data.get('_id')
+            self.document_service.delete_document(document_id)
+        #TODO check if the directory of project in the server is empty and if thats the case , delete the project directory
+
+
+
+
         return self.project_repository.delete_project(project_id)
 
     def rename_project(self, project_id, project_name):

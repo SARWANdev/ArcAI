@@ -1,3 +1,5 @@
+import os
+
 from database.repository.user_repository import User
 from services.document_service import DocumentService
 from services.project_service import ProjectService
@@ -76,13 +78,13 @@ def create_projects():
 
 def upload_documents_to_created_users():
     #DocumentService().upload_document(path_1, "user_id_1", "project_id_1_1")
-    DocumentService().upload_document(path_1, user_id_1, project_id_1_1)
-    DocumentService().upload_document(path_2, user_id_1, project_id_1_1)
-    DocumentService().upload_document(path_3, user_id_1, project_id_1_1)
+    DocumentService().upload_document(path_1, user_id_1, project_id_1_1, os.path.basename(path_1))
+    DocumentService().upload_document(path_2, user_id_1, project_id_1_1, os.path.basename(path_2))
+    DocumentService().upload_document(path_3, user_id_1, project_id_1_1, os.path.basename(path_3))
 
-    DocumentService().upload_document(path_1, user_id_1, project_id_1_2)
-    DocumentService().upload_document(path_2, user_id_1, project_id_1_2)
-    DocumentService().upload_document(path_3, user_id_1, project_id_1_2)
+    #DocumentService().u(path_1, user_id_1, project_id_1_2)
+    #DocumentService().upload_file(path_2, user_id_1, project_id_1_2)
+    #DocumentService().upload_file(path_3, user_id_1, project_id_1_2)
 
 def delete_document_from_an_id(document_id):
     DocumentService().delete_document(document_id)
@@ -124,6 +126,17 @@ def method_delete_remote_directory_TEST():
     delete_remote_directory(
         r"/home/pse03/user_1/project_1/898b29a276747664ddb4b2c9aece69e117eb475d76a5fb63fbdf8bbfd4a76faf/898b29a276747664ddb4b2c9aece69e117eb475d76a5fb63fbdf8bbfd4a76faf.pdf")
 
+def __rename(document_name: str, ref_count: int) -> str:
+
+
+    if ref_count == 0:
+        return document_name
+
+    base_name, extension = os.path.splitext(document_name)
+    new_name = f"{base_name}_({ref_count}){extension}"
+
+    return new_name
+
 if __name__ == "__main__":
     #method_upload_document_TEST()
     #method_download_document_TEST()
@@ -140,5 +153,6 @@ if __name__ == "__main__":
     #delete_document_from_an_id()
 
     #TEST : duplicate
-    DocumentService().duplicate_document("6873c120f80e5fabd720b5eb", "6873c119f80e5fabd720b5e3")
+    DocumentService().duplicate_document("6877efc18d90ba0a1892d550", "6877ef9f8d90ba0a1892d544")
+
 
