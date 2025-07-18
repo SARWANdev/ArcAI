@@ -160,22 +160,29 @@ class DocumentDataBase:
 
         
     @staticmethod
-    def search_documents(self, prefix, user_id):
-        #Searches for documents in the database
+    def search_documents(prefix, user_id):
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
             "size": 5,
             "query": {
                 "bool": {
-                    "must": [
+                    "should": [
                         {
                             "match_phrase_prefix": {
                                 "name": {
                                     "query": prefix
                                 }
                             }
+                        },
+                        {
+                            "match_phrase_prefix": {
+                                "author": {
+                                    "query": prefix
+                                }
+                            }
                         }
                     ],
+                    "minimum_should_match": 1,
                     "filter": [
                         { "term": { "user_id": user_id } }
                     ]
@@ -187,7 +194,8 @@ class DocumentDataBase:
             {"id": hit["_id"], "name": hit["_source"].get("name", "")}
             for hit in hits
         ]
-
+    
+    
     @staticmethod
     def get_user_id(document_id):
         with mongo_connection() as db:

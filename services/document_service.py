@@ -375,15 +375,9 @@ class DocumentService:
         #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
         return str()
     
-    def search_documents(self, prefix):
-        found_documents = self.document_repository.search(prefix)
-        documents_list = []
-        for document_data in found_documents:
-            doc_id = document_data.get('_id')
-            document_model = self.get_document(doc_id)
-            if document_model:
-                documents_list.append(document_model)
-        return documents_list
+    def search_documents(user_id, prefix):
+        result = DocumentRepository.search_documents(user_id, prefix)
+        return result
     
     def get_document_vector_store(self, document_id):
         pass
