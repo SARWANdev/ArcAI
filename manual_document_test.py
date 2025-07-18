@@ -61,7 +61,16 @@ if __name__ == "__main__":
     current_filter = None  # Tuple: (read, fav, tag)
 
     while True:
-        if current_filter:
+        if current_sort and current_filter:
+            read, favorite, tag = current_filter
+            docs = document_service.get_filtered_and_sorted_documents(
+                project_id,
+                current_sort[0], current_sort[1],
+                read=read,
+                favorite=favorite,
+                tag=tag
+            )
+        elif current_filter:
             read, favorite, tag = current_filter
             docs = document_service.filter_documents(project_id, read=read, favorite=favorite, tag=tag)
         elif current_sort:
@@ -80,6 +89,7 @@ if __name__ == "__main__":
         print("\n0) Quit")
         print("Type 'sort' to change sorting")
         print("Type 'filter' to apply filter")
+        print("Type 'sort+filter' to set both at once")
 
         user_input = input("Select document (number) or action: ").strip().lower()
 
@@ -92,6 +102,10 @@ if __name__ == "__main__":
         elif user_input == "filter":
             current_filter = prompt_filter_criteria()
             current_sort = []  # clear sort when filtering
+            continue
+        elif user_input == "sort+filter":
+            current_sort = prompt_sort_criteria()
+            current_filter = prompt_filter_criteria()
             continue
 
         try:

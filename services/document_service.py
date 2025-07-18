@@ -322,6 +322,43 @@ class DocumentService:
 
         return filtered
     
+    def get_filtered_and_sorted_documents(
+        self,
+        project_id: str,
+        sort_field: str,
+        order: str,
+        read: bool = None,
+        favorite: bool = None,
+        tag: str = None
+    ) -> list[DocumentModel]:
+        # 1. Filter documents
+        documents = self.filter_documents(project_id, read, favorite, tag)
+        if not documents:
+            return []
+
+        # 2. Sort documents based on sort_field
+        reverse = order == "desc"
+        repo = self.document_repository
+
+        if sort_field == "title":
+            documents.sort(key=lambda d: (d.name or "").lower(), reverse=reverse)
+        elif sort_field == "author":
+            documents.sort(key=lambda d: (repo.get_authors(d.document_id) or "").lower(), reverse=reverse)
+        elif sort_field == "year":
+            documents.sort(
+                key=lambda d: int(repo.get_year(d.document_id)) if str(repo.get_year(d.document_id)).isdigit() else -1,
+                reverse=reverse
+            )
+        elif sort_field == "source":
+            documents.sort(key=lambda d: (repo.get_source(d.document_id) or "").lower(), reverse=reverse)
+        elif sort_field == "created_at":
+            documents.sort(key=lambda d: d.created_at or "", reverse=reverse)
+        else:
+            raise ValueError(f"Invalid sort field: {sort_field}")
+
+        return documents
+
+    
     def download_document(self, document_id):
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
