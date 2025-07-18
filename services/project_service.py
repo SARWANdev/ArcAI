@@ -24,6 +24,8 @@ class ProjectService:
             user_id=user_id,
             note=""
         )
+        # 1.5 Create Conversation for Project
+        conversation_model = 
 
         # 2. 2. Save to DB using static repository
         project_id = self.project_repository.new_project(user_id, project_name, note="")

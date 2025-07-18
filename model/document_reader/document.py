@@ -1,5 +1,5 @@
 from typing import Optional
-
+from model.ai_chat.conversation import Conversation
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 
@@ -18,7 +18,6 @@ class Document:
         self.favorite = favorite
         self.created_at = created_at
         self.updated_at = updated_at
-        self.conversation = 
 
 
 
