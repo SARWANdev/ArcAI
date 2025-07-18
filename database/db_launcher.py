@@ -8,6 +8,7 @@ def init_es():
         es.indices.create(index="documents", body={
             "mappings": {
                 "properties": {
+                    "user_id":{"type": "text"},
                     "name": {"type": "text"},
                     "author": {"type": "text"},
                     "suggest": {"type": "completion"}
