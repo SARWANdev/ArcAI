@@ -4,26 +4,27 @@ from datetime import datetime
 from model.document_reader.document import Document
 from model.document_reader.library import Library
 from model.document_reader.project import Project
+from database.repository.conversation_repository import ConversationRepository
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_id:str|None=None, project_id:str|None=None, messages = None):
+    def __init__(self, user_id, document_ids:list[str], messages=None):
         
-        
+        self.conversation_repository = ConversationRepository
         self.messages = messages or []
         self.initialise_system()
-        self.document_id = document_id or None
-        self.project_id = project_id or None
         self.user_id = user_id
-        self.conversation_id = self.__generate_conversation_id()
+        self.document_ids = document_ids
+        self.conversation_id = self.__generate_conversation_id(user_id=user_id, document_ids=document_ids)
 
-    def __generate_conversation_id(self):
-        if self.document_id:
-            return self.document_id
-        elif self. project_id:
-            return self.project_id
-        return self.user_id
 
+    def __generate_conversation_id(self, document_ids:list[str], user_id):
+        id = user_id
+        for document_id in document_ids:
+            id += document_id
+        while self.conversation_repository.get_conversation_by_id(id):
+            id += "e" 
+        return id
     def add_user_message(self, message:str):
         self.messages.append({"role": "user",
                                 "content": message})
@@ -54,9 +55,10 @@ class Conversation:
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""                      
 
-                    Context: {context}  
-
-                    User Message: {message}  
+                    You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
+                Question: {message} 
+                Context: {context} 
+                Answer: 
 
                     """
         return formatted_message
@@ -75,14 +77,5 @@ class Conversation:
         return self.messages
     
     def get_vector_store(self):
-        if self.document_id:
+        for document_id in self.document_ids:
             
-            #returndocument vector store
-            pass
-        elif self.project_id:
-            # return project vector store
-            pass
-        #return library vs
-        
-
-        pass
