@@ -272,6 +272,16 @@ class PdfMasterDataBase:
             print(f"Failed to get remote_pkl_path for PDF {pdf_master_id}: {e}")
             return None
 
+    @staticmethod
+    def get_user_id(pdf_master_id):
+        try:
+            with mongo_connection() as db:
+                user_id = db.pdf_master.find_one({"_id": ObjectId(pdf_master_id)}, {"user_id": 1}).get("user_id")
+                return user_id
+        except Exception as e:
+            print(f"Failed to get user_id for PDF {pdf_master_id}: {e}")
+            return None
+
 
 
 
