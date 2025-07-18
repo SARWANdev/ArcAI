@@ -1,19 +1,19 @@
 from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
 from datetime import datetime
+from model.document_reader.document import Document
+from model.document_reader.library import Library
+from model.document_reader.project import Project
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None, list_of_documents=None):
-
-        self.conversation_id = conversation_id
+    def __init__(self, user_id, conversation_id, document:Document|None=None, library:Library|None=None, project:Project|None=None, updated_at=None):
+        
         self.user_id = user_id
-        self.name = name
-        self.messages = messages or []
-        self.vector_store = vector_store
-        self.created_at = created_at
+        self.messages = []
+        self.created_at = created_at or None
         self.updated_at = updated_at
-        self.list_of_documents = list_of_documents or []
+        self.
 
     def rename(self, name):
         self.name = name

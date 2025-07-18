@@ -1,6 +1,6 @@
 class History:
     def __init__(self, conversations):
-        self.conversations = list()
+        self.conversations = []
 
     def add_conversation(self, conversation):
         self.conversations.append(conversation)

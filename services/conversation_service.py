@@ -72,3 +72,13 @@ class ConversationService:
     def search_conversations(self, user_id, search):
         result = ConversationRepository.search_conversation(user_id, search)
         return result
+    
+    def generate_conversation_id(self, user_id, project_id=None, document_id=None):
+        conversation_id = user_id + "conversation" #Library
+        if project_id:
+            conversation_id = project_id + "conversation" #Project
+        if document_id:
+            conversation_id = document_id + "conversation" #Document
+
+        return conversation_id
+    

@@ -18,6 +18,7 @@ class Document:
         self.favorite = favorite
         self.created_at = created_at
         self.updated_at = updated_at
+        self.conversation = 
 
 
 
