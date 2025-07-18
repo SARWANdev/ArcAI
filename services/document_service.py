@@ -104,7 +104,7 @@ class DocumentService:
         #save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
 
 
-    def __get_pdf_text(self, document) -> str:
+    def get_pdf_text(self, document) -> str:
         pdf_reader = PdfReader(document)
         text = ""
         for page in pdf_reader.pages:
@@ -118,7 +118,7 @@ class DocumentService:
 
     def get_text_chunks(self, document)->list[str]:
         metadata = str(self.get_pdf_metadata(document=document))
-        text = self.__get_pdf_text(document) 
+        text = self.get_pdf_text(document) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,

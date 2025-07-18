@@ -16,8 +16,13 @@ class DocumentDataBase:
     @staticmethod
     def save(document: Document) -> str:
         with mongo_connection() as db:
-            doc_id = db.documents.insert_one(document.new_document_dict())
-            return str(doc_id.inserted_id)
+            result = db.documents.insert_one(document.new_document_dict())
+            doc_id = result.inserted_id
+            es.index(index = "documents", id = doc_id, body={
+                "user_id": "", #TODO: retrieve user_id for this
+                "name": document.get_
+            })
+            return str(doc_id)
 
     @staticmethod
     def get_path( document_id ):
@@ -92,8 +97,8 @@ class DocumentDataBase:
             with mongo_connection() as db:
                 #Deletion in Mongo
                 result = db.documents.delete_one({"_id": ObjectId(document_id)})
-                #Deletion in Elastic search
-                #es.delete(index = "documents", id=document_id)
+                #Deletion in Elasticsearch
+                es.delete(index = "documents", id=document_id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Document could not be deleted: {e}")
@@ -151,26 +156,33 @@ class DocumentDataBase:
 
         
     @staticmethod
-    def search_documents(self, prefix):
+    def search_documents(self, prefix, user_id):
         #Searches for documents in the database
-        found = es.search(index="documents", body={
-            "suggest": {
-                "documents-suggest": {
-                    "prefix": prefix,
-                    "completion": {
-                        "field": "suggest",
-                        "size": 5
-                    }
+        es.indices.refresh(index="documents")
+        result = es.search(index="documents", body={
+            "size": 5,
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "match_phrase_prefix": {
+                                "name": {
+                                    "query": prefix
+                                }
+                            }
+                        }
+                    ],
+                    "filter": [
+                        { "term": { "user_id": user_id } }
+                    ]
                 }
             }
         })
-        suggestions = found["suggest"]["documents-suggest"][0]["options"]
-        document_ids = [suggestion["_id"] for suggestion in suggestions]
-        result = []
-        for id in document_ids:
-            document = self.get_document_by_id(id)
-            result.append(document)
-        return result
+        hits = result["hits"]["hits"]
+        return [
+            {"id": hit["_id"], "name": hit["_source"].get("name", "")}
+            for hit in hits
+        ]
 
     @staticmethod
     def get_user_id(document_id):

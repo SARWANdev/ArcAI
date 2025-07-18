@@ -44,7 +44,7 @@ def choose_user():
 
 def show_user_conversations(user_id):
     print(f"\n📚 Conversation history for {user_id}:")
-    history = service.get_chat_history(user_id)
+    history = service.get_conversation_history(user_id)
     if not history:
         print("No conversations found.")
         return []
