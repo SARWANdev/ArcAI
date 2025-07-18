@@ -3,7 +3,7 @@ import os
 from database.repository.user_repository import User
 from services.document_service import DocumentService
 from services.project_service import ProjectService
-from services.upload_manager.document_upload_service import get_pdf_sha256
+from services.upload_manager.hash_manager import get_pdf_sha256
 from services.upload_manager.server_conection import download_document, upload_document, delete_remote_directory
 
 

@@ -11,12 +11,12 @@ class ConversationRepository:
             try:
                 result = db.conversations.insert_one(conversation_data)
                 conversation_id = str(result.inserted_id)
-                es.index(index="conversations", id=conversation_id, body={
+                result_es = es.index(index="conversations", id=conversation_id, body={
                     "user_id": conversation_data["user_id"],
                     "name": conversation_data["name"],
                     "suggest": {"input": conversation_data["name"]}
                 })
-                return conversation_id
+                return conversation_id and result_es
             except DuplicateKeyError:
                 print("Conversation already exists")
                 return ""
@@ -59,12 +59,12 @@ class ConversationRepository:
     @staticmethod
     def get_user_conversations(user_id):
         with mongo_connection() as db:
-            return db.conversations.find({"user_id": user_id})
+            return list(db.conversations.find({"user_id": user_id}))
         
     @staticmethod
     def get_conversation_by_name(name):
         with mongo_connection() as db:
-            return db.conversations.find({"name": name})
+            return db.conversations.find_one({"name": name})
         
     @staticmethod
     def delete_conversation(conversation_id):

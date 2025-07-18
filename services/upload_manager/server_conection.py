@@ -1,4 +1,5 @@
 import io
+import tempfile
 
 import paramiko
 from scp import SCPClient
@@ -13,6 +14,17 @@ ssh_host = os.getenv("SSH_HOST")
 ssh_port = int(os.getenv("SSH_PORT"))  # convert to integer
 ssh_user = os.getenv("SSH_USER")
 ssh_password = os.getenv("SSH_PASSWORD")
+
+def ssh_connection():
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(
+        hostname=ssh_host,
+        port=ssh_port,
+        username=ssh_user,
+        password=ssh_password
+    )
+    return ssh
 
 #test case if the instance in mongo is deleted but not in the server it creates problems
 def upload_document(local_path: str, relative_path: str, pdf_hash: str):
@@ -247,18 +259,11 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     Returns:
         bool: True if the operation succeeded, False otherwise.
     """
+    ssh = None
     try:
-        # Setup SSH connection
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
 
         # Open an SFTP session
+        ssh = ssh_connection()
         sftp = ssh.open_sftp()
         with sftp.file(remote_file_path, mode='wb') as remote_file:
             remote_file.write(file_content)
@@ -271,63 +276,51 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     except Exception as e:
         print(f"❌ Error saving file: {e}")
         return False
+    finally:
+        if ssh: ssh.close()
+
 
 def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffer: io.BytesIO) -> bool:
+    ssh = sftp = None
+
     try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
+        ssh = ssh_connection()
         sftp = ssh.open_sftp()
 
         # Ensure directory exists
-        print(1)
         remote_directory = os.path.dirname(remote_index_path)
-        #TODO take care with the paths
-        remote_directory = posixpath.join(remote_dir, remote_directory)
-        print(remote_directory)
-
-        print(2)
         try:
             sftp.stat(remote_directory)
-            print(3)
         except IOError:
             sftp.mkdir(remote_directory)
-            print(4)
 
         # Upload both buffers
         # Prepare full remote file paths
-        print(5)
         remote_index_path = posixpath.join(remote_directory, "index.faiss")
-        print(6)
         remote_meta_path = posixpath.join(remote_directory, "index.pkl")
 
         # Upload the FAISS index
-        print(7)
         index_buffer.seek(0)
         with sftp.open(remote_index_path, 'wb') as f_index:
-            print(8)
             f_index.write(index_buffer.read())
 
         # Upload the metadata
-        print(9)
         meta_buffer.seek(0)
         with sftp.open(remote_meta_path, 'wb') as f_meta:
-            print(10)
             f_meta.write(meta_buffer.read())
 
-        sftp.close()
-        ssh.close()
+        print(f"✅ Embeddings successfully saved to: {remote_directory}")
         return True
 
 
     except Exception as e:
         print(f"Error uploading the embeddings: {e}")
         return False
+    finally:
+        if ssh: ssh.close()
+        if sftp: sftp.close()
+
+
 
 
 

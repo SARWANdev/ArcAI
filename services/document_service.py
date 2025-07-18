@@ -15,8 +15,9 @@ from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 from services.bibtex_service import BibTeX_Service
 
-from services.upload_manager.document_upload_service import get_pdf_sha256, document_name_generator, relative_path_generator
-from services.upload_manager.server_conection import upload_document, delete_remote_directory
+from services.upload_manager.hash_manager import get_pdf_sha256, document_name_generator, relative_path_generator
+from services.upload_manager.embeddings_manager import EmbeddingsManager
+from services.upload_manager.server_conection import upload_document, delete_remote_directory, save_embeddings
 from services.notebook_service import NotebookService
 
 class DocumentService:
@@ -27,6 +28,7 @@ class DocumentService:
         self.document_properties_repo = DocumentPropertiesRepository
         self.pdf_master_repository = PdfMasterDataBase
         self.notebook_service = NotebookService()
+        self.ai_service = AIService()
 
 
     def __create_document(self, document_name, project_id, pdf_master_id):
@@ -68,7 +70,15 @@ class DocumentService:
 
 
 
+    def embeddings_storage(self, document_path, pdf_master_id):
+        text_chunks = self.get_text_chunks(document=document_path)
+        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)  #
+        serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
+        path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
+        save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1]) #save th embeddings in the server
+        #TODO save the paths in mongo pdf_master
 
+        pass
 
     def upload_document(self, document_path: str, user_id: str, project_id: str, original_name: str):
 
@@ -84,27 +94,30 @@ class DocumentService:
         self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
         #generate embeddings and vector store
+        #TO run this lines of code , make sure the ollama tunel is running in the server
 
-        #text_chunks = self.__get_text_chunks(document_path=document_path)
-        #ai_service = AIService()
-        #embeddings = ai_service.get_vector_store(text_chunks=text_chunks, embedding_path=document_path+".FAISS") #TODO save to database
+        text_chunks = self.get_text_chunks(document=document_path)
+        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
+        serialized_vector_store = EmbeddingsManager.serialize_vector_store( embeddings )
+        path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
+        save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
 
 
-    def __get_pdf_text(self, document_path:str) -> str:
-        pdf_reader = PdfReader(document_path)
+    def __get_pdf_text(self, document) -> str:
+        pdf_reader = PdfReader(document)
         text = ""
         for page in pdf_reader.pages:
             text += page.extract_text()
 
         return text
     
-    def get_pdf_metadata(self, document_path:str):
-        pdf_reader = PdfReader(document_path)
+    def get_pdf_metadata(self, document:str):
+        pdf_reader = PdfReader(document)
         metadata = pdf_reader.metadata
 
-    def get_text_chunks(self, document_path:str)->list[str]:
-        metadata = str(self.get_pdf_metadata(document_path=document_path))
-        text = self.__get_pdf_text(document_path) 
+    def get_text_chunks(self, document)->list[str]:
+        metadata = str(self.get_pdf_metadata(document=document))
+        text = self.__get_pdf_text(document) 
         text_splitter = CharacterTextSplitter(
         separator="\n",
         chunk_size = 1000,
