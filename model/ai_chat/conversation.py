@@ -1,22 +1,28 @@
 from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
 from datetime import datetime
+from model.document_reader.document import Document
+from model.document_reader.library import Library
+from model.document_reader.project import Project
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, vector_store:FAISS,conversation_id=None, user_id=None, name=None, messages=None, created_at=None, updated_at=None, list_of_documents=None):
-
-        self.conversation_id = conversation_id
-        self.user_id = user_id
-        self.name = name
+    def __init__(self, user_id, conversation_id, document_id:str|None=None, project_id:str|None=None, messages = None):
+        
+        
         self.messages = messages or []
-        self.vector_store = vector_store
-        self.created_at = created_at
-        self.updated_at = updated_at
-        self.list_of_documents = list_of_documents or []
+        self.initialise_system()
+        self.document_id = document_id or None
+        self.project_id = project_id or None
+        self.user_id = user_id
+        self.conversation_id = self.__generate_conversation_id()
 
-    def rename(self, name):
-        self.name = name
+    def __generate_conversation_id(self):
+        if self.document_id:
+            return self.document_id
+        elif self. project_id:
+            return self.project_id
+        return self.user_id
 
     def add_user_message(self, message:str):
         self.messages.append({"role": "user",
@@ -29,34 +35,29 @@ class Conversation:
     def add_system_message(self, message: str):
         self.messages.append({"role": "system",
                                 "content": message})
+        
+    def initialise_system(self):
+        self.add_system_message(f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
+                    2. Your job is to reply to User Message.
+                    3. If necessary look at the attached Context
+                    3. Keep answers concise but friendly.  
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: """)
 
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "_id": self.conversation_id,
             "user_id": self.user_id,
-            "name": self.name,
             "messages": self.messages,
-            "vector_store": self.vector_store,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at or datetime.utcnow(),
         }
         
     def __format_user_message(self, message:str, context: str)->str:
-        formatted_message = f"""  
+        formatted_message = f"""                      
 
-                    1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
-                    2. Your job is to reply to User Message.
-                    3. If necessary look at the attached Context
-                    3. Keep answers concise but friendly.  
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
-                    
+                    Context: {context}  
 
-                    5: Context: {context}  
+                    User Message: {message}  
 
-                    6: User Message: {message}  
-
-                    Answer:  
                     """
         return formatted_message
     
@@ -73,5 +74,15 @@ class Conversation:
     def get_messages(self):
         return self.messages
     
-    def get_vector_store(self)->FAISS:
-        return self.vector_store
+    def get_vector_store(self):
+        if self.document_id:
+            
+            #returndocument vector store
+            pass
+        elif self.project_id:
+            # return project vector store
+            pass
+        #return library vs
+        
+
+        pass

@@ -118,7 +118,7 @@ def main():
                 st.write(f"Processing complete in {(summary_time-start):.2f}s")
                 document_processed = True
 
-    
+    """
     if st.session_state.vector_store and st.session_state.conversation:
         question = st.chat_input("Ask anything")
         if question:
@@ -132,7 +132,7 @@ def main():
                 answer = ai_service.output_streaming_response(response=response, output_function=placeholder.markdown)
                 st.session_state.conversation.add_ai_message(answer)
                 placeholder.markdown(answer)
-        
+        """
 
 
 
