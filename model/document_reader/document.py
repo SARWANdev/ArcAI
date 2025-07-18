@@ -1,5 +1,4 @@
 from typing import Optional
-from model.ai_chat.conversation import Conversation
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 
