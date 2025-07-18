@@ -75,10 +75,11 @@ class DocumentService:
         embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)  #
         serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
         path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
-        save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1]) #save th embeddings in the server
+        paths = save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1]) #save th embeddings in the server
+
         #TODO save the paths in mongo pdf_master
 
-        pass
+
 
     def upload_document(self, document_path: str, user_id: str, project_id: str, original_name: str):
 
@@ -96,11 +97,11 @@ class DocumentService:
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
 
-        text_chunks = self.get_text_chunks(document=document_path)
-        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
-        serialized_vector_store = EmbeddingsManager.serialize_vector_store( embeddings )
-        path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
-        save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
+        #text_chunks = self.get_text_chunks(document=document_path)
+        #embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
+        #serialized_vector_store = EmbeddingsManager.serialize_vector_store( embeddings )
+        #path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
+        #save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
 
 
     def get_pdf_text(self, document) -> str:
