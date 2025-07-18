@@ -280,7 +280,7 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
         if ssh: ssh.close()
 
 
-def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffer: io.BytesIO) -> bool:
+def save_embeddings(remote_faiss_path: str, index_buffer: io.BytesIO, meta_buffer: io.BytesIO) -> tuple[str, str] | None:
     ssh = sftp = None
 
     try:
@@ -288,7 +288,7 @@ def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffe
         sftp = ssh.open_sftp()
 
         # Ensure directory exists
-        remote_directory = os.path.dirname(remote_index_path)
+        remote_directory = os.path.dirname(remote_faiss_path)
         try:
             sftp.stat(remote_directory)
         except IOError:
@@ -296,26 +296,26 @@ def save_embeddings(remote_index_path: str, index_buffer: io.BytesIO, meta_buffe
 
         # Upload both buffers
         # Prepare full remote file paths
-        remote_index_path = posixpath.join(remote_directory, "index.faiss")
-        remote_meta_path = posixpath.join(remote_directory, "index.pkl")
+        remote_faiss_path = posixpath.join(remote_directory, "index.faiss")
+        remote_pkl_path = posixpath.join(remote_directory, "index.pkl")
 
         # Upload the FAISS index
         index_buffer.seek(0)
-        with sftp.open(remote_index_path, 'wb') as f_index:
+        with sftp.open(remote_faiss_path, 'wb') as f_index:
             f_index.write(index_buffer.read())
 
         # Upload the metadata
         meta_buffer.seek(0)
-        with sftp.open(remote_meta_path, 'wb') as f_meta:
+        with sftp.open(remote_pkl_path, 'wb') as f_meta:
             f_meta.write(meta_buffer.read())
 
         print(f"✅ Embeddings successfully saved to: {remote_directory}")
-        return True
+        return remote_faiss_path, remote_pkl_path
 
 
     except Exception as e:
         print(f"Error uploading the embeddings: {e}")
-        return False
+        return None
     finally:
         if ssh: ssh.close()
         if sftp: sftp.close()
