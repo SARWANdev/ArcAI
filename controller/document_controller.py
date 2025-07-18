@@ -4,6 +4,7 @@ from services.notebook_service import NotebookService
 from database.repository.document_repository import DocumentDataBase
 from services.ai_service import AIService
 from flask import Blueprint,Flask, jsonify, request, send_file
+from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
 
@@ -130,10 +131,67 @@ class DocumentController:
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
 
+    def make_document_favourite(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = ObjectId(data.get("document_id"))
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            print(document_id)
+            print(type(document_id))
+            self.document_service.add_to_favorites(document_id)
+
+            return jsonify({
+                "status": "success",
+                "message": "The document has been favourite successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in favouring the document: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to favourite the document",
+                "error": str(e)
+            }), 500
+
+
+    def delete_favourite(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = ObjectId(data.get("document_id"))
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            print(document_id)
+            print(type(document_id))
+            self.document_service.remove_from_favorites(document_id)
+            print("The document is unfavourited")
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "Projects unfavoured successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in unfavouring the document: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to un-favour the document",
+                "error": str(e)
+            }), 500
+
+
 
     def register_document_routes(self, app):
         app.add_url_rule("/document/upload", view_func=self.upload_document, methods=["POST"])
         app.add_url_rule("/document/delete", view_func=self.delete_document, methods=["DELETE"])
         app.add_url_rule("/document/get-document", view_func=self.get_document)
         app.add_url_rule("/document/save", view_func=self.save_document, methods=["POST"])
+        app.add_url_rule("/document/favourite", view_func=self.make_document_favourite, methods=["POST"])
+        app.add_url_rule("/document/favourite", view_func=self.delete_favourite, methods=["DELETE"])
         app.register_blueprint(self.document)

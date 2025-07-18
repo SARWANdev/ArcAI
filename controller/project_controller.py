@@ -50,14 +50,27 @@ class ProjectController:
 
             sort_criteria = []
             document_list = []
+            documents = []
+
 
             if not sort_states:
-                documents = self.document_service.get_project_documents(project_id)
+                if not filter_state:
+                    documents = self.document_service.get_project_documents(project_id)
+                else:
+                    if filter_state == "ByFavourite":
+                        documents = self.document_service.filter_documents(project_id, favorite=True)
+                    elif filter_state == "IfRead":
+                        documents = self.document_service.filter_documents(project_id, read=True)
+
             else:
-                for sort_state in sort_states:
-                    sort_tuple = (sort_state["field"].lower(), sort_state["order"])
-                    sort_criteria.append(sort_tuple)
-                documents = self.project_service.sort_project_documents(project_id, sort_criteria)
+                if not filter_state:
+                    for sort_state in sort_states:
+                        sort_tuple = (sort_state["field"].lower(), sort_state["order"])
+                        sort_criteria.append(sort_tuple)
+                    documents = self.project_service.sort_project_documents(project_id, sort_criteria)
+                else:
+                    # A filter function which takes into account the sort states as well as filter
+                    documents = self.document_service.get_project_documents(project_id)
 
             # Check if documents is None
             if documents is None:
@@ -76,6 +89,8 @@ class ProjectController:
                     "Authors": self.document_repository.get_authors(str(document.document_id)),
                 }
                 document_list.append(document_object)
+
+            print(document_list)
 
             return jsonify({
                 "status": "success",
