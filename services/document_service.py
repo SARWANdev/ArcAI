@@ -5,9 +5,13 @@ from database.repository.document_repository import DocumentDataBase as Document
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.tag_registry_repository import TagRegistryRepository
+from database.repository.conversation_repository import ConversationRepository
+
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
+from model.ai_chat.conversation import Conversation
+
 import io
 from PyPDF2 import PdfReader
 from langchain_community.vectorstores import FAISS
@@ -105,7 +109,7 @@ class DocumentService:
 
 
     def get_pdf_text(self, document) -> str:
-        pdf_reader = PdfReader(document)
+        pdf_reader = PdfReader(document) #can also take document path
         text = ""
         for page in pdf_reader.pages:
             text += page.extract_text()

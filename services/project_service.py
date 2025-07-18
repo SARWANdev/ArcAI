@@ -6,6 +6,7 @@ from model.document_reader.document import Document as DocumentModel
 from services.document_service import DocumentService
 from services.notebook_service import NotebookService
 
+
 class ProjectService:
     def __init__(self):
         self.project_repository = ProjectRepository
@@ -24,13 +25,14 @@ class ProjectService:
             user_id=user_id,
             note=""
         )
-        # 1.5 Create Conversation for Project
-        conversation_model = 
+        
 
         # 2. 2. Save to DB using static repository
         project_id = self.project_repository.new_project(user_id, project_name, note="")
         project_model.id = project_id  # assign back the ID
         self.notebook_service.update_project_notebook(project_id, "")
+
+       
 
         return project_model  # or wrap this in a DTO if needed
 

@@ -7,7 +7,7 @@ from model.document_reader.project import Project
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, conversation_id, document_id:str|None=None, project_id:str|None=None, messages = None):
+    def __init__(self, user_id, document_id:str|None=None, project_id:str|None=None, messages = None):
         
         
         self.messages = messages or []
