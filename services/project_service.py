@@ -82,32 +82,42 @@ class ProjectService:
     def download_project(self, project_id):
         pass
 
-    def sort_project_documents(self, project_id: str, sort_criteria: list[tuple[str, str]]) -> list[DocumentModel]:
+    def sort_project_documents(self, project_id: str, sort_field: str, order: str) -> list[DocumentModel]:
         """
-        Sort documents of a project by multiple criteria.
-        Each entry in sort_criteria is a tuple: (field_name, order)
-        e.g., [('author', 'asc'), ('year', 'desc'), ('title', 'asc')]
+        Sort documents of a project by a single field.
+        sort_field: one of ['title', 'author', 'year', 'source', 'created_at']
+        order: 'asc' or 'desc'
         """
         documents = self.document_service.get_project_documents(project_id)
         if not documents:
             return []
 
-        valid_fields = {
-            "title": lambda d: getattr(d, 'name', '').lower() if getattr(d, 'name', None) else "",
-            "author": lambda d: getattr(d, 'author', '').lower() if getattr(d, 'author', None) else "",
-            "year": lambda d: getattr(d, 'year', None) if getattr(d, 'year', None) is not None else -1,
-            "source": lambda d: getattr(d, 'source', '').lower() if getattr(d, 'source', None) else "",
-            "created_at": lambda d: getattr(d, 'created_at', '') if getattr(d, 'created_at', None) else ""
-        }
+        reverse = order == "desc"
+        repo = self.document_repository
 
+        def get_field_value(doc: DocumentModel):
+            if sort_field == "title":
+                return (doc.name or "").lower()
+            elif sort_field == "author":
+                return (repo.get_authors(doc.document_id) or "").lower()
+            elif sort_field == "year":
+                year = repo.get_year(doc.document_id)
+                return int(year) if str(year).isdigit() else -1
+            elif sort_field == "source":
+                return (repo.get_source(doc.document_id) or "").lower()
+            elif sort_field == "created_at":
+                return doc.created_at or ""
+            else:
+                raise ValueError(f"Invalid sort field: {sort_field}")
 
-        for field, order in reversed(sort_criteria):
-            if field not in valid_fields:
-                raise ValueError(f"Invalid sort field: {field}")
-            reverse = (order == "desc")
-            documents.sort(key=valid_fields[field], reverse=reverse)
+        try:
+            documents.sort(key=get_field_value, reverse=reverse)
+        except Exception as e:
+            print(f"Error while sorting documents: {e}")
+            return documents  # fallback: return unsorted
 
         return documents
+
 
 
     #SHRAWAN

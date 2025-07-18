@@ -18,10 +18,13 @@ class DocumentDataBase:
         with mongo_connection() as db:
             result = db.documents.insert_one(document.new_document_dict())
             doc_id = result.inserted_id
+            name = DocumentDataBase.get_name(doc_id)
+            author = DocumentDataBase.get_authors(doc_id)
             es.index(index = "documents", id = doc_id, body={
-                "user_id": DocumentDataBase.get_user_id(doc_id), #TODO: retrieve user_id for this
-                "name": DocumentDataBase.get_name(doc_id),
-                "author": DocumentDataBase.get_authors(doc_id)
+                "user_id": DocumentDataBase.get_user_id(doc_id), 
+                "name": name,
+                "author": author,
+                "suggest": {"input": [name, author]}
             })
             return str(doc_id)
 
@@ -157,22 +160,29 @@ class DocumentDataBase:
 
         
     @staticmethod
-    def search_documents(self, prefix, user_id):
-        #Searches for documents in the database
+    def search_documents(prefix, user_id):
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
             "size": 5,
             "query": {
                 "bool": {
-                    "must": [
+                    "should": [
                         {
                             "match_phrase_prefix": {
                                 "name": {
                                     "query": prefix
                                 }
                             }
+                        },
+                        {
+                            "match_phrase_prefix": {
+                                "author": {
+                                    "query": prefix
+                                }
+                            }
                         }
                     ],
+                    "minimum_should_match": 1,
                     "filter": [
                         { "term": { "user_id": user_id } }
                     ]
@@ -184,7 +194,8 @@ class DocumentDataBase:
             {"id": hit["_id"], "name": hit["_source"].get("name", "")}
             for hit in hits
         ]
-
+    
+    
     @staticmethod
     def get_user_id(document_id):
         with mongo_connection() as db:

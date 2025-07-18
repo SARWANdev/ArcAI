@@ -80,6 +80,8 @@ class DocumentService:
         serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
         path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
         paths = save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1]) #save th embeddings in the server
+        self.pdf_master_repository.set_remote_faiss_path(pdf_master_id, paths[0])
+        self.pdf_master_repository.set_remote_pkl_path(pdf_master_id, paths[1])
 
         #TODO save the paths in mongo pdf_master
 
@@ -100,6 +102,8 @@ class DocumentService:
 
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
+
+        self.embeddings_storage(document_path, pdf_master_id)
 
         #text_chunks = self.get_text_chunks(document=document_path)
         #embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
@@ -371,15 +375,9 @@ class DocumentService:
         #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
         return str()
     
-    def search_documents(self, prefix):
-        found_documents = self.document_repository.search(prefix)
-        documents_list = []
-        for document_data in found_documents:
-            doc_id = document_data.get('_id')
-            document_model = self.get_document(doc_id)
-            if document_model:
-                documents_list.append(document_model)
-        return documents_list
+    def search_documents(user_id, prefix):
+        result = DocumentRepository.search_documents(user_id, prefix)
+        return result
     
     def get_document_vector_store(self, document_id):
         pass
