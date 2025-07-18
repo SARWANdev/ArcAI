@@ -11,23 +11,20 @@ def prompt_sort_criteria():
     for field in fields:
         print(f"• {field}")
 
-    print("\nYou can specify up to 4 sort fields.")
-    print("For each field, use the format: field:asc or field:desc")
-    print("Example: title:asc,year:desc\n")
+    print("\nYou can only sort by ONE field at a time.")
+    print("Use the format: field:asc or field:desc")
+    print("Example: title:asc\n")
 
-    user_input = input("Enter sort fields (comma-separated): ").strip()
+    user_input = input("Enter sort field: ").strip()
     if not user_input:
-        return []
+        return None
 
-    criteria = []
-    for item in user_input.split(","):
-        parts = item.strip().split(":")
-        if len(parts) != 2 or parts[0] not in fields or parts[1] not in ["asc", "desc"]:
-            print(f"⚠️ Invalid input: {item}")
-            continue
-        criteria.append((parts[0], parts[1]))
+    parts = user_input.split(":")
+    if len(parts) != 2 or parts[0] not in fields or parts[1] not in ["asc", "desc"]:
+        print(f"⚠️ Invalid input: {user_input}")
+        return None
 
-    return criteria
+    return (parts[0], parts[1])
 
 def prompt_filter_criteria():
     print("\nFilter Options:")
@@ -68,7 +65,7 @@ if __name__ == "__main__":
             read, favorite, tag = current_filter
             docs = document_service.filter_documents(project_id, read=read, favorite=favorite, tag=tag)
         elif current_sort:
-            docs = project_service.sort_project_documents(project_id, current_sort)
+            docs = project_service.sort_project_documents(project_id, current_sort[0], current_sort[1])
         else:
             docs = document_service.get_project_documents(project_id)
 
