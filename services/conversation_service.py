@@ -7,6 +7,13 @@ class ConversationService:
     def __init__(self):
         self.conversation_repository = ConversationRepository
 
+    def create_conversation(self, user_id, document_ids=None, project_ids=None):
+        conversation_model = ConversationModel(user_id=user_id, document_ids=document_ids, project_ids=project_ids)
+        conversation_id = self.conversation_repository.save(conversation_model.to_dict())
+        conversation_model.conversation_id = conversation_id
+        return conversation_model
+
+
     def get_conversation_history(self, user_id):
         conversations = ConversationRepository.get_user_conversations(user_id)
         if not conversations: 
@@ -14,12 +21,14 @@ class ConversationService:
         history = []
         for conversation_data in conversations:
             conversation_model = ConversationModel(
-            conversation_id= conversation_data.get("_id"),
+            conversation_id = conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),
             messages = conversation_data.get("messages"),
             )
             history.append(conversation_model)
         return history
+    
+    
     
     def get_conversation(self, conversation_id):
         conversation_data = ConversationRepository.get_conversation_by_id(conversation_id)
@@ -29,10 +38,13 @@ class ConversationService:
             conversation_id= conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),
             messages = conversation_data.get("messages"),
+            document_ids= conversation_data.get("document_ids")
         )
         return conversation_model
     
-   
+    def update_messages(self, conversation_id, messages):
+        self.conversation_repository.update_messages(conversation_id=conversation_id, messages=messages)
+    
         
     def add_to_history(self, conversation_id):
         return ConversationRepository.add_to_history(conversation_id)

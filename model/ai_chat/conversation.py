@@ -1,30 +1,31 @@
 from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
-from datetime import datetime
-from model.document_reader.document import Document
-from model.document_reader.library import Library
-from model.document_reader.project import Project
 from database.repository.conversation_repository import ConversationRepository
+from services.upload_manager.embeddings_manager import EmbeddingsManager
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str], messages=None):
+    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None):
         
         self.conversation_repository = ConversationRepository
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
-        self.document_ids = document_ids
-        self.conversation_id = self.__generate_conversation_id(user_id=user_id, document_ids=document_ids)
+        self.document_ids = document_ids or []
+        self.conversation_id = conversation_id
+    
+    # If project_ids are provided, get their document_ids and add them
+        if project_ids:
+            project_document_ids = self.get_document_ids_from_project_ids(project_ids)
+            self.document_ids.extend(project_document_ids)
+        #delete duplicates document ids
+           
+         
+        
+        self.embeddings_manager = EmbeddingsManager
 
 
-    def __generate_conversation_id(self, document_ids:list[str], user_id):
-        id = user_id
-        for document_id in document_ids:
-            id += document_id
-        while self.conversation_repository.get_conversation_by_id(id):
-            id += "e" 
-        return id
+   
     def add_user_message(self, message:str):
         self.messages.append({"role": "user",
                                 "content": message})
@@ -42,7 +43,8 @@ class Conversation:
                     2. Your job is to reply to User Message.
                     3. If necessary look at the attached Context
                     3. Keep answers concise but friendly.  
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: """)
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    """)
 
 
     def to_dict(self) -> Dict[str, Any]:
@@ -50,17 +52,19 @@ class Conversation:
             "_id": self.conversation_id,
             "user_id": self.user_id,
             "messages": self.messages,
+            "conversation_id": self.conversation_id,
+            "document_ids": self.document_ids
         }
         
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""                      
 
-                    You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
+                You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
                 Question: {message} 
                 Context: {context} 
                 Answer: 
 
-                    """
+                """
         return formatted_message
     
     def format_last_user_message(self, context: str):
@@ -76,6 +80,23 @@ class Conversation:
     def get_messages(self):
         return self.messages
     
-    #def get_vector_store(self):
-     #   for document_id in self.document_ids:
-            
+    def get_document_ids_from_project_ids(self, project_ids:list[str]):
+        from services.document_service import DocumentService
+        document_ids = []
+        for project_id in project_ids:
+            documents = DocumentService().get_project_documents(project_id=project_id)
+            for document in documents or []:
+                document_ids.append(document.document_id)
+        return document_ids
+    
+    def get_vector_store(self):
+        from services.ai_service import AIService
+
+        document_embeddings = []
+        for document_id in self.document_ids or []:
+            document_embeddings.append(self.embeddings_manager.get_embeddings(document_id=document_id))
+
+        return AIService().merge_vector_stores(document_embeddings)
+
+        
+
