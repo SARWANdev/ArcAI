@@ -5,10 +5,11 @@ from model.document_reader.document import Document
 from model.document_reader.library import Library
 from model.document_reader.project import Project
 from database.repository.conversation_repository import ConversationRepository
+from database.repository.document_repository import DocumentDataBase
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str], messages=None):
+    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None):
         
         self.conversation_repository = ConversationRepository
         self.messages = messages or []
@@ -16,11 +17,12 @@ class Conversation:
         self.user_id = user_id
         self.document_ids = document_ids
         self.conversation_id = self.__generate_conversation_id(user_id=user_id, document_ids=document_ids)
+        self.document_database = DocumentDataBase
 
 
-    def __generate_conversation_id(self, document_ids:list[str], user_id):
+    def __generate_conversation_id(self, document_ids:list[str]|None, user_id):
         id = user_id
-        for document_id in document_ids:
+        for document_id in document_ids or []:
             id += document_id
         while self.conversation_repository.get_conversation_by_id(id):
             id += "e" 
@@ -42,7 +44,8 @@ class Conversation:
                     2. Your job is to reply to User Message.
                     3. If necessary look at the attached Context
                     3. Keep answers concise but friendly.  
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: """)
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    """)
 
 
     def to_dict(self) -> Dict[str, Any]:
@@ -55,12 +58,12 @@ class Conversation:
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""                      
 
-                    You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
+                You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
                 Question: {message} 
                 Context: {context} 
                 Answer: 
 
-                    """
+                """
         return formatted_message
     
     def format_last_user_message(self, context: str):
@@ -76,6 +79,13 @@ class Conversation:
     def get_messages(self):
         return self.messages
     
+    def get_document_ids_from_project_ids(self, project_ids:list[str]):
+        document_ids = []
+        for project_id in project_ids:
+            documents = self.document_database.get_documents_by_project(project_id=project_id)
+            for document in documents:
+                document_ids.append(document.)
+    
     def get_vector_store(self):
-        for document_id in self.document_ids:
-            
+        
+

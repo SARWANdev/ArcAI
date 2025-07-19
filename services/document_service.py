@@ -340,7 +340,7 @@ class DocumentService:
         """
         1. gets the pdf_master_id
         2. gets the name of teh document_name
-        3. cretaes and new document
+        3. creates and new document
         :param project_id:
         :param document_id:
         :return:
@@ -363,7 +363,8 @@ class DocumentService:
         # Get a document's bibtex and returns it as a buffer, with it's name
         document_data = self.document_repository.get_by_document_id(document_id)
         bibtex = document_data.get('bibtex')
-        title = document_data.get('name') + '.bibtex.txt'
+        name = document_data.get('name') or "document"
+        title = name + '.bibtex.txt'
         if not bibtex:
             return None
         buffer = io.BytesIO()
