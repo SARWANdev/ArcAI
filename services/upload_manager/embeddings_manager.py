@@ -7,7 +7,6 @@ import faiss
 from langchain_community.vectorstores import FAISS
 
 from database.repository.document_repository import DocumentDataBase
-from services.ai_service import AIService
 from services.upload_manager.server_conection import ssh_connection
 
 
@@ -48,6 +47,7 @@ class EmbeddingsManager:
 
     @staticmethod
     def load_remote_faiss_index(remote_index_path: str) -> bytes | None: #ACHTUNG: this is the path of the actual document
+        from services.ai_service import AIService
 
         # Step 1: Create a temporary directory
         with tempfile.TemporaryDirectory() as temp_dir:
