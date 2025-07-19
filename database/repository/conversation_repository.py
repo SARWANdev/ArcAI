@@ -12,7 +12,7 @@ class ConversationRepository:
                 result = db.conversations.insert_one(conversation_data)
                 conversation_id = str(result.inserted_id)
                 es.index(index="conversations", id=conversation_id, body={
-                    "user_id": conversation_data["user_id"],
+                    "user_id": str(conversation_data["user_id"]),
                     "name": conversation_data["name"],
                     "suggest": {"input": conversation_data["name"]}
                 })
@@ -34,7 +34,7 @@ class ConversationRepository:
         query = {
             "query": {
                 "match": {
-                    "user_id": user_id
+                    "user_id": str(user_id)
                 }
             }
         }
@@ -71,8 +71,7 @@ class ConversationRepository:
         try:
             with mongo_connection() as db:
                 result = db.conversations.delete_one({"_id": conversation_id})
-                if es.exists(index="conversations", id=conversation_id):
-                    es.delete(index = "conversations", id = conversation_id)
+                es.delete(index = "conversations", id = str(conversation_id))
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Conversation could not be deleted: {e}")
@@ -86,7 +85,7 @@ class ConversationRepository:
                 for conversation in history:
                     id = conversation["_id"]
                     result = db.conversations.delete_one({"_id": id})
-                    es.delete(index = "conversations", id = id)
+                    es.delete(index = "conversations", id = str(id))
                 return result.deleted_count > 0
         except Exception as e:
             print(f"History could not be cleared: {e}")
@@ -100,7 +99,7 @@ class ConversationRepository:
                 es.delete_by_query(index = "conversations", body={
                     "query": {
                         "term": {
-                            "user_id": user_id
+                            "user_id": str(user_id)
                         }
                     }
                 })
@@ -115,10 +114,9 @@ class ConversationRepository:
             with mongo_connection() as db:
                 result = db.conversations.update_one({"_id": conversation_id},
                                                      {"$set": {"name": new_name}})
-                if es.exists(index="conversations", id=conversation_id):
-                    es.update(index = "conversations", id = conversation_id, body={
-                        "doc": {"name": new_name}
-                    })
+                es.update(index = "conversations", id = str(conversation_id), body={
+                    "doc": {"name": new_name}
+                })
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating conversation name {e}")
@@ -166,7 +164,7 @@ class ConversationRepository:
                         }
                     ],
                     "filter": [
-                        { "term": { "user_id": user_id } }
+                        { "term": { "user_id": str(user_id) } }
                     ]
                 }
             }
