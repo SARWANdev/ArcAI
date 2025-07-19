@@ -18,6 +18,7 @@ class Conversation:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
             self.document_ids.extend(project_document_ids)
         #delete duplicates document ids
+        self.remove_duplicate_document_ids()
            
          
         
@@ -97,6 +98,10 @@ class Conversation:
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
 
         return AIService().merge_vector_stores(document_embeddings)
+    
+    def remove_duplicate_document_ids(self):
+        if self.document_ids:
+            self.document_ids = list(dict.fromkeys(self.document_ids))
 
         
 
