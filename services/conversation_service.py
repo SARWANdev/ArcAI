@@ -7,10 +7,17 @@ class ConversationService:
     def __init__(self):
         self.conversation_repository = ConversationRepository
 
-    def create_conversation(self, user_id, document_ids=None, project_ids=None):
-        conversation_model = ConversationModel(user_id=user_id, document_ids=document_ids, project_ids=project_ids)
-        conversation_id = self.conversation_repository.save(conversation_model.to_dict())
-        conversation_model.conversation_id = conversation_id
+
+    def create_conversation(self, name, user_id, document_ids=None, project_ids=None):
+        conversation_id = ObjectId()
+        conversation_model = ConversationModel(
+            name=name, 
+            user_id=user_id, 
+            document_ids=document_ids, 
+            project_ids=project_ids,
+            conversation_id=conversation_id
+            )
+        self.conversation_repository.save(conversation_model.to_dict())
         return conversation_model
 
 

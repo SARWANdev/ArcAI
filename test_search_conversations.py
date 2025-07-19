@@ -26,11 +26,14 @@ def save_chats():
                 "user_id": user,
                 "name": title,
                 "messages": [],
-                "vector_store": None,
                 "created_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc)
             }
-            ConversationRepository.save(conversation_data)
+            service.create_conversation(
+
+                name=title,
+                user_id=user
+                )
             #ConversationRepository.add_to_history(conversation_data)
 
 # === Interactive CLI ===

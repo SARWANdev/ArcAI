@@ -4,9 +4,9 @@ from database.repository.conversation_repository import ConversationRepository
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None):
-        
-        self.conversation_repository = ConversationRepository
+    def __init__(self, user_id, name, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None):
+        self.name = name
+        #self.conversation_repository = ConversationRepository
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
@@ -102,5 +102,5 @@ class Conversation:
         if self.document_ids:
             self.document_ids = list(dict.fromkeys(self.document_ids))
 
-        
+           
 
