@@ -18,7 +18,8 @@ class Conversation:
         if project_ids:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
             self.document_ids.extend(project_document_ids)
-        #delete duplicates document ids   
+        #delete duplicates document ids
+           
          
         
         self.embeddings_manager = EmbeddingsManager
