@@ -45,7 +45,7 @@ class DocumentService:
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
         relative_path = relative_path_generator(user_id, project_id)
-        bibtex_instance = BibTeX_Service(original_name)
+        bibtex_instance = BibTeX_Service(original_name, pdf_hash)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
