@@ -8,23 +8,17 @@ from database.repository.conversation_repository import ConversationRepository
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str], messages=None):
+    def __init__(self, user_id, document_ids: list[str] | None = None, project_id: list[str] | None = None, messages=None, conversation_id=None):
         
         self.conversation_repository = ConversationRepository
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
         self.document_ids = document_ids
-        self.conversation_id = self.__generate_conversation_id(user_id=user_id, document_ids=document_ids)
+        self.conversation_id = conversation_id
 
 
-    def __generate_conversation_id(self, document_ids:list[str], user_id):
-        id = user_id
-        for document_id in document_ids:
-            id += document_id
-        while self.conversation_repository.get_conversation_by_id(id):
-            id += "e" 
-        return id
+   
     def add_user_message(self, message:str):
         self.messages.append({"role": "user",
                                 "content": message})
@@ -47,7 +41,7 @@ class Conversation:
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            "_id": self.conversation_id,
+            "conversation_id": self.conversation_id,
             "user_id": self.user_id,
             "messages": self.messages,
         }
