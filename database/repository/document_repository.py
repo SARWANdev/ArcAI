@@ -18,15 +18,20 @@ class DocumentDataBase:
         with mongo_connection() as db:
             result = db.documents.insert_one(document.new_document_dict())
             doc_id = result.inserted_id
-            name = DocumentDataBase.get_name(doc_id)
-            author = DocumentDataBase.get_authors(doc_id)
-            es.index(index = "documents", id = doc_id, body={
-                "user_id": DocumentDataBase.get_user_id(doc_id), 
-                "name": name,
-                "author": author,
-                "suggest": {"input": [name, author]}
-            })
+            #DocumentDataBase.save_elastic(doc_id)
             return str(doc_id)
+
+    @staticmethod
+    def save_elastic(doc_id):
+        doc_id = str(doc_id)
+        name = DocumentDataBase.get_name(doc_id)
+        author = DocumentDataBase.get_authors(doc_id)
+        es.index(index="documents", id=doc_id, body={
+            "user_id": DocumentDataBase.get_user_id(doc_id),
+            "name": name,
+            "author": author,
+            "suggest": {"input": [name, author]}
+        })
 
     @staticmethod
     def get_path( document_id ):

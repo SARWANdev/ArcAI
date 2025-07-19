@@ -53,7 +53,7 @@ if __name__ == "__main__":
         document_path=pdf_path,
         user_id=user_id,
         project_id=project_id,
-        original_name="Blending_Immersive_Gameplay_with_Intense_Exercise_Using_Asynchronous_Exergaming.pdf"
+        original_name= os.path.basename(pdf_path),
     )
     print("✔️ Upload complete.\n")
 
