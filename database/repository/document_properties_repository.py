@@ -5,7 +5,6 @@ class DocumentPropertiesRepository:
 
     @staticmethod
     def mark_as_favorite(document_id) -> bool:
-        ObjectId(document_id)
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"favorite": True}})
@@ -49,7 +48,7 @@ class DocumentPropertiesRepository:
     def update_journal(document_id, journal_name) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.documents.update_one({"_id": document_id}, {"$set": {"journal": journal_name}})
+                result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"journal": journal_name}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"Journal name could not be update: {e}")
