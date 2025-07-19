@@ -7,7 +7,7 @@ class ConversationService:
     def __init__(self):
         self.conversation_repository = ConversationRepository
 
-    def 
+    def create_conversation()
 
     def get_conversation_history(self, user_id):
         conversations = ConversationRepository.get_user_conversations(user_id)

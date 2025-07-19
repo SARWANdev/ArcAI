@@ -5,7 +5,6 @@ from database.repository.document_repository import DocumentDataBase as Document
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.tag_registry_repository import TagRegistryRepository
-from database.repository.conversation_repository import ConversationRepository
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -14,7 +13,6 @@ from model.document_reader.tag_manager.tag import Tag as TagModel
 import io
 from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
-from services.ai_service import AIService
 from services.bibtex_service import BibTeX_Service
 
 from services.upload_manager.hash_manager import get_pdf_sha256, document_name_generator, relative_path_generator
@@ -29,7 +27,6 @@ class DocumentService:
         self.document_properties_repo = DocumentPropertiesRepository
         self.pdf_master_repository = PdfMasterDataBase
         self.notebook_service = NotebookService()
-        self.ai_service = AIService()
 
 
     def __create_document(self, document_name, project_id, pdf_master_id):
@@ -72,8 +69,10 @@ class DocumentService:
 
 
     def embeddings_storage(self, document_path, pdf_master_id):
+        from ai_service import AIService
+        ai_service = AIService()
         text_chunks = self.get_text_chunks(document=document_path)
-        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)  #
+        embeddings = ai_service.get_vector_store(text_chunks=text_chunks)  #
         serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
         path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
         paths = save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1]) #save th embeddings in the server
