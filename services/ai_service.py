@@ -270,7 +270,20 @@ class AIService:
         
         return merged_vector_store
 
-    
+    def merge_and_save_vector_stores(self, vector_stores: list[FAISS], save_path: str) -> FAISS:
+        """
+        Merges multiple FAISS vector stores and saves the result to a specified path.
+        
+        Args:
+            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
+            save_path (str): Path where the merged vector store will be saved.
+            
+        Returns:
+            FAISS: The merged vector store.
+        """
+        merged_store = self.merge_vector_stores(vector_stores)
+        merged_store.save_local(save_path)
+        return merged_store
 
 
 

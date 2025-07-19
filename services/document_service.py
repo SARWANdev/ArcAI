@@ -5,13 +5,16 @@ from database.repository.document_repository import DocumentDataBase as Document
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.tag_registry_repository import TagRegistryRepository
+from database.repository.conversation_repository import ConversationRepository
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
+from model.ai_chat.conversation import Conversation
 
 import io
 from PyPDF2 import PdfReader
+from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 from services.bibtex_service import BibTeX_Service
@@ -22,6 +25,7 @@ from services.upload_manager.server_conection import upload_document, delete_rem
 from services.notebook_service import NotebookService
 
 class DocumentService:
+
 
     def __init__(self):
         self.document_repository = DocumentRepository 
@@ -45,7 +49,7 @@ class DocumentService:
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
         relative_path = relative_path_generator(user_id, project_id)
-        bibtex_instance = BibTeX_Service(original_name, pdf_hash)
+        bibtex_instance = BibTeX_Service(original_name)
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
@@ -297,25 +301,6 @@ class DocumentService:
             return TagModel(name=tag_name, color=tag_color)
         return None
     
-    def get_all_tags_in_project(self, project_id: str) -> list[TagModel]:
-        """
-        Returns a list of unique TagModel instances used by documents in the given project.
-        """
-        documents = self.get_project_documents(project_id)
-        if not documents:
-            return []
-
-        tag_set = {}
-        for doc in documents:
-            tag = doc.get_tag()
-            if tag:
-                tag_name = tag.get_name()
-                tag_color = tag.get_color()
-                if tag_name not in tag_set:
-                    tag_set[tag_name] = TagModel(tag_name, tag_color)
-
-        return list(tag_set.values())
-    
 
     def filter_documents(self, project_id: str, read: bool = None, favorite: bool = None, tag: str = None):
         all_docs = self.get_project_documents(project_id)
@@ -392,7 +377,7 @@ class DocumentService:
         """
         1. gets the pdf_master_id
         2. gets the name of teh document_name
-        3. creates and new document
+        3. cretaes and new document
         :param project_id:
         :param document_id:
         :return:
@@ -415,8 +400,7 @@ class DocumentService:
         # Get a document's bibtex and returns it as a buffer, with it's name
         document_data = self.document_repository.get_by_document_id(document_id)
         bibtex = document_data.get('bibtex')
-        name = document_data.get('name') or "document"
-        title = name + '.bibtex.txt'
+        title = document_data.get('name') + '.bibtex.txt'
         if not bibtex:
             return None
         buffer = io.BytesIO()

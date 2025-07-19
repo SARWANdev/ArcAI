@@ -45,7 +45,7 @@ class Project:
                 # Convert to ObjectId if it's a string
                 if isinstance(project_id, str):
                     project_id = ObjectId(project_id)
-                return db.projects.find_one({"_id": project_id})
+                return db.projects.find_one({"_id": ObjectId(project_id)})
         except Exception as e:
             print(e)
             raise
@@ -77,7 +77,7 @@ class Project:
     def update_name(project_id, new_name) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.projects.update_one({"_id": project_id}, {"$set": {"project_name": new_name,
+                result = db.projects.update_one({"_id": ObjectId(project_id) }, {"$set": {"project_name": new_name,
                                                                       "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
         except Exception as e:

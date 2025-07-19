@@ -1,4 +1,5 @@
-import pymongo
+
+from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from database.utils.mongo_connector import mongo_connection
 from database.utils.db_setup import es
@@ -12,7 +13,7 @@ class ConversationRepository:
                 result = db.conversations.insert_one(conversation_data)
                 conversation_id = str(result.inserted_id)
                 es.index(index="conversations", id=conversation_id, body={
-                    "user_id": str(conversation_data["user_id"]),
+                    "user_id": conversation_data["user_id"],
                     "name": conversation_data["name"],
                     "suggest": {"input": conversation_data["name"]}
                 })
@@ -34,7 +35,7 @@ class ConversationRepository:
         query = {
             "query": {
                 "match": {
-                    "user_id": str(user_id)
+                    "user_id": user_id
                 }
             }
         }
@@ -54,7 +55,7 @@ class ConversationRepository:
     @staticmethod
     def get_conversation_by_id(conversation_id):
         with mongo_connection() as db:
-            return db.conversations.find_one({"_id": conversation_id})
+            return db.conversations.find_one({"_id": ObjectId(conversation_id)})
 
     @staticmethod
     def get_user_conversations(user_id):
@@ -68,10 +69,12 @@ class ConversationRepository:
         
     @staticmethod
     def delete_conversation(conversation_id):
+
         try:
             with mongo_connection() as db:
-                result = db.conversations.delete_one({"_id": conversation_id})
-                es.delete(index = "conversations", id = str(conversation_id))
+                result = db.conversations.delete_one({"_id": ObjectId(conversation_id)})
+                if es.exists(index="conversations", id=conversation_id):
+                    es.delete(index = "conversations", id = conversation_id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Conversation could not be deleted: {e}")
@@ -84,8 +87,8 @@ class ConversationRepository:
             with mongo_connection() as db:
                 for conversation in history:
                     id = conversation["_id"]
-                    result = db.conversations.delete_one({"_id": id})
-                    es.delete(index = "conversations", id = str(id))
+                    result = db.conversations.delete_one({"_id": ObjectId(id)})
+                    es.delete(index = "conversations", id = id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"History could not be cleared: {e}")
@@ -99,7 +102,7 @@ class ConversationRepository:
                 es.delete_by_query(index = "conversations", body={
                     "query": {
                         "term": {
-                            "user_id": str(user_id)
+                            "user_id": user_id
                         }
                     }
                 })
@@ -110,13 +113,15 @@ class ConversationRepository:
 
     @staticmethod
     def update_conversation_name(conversation_id, new_name) -> bool:
+
         try:
             with mongo_connection() as db:
-                result = db.conversations.update_one({"_id": conversation_id},
+                result = db.conversations.update_one({"_id": ObjectId(conversation_id)},
                                                      {"$set": {"name": new_name}})
-                es.update(index = "conversations", id = str(conversation_id), body={
-                    "doc": {"name": new_name}
-                })
+                if es.exists(index="conversations", id=conversation_id):
+                    es.update(index = "conversations", id = conversation_id, body={
+                        "doc": {"name": new_name}
+                    })
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating conversation name {e}")
@@ -126,7 +131,7 @@ class ConversationRepository:
     def update_list_of_documents(conversation_id, list_of_documents) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.conversations.update_one({"_id": conversation_id},
+                result = db.conversations.update_one({"_id": ObjectId(conversation_id)},
                                                      {"$set": {"list_of_documents": list_of_documents}})
                 return result.modified_count > 0
         except Exception as e:
@@ -138,7 +143,7 @@ class ConversationRepository:
     def update_messages(conversation_id, messages: list) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.conversations.update_one({"_id": conversation_id},
+                result = db.conversations.update_one({"_id": ObjectId(conversation_id)},
                                                     {"$set": {"messages": messages}})
                 return result.modified_count > 0
         except Exception as e:
@@ -164,7 +169,7 @@ class ConversationRepository:
                         }
                     ],
                     "filter": [
-                        { "term": { "user_id": str(user_id) } }
+                        { "term": { "user_id": user_id } }
                     ]
                 }
             }

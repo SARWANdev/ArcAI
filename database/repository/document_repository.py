@@ -20,7 +20,7 @@ class DocumentDataBase:
             doc_id = result.inserted_id
             name = DocumentDataBase.get_name(doc_id)
             author = DocumentDataBase.get_authors(doc_id)
-            es.index(index = "documents", id = str(doc_id), body={
+            es.index(index = "documents", id = doc_id, body={
                 "user_id": DocumentDataBase.get_user_id(doc_id), 
                 "name": name,
                 "author": author,
@@ -87,7 +87,7 @@ class DocumentDataBase:
                 result = db.documents.update_one({"_id": ObjectId(document_id)},
                                         {"$set": {"name": name, "updated_at": get_utc_zulu_timestamp()}})
                 #Update in Elastic
-                es.update(index = "documents", id = str(document_id), body={
+                es.update(index = "documents", id = document_id, body={
                     "doc": {"name": name}
                 })
                 return result.modified_count > 0
@@ -102,7 +102,7 @@ class DocumentDataBase:
                 #Deletion in Mongo
                 result = db.documents.delete_one({"_id": ObjectId(document_id)})
                 #Deletion in Elasticsearch
-                es.delete(index = "documents", id=str(document_id))
+                es.delete(index = "documents", id=document_id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Document could not be deleted: {e}")
@@ -184,7 +184,7 @@ class DocumentDataBase:
                     ],
                     "minimum_should_match": 1,
                     "filter": [
-                        { "term": { "user_id": str(user_id) } }
+                        { "term": { "user_id": user_id } }
                     ]
                 }
             }

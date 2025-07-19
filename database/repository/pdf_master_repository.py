@@ -247,7 +247,7 @@ class PdfMasterDataBase:
     def get_remote_faiss_path(pdf_master_id):
         try:
             with mongo_connection() as db:
-                path = db.pdf_master.find_one({"_id": pdf_master_id}, {"remote_faiss_path": 1}).get("remote_faiss_path")
+                path = db.pdf_master.find_one({"_id": ObjectId(pdf_master_id)}, {"remote_faiss_path": 1}).get("remote_faiss_path")
                 return path
         except Exception as e:
             print(f"Failed to get faiss path for PDF {pdf_master_id}: {e}")
@@ -266,7 +266,7 @@ class PdfMasterDataBase:
     def get_remote_pkl_path(pdf_master_id):
         try:
             with mongo_connection() as db:
-                path = db.pdf_master.find_one({"_id": pdf_master_id}, {"remote_pkl_path": 1}).get("remote_pkl_path")
+                path = db.pdf_master.find_one({"_id": ObjectId(pdf_master_id)}, {"remote_pkl_path": 1}).get("remote_pkl_path")
                 return path
         except Exception as e:
             print(f"Failed to get remote_pkl_path for PDF {pdf_master_id}: {e}")

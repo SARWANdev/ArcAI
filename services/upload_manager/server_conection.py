@@ -321,6 +321,20 @@ def save_embeddings(remote_faiss_path: str, index_buffer: io.BytesIO, meta_buffe
         if sftp: sftp.close()
 
 
+def download_project(remote_paths: []):  #TODO (santiago) method to download file, .bib and note
+    ssh = sftp = None
+    try:
+        ssh = ssh_connection()
+        sftp = ssh.open_sftp()
+
+
+
+    except Exception as e:
+        print(f"Error uploading the embeddings: {e}")
+        return None
+
+
+
 
 
 
