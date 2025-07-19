@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from bson import ObjectId
 from services.ai_service import AIService
+from services.conversation_service import ConversationService
 from services.document_service import DocumentService
 from services.ai_service import AIService
 from model.ai_chat.conversation import Conversation
@@ -16,6 +17,7 @@ class ChatController:
         self.document_service = DocumentService()
         self.ai_service = AIService()
         self.conversation_repository = ConversationRepository
+        self.conversation_service = ConversationService()
         self.new_conversation = None
         # 1st step : Getting text chunks using get_text_chunks
         # 2nd step : Get_vector_store in ai_service and use it on the text chunks
@@ -33,47 +35,44 @@ class ChatController:
     def query(self):
         try:
             # Get form fields
-            user_id = request.form.get("user_id")
-            user_prompt = request.form.get("user_prompt")
-            document_name = request.form.get("document_name")
-            uploaded_file = request.files.get("file")
+            data = request.get_json()
+            user_id = data.get("user_id")
+            user_prompt = data.get("user_prompt")
+            document_ids = data.get("document_ids")
+            project_ids = data.get("project_ids")
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
-            if not uploaded_file or not document_name:
-                return jsonify({"error": "file and document_name are required"}), 400
 
+            new_conversation = self.conversation_service.create_conversation(user_id, document_ids, project_ids)
 
-            # 1st step : Getting text chunks using get_text_chunks
-            text_chunks = self.document_service.get_text_chunks(uploaded_file)
+            print("Created new convo")
 
-            # 2nd step : Get vector store
-            vector_store = self.ai_service.get_vector_store(text_chunks)
+            new_conversation.add_user_message(user_prompt)
 
-            conversation_id = str(ObjectId())
-            # 3rd step : Initialise conversation
-            self.new_conversation = Conversation(vector_store=vector_store, user_id=user_id, conversation_id=str(ObjectId()), name = "Conversation 1",
-                                                 created_at=datetime.now(timezone.utc), updated_at=datetime.now(timezone.utc))
+            print("Added user prompt")
 
-            # Creating the list to save the conversation
+            response = self.ai_service.send_chat_message(question=user_prompt, conversation=new_conversation)
 
+            print("Sending user message to ai service")
 
-            # 4th step : Add user message
-            self.new_conversation.add_user_message(user_prompt)
+            string_response = self.ai_service.output_streaming_response(response, len)
 
-            # 5th step : Get response
-            response = self.ai_service.send_chat_message(user_prompt, self.new_conversation)
+            print("Stringify the response")
 
-            # 6th step : Use ai_service.output_streaming_response method to stream the response
-            response_string = self.ai_service.output_streaming_response(response, len)
-            # This will give me list of messages between user an AI
-            # Unique conversation id to access the conversation everytime
-            list_of_messages = self.new_conversation.get_messages()
-            self.new_conversation.add_ai_message(response_string)
+            print(string_response)
+
+            new_conversation.add_ai_message(string_response)
+
+            print("Added ai message")
+
+            self.conversation_service.update_messages(new_conversation.conversation_id, new_conversation.get_messages())
+
+            print("Putting it in database")
 
             return jsonify({
                 "success": True,
-                "data": {"list_of_messages" : list_of_messages, "conversation_id": conversation_id}
+                "data": "success"
             }), 200
 
         except Exception as e:
@@ -88,12 +87,13 @@ class ChatController:
             data = request.get_json()
             user_id = data.get("user_id")
             user_prompt = data.get("user_prompt")
-            conversation_id = data.get("conversation_id")
+            document_ids = data.get("document_ids")
+            project_ids = data.get("project_ids")
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            print(f"The user {user_id} with the user prompt {user_prompt} wants answer with conversation id : {conversation_id}")
+            print(user_id, user_prompt, document_ids, project_ids)
 
             return jsonify({
                 "success": True,

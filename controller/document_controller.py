@@ -42,6 +42,57 @@ class DocumentController:
     def follow_up(self, chat_id, prompt):
         pass
 
+    def add_document_tag(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            tag_name = data.get("tag_name")
+            selected_colour = data.get("selected_colour")
+            document_id = ObjectId(data.get("document_id"))
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.document_service.add_tag(document_id, tag_name, selected_colour)
+
+            return jsonify({
+                "status": "success",
+                "message": "The tag has been added to the document successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in making a tag for the document: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to make tag for the document",
+                "error": str(e)
+            }), 500
+
+    def remove_document_tag(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = data.get("document_id")
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.document_service.remove_tag(ObjectId(document_id))
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "Tag deleted successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in deleting the tag for the document: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to delete the tag for the document",
+                "error": str(e)
+            }), 500
+
     def upload_document(self):
         try:
             # Validate file part
@@ -51,6 +102,8 @@ class DocumentController:
             file = request.files["file"]
             user_sub = request.form.get("user_sub")
             project_id = request.form.get("project_id")
+            print(user_sub)
+            print(project_id)
 
             if not file or file.filename.strip() == "":
                 return jsonify({"error": "No selected file"}), 400
@@ -139,8 +192,6 @@ class DocumentController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            print(document_id)
-            print(type(document_id))
             self.document_service.add_to_favorites(document_id)
 
             return jsonify({
@@ -167,10 +218,7 @@ class DocumentController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            print(document_id)
-            print(type(document_id))
             self.document_service.remove_from_favorites(document_id)
-            print("The document is unfavourited")
             # Return both success message
             return jsonify({
                 "status": "success",
@@ -185,6 +233,54 @@ class DocumentController:
                 "error": str(e)
             }), 500
 
+    def mark_document_read(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = ObjectId(data.get("document_id"))
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.document_service.mark_as_read(document_id)
+
+            return jsonify({
+                "status": "success",
+                "message": "The document has been marked as read successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in marking the document as read: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to mark document as read",
+                "error": str(e)
+            }), 500
+
+    def delete_document_read(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = ObjectId(data.get("document_id"))
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.document_service.mark_as_unread(document_id)
+
+            return jsonify({
+                "status": "success",
+                "message": "The document has been unmarked as read successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in unmarking the document as read: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to unmark document as read",
+                "error":str(e)
+            }), 500
+
 
 
     def register_document_routes(self, app):
@@ -194,4 +290,8 @@ class DocumentController:
         app.add_url_rule("/document/save", view_func=self.save_document, methods=["POST"])
         app.add_url_rule("/document/favourite", view_func=self.make_document_favourite, methods=["POST"])
         app.add_url_rule("/document/favourite", view_func=self.delete_favourite, methods=["DELETE"])
+        app.add_url_rule("/document/read", view_func=self.mark_document_read, methods=["POST"])
+        app.add_url_rule("/document/read", view_func=self.delete_document_read, methods=["DELETE"])
+        app.add_url_rule("/document/tag", view_func=self.add_document_tag, methods=["POST"])
+        app.add_url_rule("/document/tag", view_func=self.remove_document_tag, methods=["DELETE"])
         app.register_blueprint(self.document)
