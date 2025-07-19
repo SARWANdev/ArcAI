@@ -118,7 +118,6 @@ class ProjectService:
         return documents
 
 
-
     #SHRAWAN
     def get_project_embeddings(self, project_id, document_ids=None):
         pass

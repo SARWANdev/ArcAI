@@ -26,7 +26,6 @@ from services.notebook_service import NotebookService
 
 class DocumentService:
 
-
     def __init__(self):
         self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository
@@ -300,6 +299,25 @@ class DocumentService:
         if tag_name and tag_color:
             return TagModel(name=tag_name, color=tag_color)
         return None
+    
+    def get_all_tags_in_project(self, project_id: str) -> list[TagModel]:
+        """
+        Returns a list of unique TagModel instances used by documents in the given project.
+        """
+        documents = self.get_project_documents(project_id)
+        if not documents:
+            return []
+
+        tag_set = {}
+        for doc in documents:
+            tag = doc.get_tag()
+            if tag:
+                tag_name = tag.get_name()
+                tag_color = tag.get_color()
+                if tag_name not in tag_set:
+                    tag_set[tag_name] = TagModel(tag_name, tag_color)
+
+        return list(tag_set.values())
     
 
     def filter_documents(self, project_id: str, read: bool = None, favorite: bool = None, tag: str = None):
