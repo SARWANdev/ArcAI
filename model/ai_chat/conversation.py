@@ -6,6 +6,9 @@ from model.document_reader.library import Library
 from model.document_reader.project import Project
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.document_repository import DocumentDataBase
+from services.document_service import DocumentService
+from services.upload_manager.embeddings_manager import EmbeddingsManager
+from services.ai_service import AIService
 #call 015733401006 before huge changes lol
 
 class Conversation:
@@ -15,9 +18,15 @@ class Conversation:
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
-        self.document_ids = document_ids
+        self.document_ids = document_ids or []
+    
+    # If project_ids are provided, get their document_ids and add them
+        if project_ids:
+            project_document_ids = self.get_document_ids_from_project_ids(project_ids)
+            self.document_ids.extend(project_document_ids)
+        #delete duplicates document ids    
         self.conversation_id = self.__generate_conversation_id(user_id=user_id, document_ids=document_ids)
-        self.document_database = DocumentDataBase
+        self.embeddings_manager = EmbeddingsManager
 
 
     def __generate_conversation_id(self, document_ids:list[str]|None, user_id):
@@ -82,10 +91,17 @@ class Conversation:
     def get_document_ids_from_project_ids(self, project_ids:list[str]):
         document_ids = []
         for project_id in project_ids:
-            documents = self.document_database.get_documents_by_project(project_id=project_id)
-            for document in documents:
-                document_ids.append(document.)
+            documents = DocumentService().get_project_documents(project_id=project_id)
+            for document in documents or []:
+                document_ids.append(document.document_id)
+        return document_ids
     
     def get_vector_store(self):
+        document_embeddings = []
+        for document_id in self.document_ids or []:
+            document_embeddings.append(self.embeddings_manager.get_embeddings(document_id=document_id))
+
+        return AIService().merge_vector_stores(document_embeddings)
+
         
 

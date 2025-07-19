@@ -21,6 +21,8 @@ class ConversationService:
             history.append(conversation_model)
         return history
     
+    
+    
     def get_conversation(self, conversation_id):
         conversation_data = ConversationRepository.get_conversation_by_id(conversation_id)
         if not conversation_data:
