@@ -4,7 +4,6 @@ import json
 from typing import Callable
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OllamaEmbeddings
-from model.ai_chat.conversation import Conversation
 from database.repository.conversation_repository import ConversationRepository
 
 class AIService:
@@ -60,6 +59,8 @@ class AIService:
     __DEFAULT_LLM_NAME = "gemma3"
     __GENERATE_PATH = "/api/generate"
     __CHAT_PATH = "/api/chat"
+    from model.ai_chat.conversation import Conversation
+
     
 
 
