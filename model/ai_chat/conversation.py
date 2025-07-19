@@ -1,7 +1,6 @@
 from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
 from database.repository.conversation_repository import ConversationRepository
-from services.document_service import DocumentService
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.ai_service import AIService
 #call 015733401006 before huge changes lol
@@ -82,6 +81,7 @@ class Conversation:
         return self.messages
     
     def get_document_ids_from_project_ids(self, project_ids:list[str]):
+        from services.document_service import DocumentService
         document_ids = []
         for project_id in project_ids:
             documents = DocumentService().get_project_documents(project_id=project_id)
