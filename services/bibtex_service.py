@@ -6,8 +6,9 @@ import requests
 class BibTeX_Service:
 
     # gotta clean up on frontend connection
-    def __init__(self, paper_name = None) -> None:
+    def __init__(self, pdf_hash, paper_name = None) -> None:
         if paper_name:
+            self.pdf_hash = pdf_hash
             self.__paper_name = paper_name.replace("_", " ")
             if self.__paper_name.lower().endswith('.pdf'):
                 self.__paper_name = self.__paper_name[:-4]
@@ -32,20 +33,22 @@ class BibTeX_Service:
         cr = Crossref()
         cr.timeout=1200
         res = cr.works(query=paper_name, limit=1)
-        similarity_score = res['message']['items'][0]['score']
         doi = res['message']['items'][0]['DOI']
-        title = res['message']['items'][0]['title']
-        correct = input(f"found {title}  with simscore {similarity_score} accept this?").lower() in ("yes","y") #TODO forward this to front end
+        bibtex = requests.get(f"https://doi.org/{doi}", headers={"Accept": "application/x-bibtex"}, stream=False)
+        return bibtex.text
         
-        if correct:
-            doi = res['message']['items'][0]['DOI'] 
-            bibtex = requests.get(f"https://doi.org/{doi}", headers={"Accept": "application/x-bibtex"}, stream=False)
-            return bibtex.text
+            
     
-    def save_to_file(self, path:str):
+    def save_to_file(self):
+        path = "F:/PSE/arcai/services/bibtex/"
+        id = self.__bibtex_library.entries[0].get("ID")
+        with open(path + self.pdf_hash + ".bib", "w") as file:
+            file.write(self.__formatted_bibtex_string)
+            
+    def get_file(self, path:str):
         id = self.__bibtex_library.entries[0].get("ID")
         with open(path + id + ".bib", "w") as file:
-            file.write(self.__formatted_bibtex_string)
+            return file
 
     def get_bibtex_string(self)->str:
         return self.__formatted_bibtex_string
@@ -76,3 +79,8 @@ class BibTeX_Service:
     
     def get_year(self):
         return self.get_bibtex_library_dict()['year']   
+    
+from upload_manager.hash_manager import get_pdf_sha256
+b = BibTeX_Service(pdf_hash = get_pdf_sha256("papers/Automatic_Visual_Detection_of_Fresh_Poultry_Egg_Quality_Inspection_using_Image_Processing.pdf"), 
+                   paper_name="Automatic Visual Detection of Fresh Poultry Egg Quality Inspection using Image Processing")
+b.save_to_file()
