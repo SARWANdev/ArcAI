@@ -21,28 +21,20 @@ class EmbeddingsManager:
             Tuple[BytesIO, BytesIO]: (faiss_index_buffer, metadata_buffer)
         """
         # --- Serialize FAISS index to temp file ---
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_index_file:
-            temp_index_path = tmp_index_file.name
+        with tempfile.TemporaryDirectory() as temp_dir:
+            vector_store.save_local(temp_dir)
 
-        try:
-            faiss.write_index(vector_store.index, temp_index_path)
+        index_faiss_path = os.path.join(temp_dir, "index.faiss")
+        with open(index_faiss_path, "rb") as f:
+            faiss_index_buffer = io.BytesIO(f.read())
+            faiss_index_buffer.seek(0)
 
-            with open(temp_index_path, "rb") as f:
-                faiss_index_buffer = io.BytesIO(f.read())
-                faiss_index_buffer.seek(0)
-        finally:
-            os.remove(temp_index_path)
+        # Read index.pkl into memory
+        index_pkl_path = os.path.join(temp_dir, "index.pkl")
+        with open(index_pkl_path, "rb") as f:
+            metadata_buffer = io.BytesIO(f.read())
+            metadata_buffer.seek(0)
 
-        # --- Serialize metadata ---
-        #metadata = {
-        #    "docstore": vector_store.docstore,
-        #    "index_to_docstore_id": vector_store.index_to_docstore_id,
-        #    "embedding_function": None  # Usually can't be serialized
-        #}
-
-        metadata_buffer = io.BytesIO()
-        pickle.dump((vector_store.index_to_docstore_id, vector_store.docstore), metadata_buffer)
-        metadata_buffer.seek(0)
 
         return faiss_index_buffer, metadata_buffer
 
