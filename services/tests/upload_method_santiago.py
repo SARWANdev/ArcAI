@@ -1,5 +1,7 @@
 import os
 
+from database.repository.document_repository import DocumentDataBase
+from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.user_repository import User
 from services.document_service import DocumentService
 from services.project_service import ProjectService
@@ -153,6 +155,12 @@ if __name__ == "__main__":
     #delete_document_from_an_id()
 
     #TEST : duplicate
-    DocumentService().duplicate_document("6877efc18d90ba0a1892d550", "6877ef9f8d90ba0a1892d544")
+    #DocumentService().duplicate_document("6877efc18d90ba0a1892d550", "6877ef9f8d90ba0a1892d544")
+
+    DocumentService().upload_document(path_1, "user_id_1", "project_id_1_1", os.path.basename(path_1))
+
+    #print(PdfMasterDataBase.get_authors("687bc16986f78260bd7da2f5"))
+
+    #print(DocumentDataBase.get_authors("6877efc18d90ba0a1892d550"))
 
 

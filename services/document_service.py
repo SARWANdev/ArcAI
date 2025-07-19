@@ -38,10 +38,11 @@ class DocumentService:
     def __create_document(self, document_name, project_id, pdf_master_id):
         #Creates a new document in the database
         new_name = self.__rename_according_ref_count(document_name, pdf_master_id)
-        new_document_instance = DocumentModel(name=new_name, project_id=project_id)  # instance of the model Document
+        new_document_instance = DocumentModel(name = new_name, project_id = project_id, pdf_master_id = pdf_master_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
-        self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
+        #self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
+
 
         # Create an empty notebook for the document
         self.notebook_service.update_document_notebook(new_document_id, "")

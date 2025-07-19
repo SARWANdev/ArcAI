@@ -24,7 +24,7 @@ class Document:
         document_dic = {
             "name": self.name,
             "project_id": self.project_id,
-            "pdf_master_id": "",
+            "pdf_master_id": self.pdf_master_id or "",
             "note": "",
             "tag_name": "",
             "tag_color": "",
@@ -63,6 +63,9 @@ class Document:
 
     def get_tag_name(self):
         return self.tag_name
+
+    def get_pdf_master(self):
+        return self.pdf_master_id
 
 
 
