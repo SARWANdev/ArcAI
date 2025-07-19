@@ -24,16 +24,16 @@ class EmbeddingsManager:
         with tempfile.TemporaryDirectory() as temp_dir:
             vector_store.save_local(temp_dir)
 
-        index_faiss_path = os.path.join(temp_dir, "index.faiss")
-        with open(index_faiss_path, "rb") as f:
-            faiss_index_buffer = io.BytesIO(f.read())
-            faiss_index_buffer.seek(0)
+            index_faiss_path = os.path.join(temp_dir, "index.faiss")
+            with open(index_faiss_path, "rb") as f:
+                faiss_index_buffer = io.BytesIO(f.read())
+                faiss_index_buffer.seek(0)
 
-        # Read index.pkl into memory
-        index_pkl_path = os.path.join(temp_dir, "index.pkl")
-        with open(index_pkl_path, "rb") as f:
-            metadata_buffer = io.BytesIO(f.read())
-            metadata_buffer.seek(0)
+            # Read index.pkl into memory
+            index_pkl_path = os.path.join(temp_dir, "index.pkl")
+            with open(index_pkl_path, "rb") as f:
+                metadata_buffer = io.BytesIO(f.read())
+                metadata_buffer.seek(0)
 
 
         return faiss_index_buffer, metadata_buffer
