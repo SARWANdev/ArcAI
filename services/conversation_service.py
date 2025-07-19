@@ -7,6 +7,8 @@ class ConversationService:
     def __init__(self):
         self.conversation_repository = ConversationRepository
 
+    def 
+
     def get_conversation_history(self, user_id):
         conversations = ConversationRepository.get_user_conversations(user_id)
         if not conversations: 
@@ -14,7 +16,7 @@ class ConversationService:
         history = []
         for conversation_data in conversations:
             conversation_model = ConversationModel(
-            conversation_id= conversation_data.get("_id"),
+            conversation_id = conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),
             messages = conversation_data.get("messages"),
             )
@@ -31,6 +33,7 @@ class ConversationService:
             conversation_id= conversation_data.get("_id"),
             user_id = conversation_data.get("user_id"),
             messages = conversation_data.get("messages"),
+            document_ids= conversation_data.get("document_ids")
         )
         return conversation_model
     

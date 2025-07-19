@@ -10,11 +10,9 @@ from database.repository.conversation_repository import ConversationRepository
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
 from model.document_reader.tag_manager.tag import Tag as TagModel
-from model.ai_chat.conversation import Conversation
 
 import io
 from PyPDF2 import PdfReader
-from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 from services.bibtex_service import BibTeX_Service

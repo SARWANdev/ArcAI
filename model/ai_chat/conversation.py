@@ -1,41 +1,32 @@
 from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
-from datetime import datetime
-from model.document_reader.document import Document
-from model.document_reader.library import Library
-from model.document_reader.project import Project
 from database.repository.conversation_repository import ConversationRepository
-from database.repository.document_repository import DocumentDataBase
 from services.document_service import DocumentService
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.ai_service import AIService
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None):
+    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None):
         
         self.conversation_repository = ConversationRepository
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
         self.document_ids = document_ids or []
+        self.conversation_id = conversation_id
     
     # If project_ids are provided, get their document_ids and add them
         if project_ids:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
             self.document_ids.extend(project_document_ids)
-        #delete duplicates document ids    
-        self.conversation_id = self.__generate_conversation_id(user_id=user_id, document_ids=document_ids)
+        #delete duplicates document ids   
+         
+        
         self.embeddings_manager = EmbeddingsManager
 
 
-    def __generate_conversation_id(self, document_ids:list[str]|None, user_id):
-        id = user_id
-        for document_id in document_ids or []:
-            id += document_id
-        while self.conversation_repository.get_conversation_by_id(id):
-            id += "e" 
-        return id
+   
     def add_user_message(self, message:str):
         self.messages.append({"role": "user",
                                 "content": message})
@@ -62,6 +53,8 @@ class Conversation:
             "_id": self.conversation_id,
             "user_id": self.user_id,
             "messages": self.messages,
+            "conversation_id": self.conversation_id,
+            "document_ids": self.document_ids
         }
         
     def __format_user_message(self, message:str, context: str)->str:
