@@ -6,6 +6,7 @@ import tempfile
 import faiss
 from langchain_community.vectorstores import FAISS
 
+from database.repository.document_repository import DocumentDataBase
 from services.ai_service import AIService
 from services.upload_manager.server_conection import ssh_connection
 
@@ -47,8 +48,7 @@ class EmbeddingsManager:
 
     @staticmethod
     def load_remote_faiss_index(remote_index_path: str) -> bytes | None: #ACHTUNG: this is the path of the actual document
-        remote_index_path = os.path.dirname(remote_index_path)
-        print("remote_index_dir:  ", remote_index_path)
+
         # Step 1: Create a temporary directory
         with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -64,7 +64,6 @@ class EmbeddingsManager:
                 sftp.get(remote_file, local_file)
 
             print("temp_dir:  ", temp_dir)
-            input('Hi')
             sftp.close()
             ssh.close()
 
@@ -72,3 +71,9 @@ class EmbeddingsManager:
 
 
             return faiss_index
+
+    @staticmethod
+    def get_embeddings(document_id):
+        path = DocumentDataBase.get_path( document_id )
+        path = os.path.dirname(path)
+        return EmbeddingsManager.load_remote_faiss_index(path)

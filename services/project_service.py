@@ -23,7 +23,6 @@ class ProjectService:
         project_model = ProjectModel(
             project_name=project_name,
             user_id=user_id,
-            note=""
         )
         
 
