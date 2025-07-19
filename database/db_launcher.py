@@ -29,7 +29,6 @@ def init_es():
         print("Elasticsearch indices already exist")
 
 
-
 def init_mongo():
     with mongo_connection() as db:
 
