@@ -230,7 +230,6 @@ class AIService:
         """
         relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
         context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
-        print(context)
         return context
     
     

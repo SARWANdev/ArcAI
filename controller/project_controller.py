@@ -48,7 +48,6 @@ class ProjectController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            sort_criteria = []
             document_list = []
             documents = []
 
@@ -64,13 +63,13 @@ class ProjectController:
 
             else:
                 if not filter_state:
-                    for sort_state in sort_states:
-                        sort_tuple = (sort_state["field"].lower(), sort_state["order"])
-                        sort_criteria.append(sort_tuple)
-                    documents = self.project_service.sort_project_documents(project_id, sort_criteria)
+                    documents = self.project_service.sort_project_documents(project_id, sort_states[0]["field"], sort_states[0]["order"])
                 else:
                     # A filter function which takes into account the sort states as well as filter
-                    documents = self.document_service.get_project_documents(project_id)
+                    if filter_state == "ByFavourite":
+                        documents = self.document_service.get_filtered_and_sorted_documents(project_id, favorite=True, sort_field=sort_states[0]["field"], order=sort_states[0]["order"])
+                    elif filter_state == "IfRead":
+                        documents = self.document_service.get_filtered_and_sorted_documents(project_id, read=True, sort_field=sort_states[0]["field"], order=sort_states[0]["order"])
 
             # Check if documents is None
             if documents is None:
@@ -84,13 +83,14 @@ class ProjectController:
                     "Read": document.read,
                     "CreatedAt": document.created_at,
                     "Favorite": document.favorite,
+                    "TagName" : document.tag_name,
+                    "TagColor" : document.tag_color,
+                    "Note" : document.note,
                     "Year": self.document_repository.get_year(str(document.document_id)),
                     "Source": self.document_repository.get_source(str(document.document_id)),
                     "Authors": self.document_repository.get_authors(str(document.document_id)),
                 }
                 document_list.append(document_object)
-
-            print(document_list)
 
             return jsonify({
                 "status": "success",
