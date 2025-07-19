@@ -12,15 +12,21 @@ class ConversationRepository:
             try:
                 result = db.conversations.insert_one(conversation_data)
                 conversation_id = str(result.inserted_id)
-                es.index(index="conversations", id=conversation_id, body={
-                    "user_id": conversation_data["user_id"],
-                    "name": conversation_data["name"],
-                    "suggest": {"input": conversation_data["name"]}
-                })
+                user_id = str(conversation_data["user_id"])
+                name = conversation_data["name"]
+                #ConversationRepository.add_to_es(conversation_id, name, user_id)
                 return conversation_id
             except DuplicateKeyError:
                 print("Conversation already exists")
                 
+
+    @staticmethod
+    def add_to_es(id, name, user_id):
+        es.index(index="conversations", id=id, body={
+                    "user_id": user_id,
+                    "name": name,
+                    "suggest": {"input": name}
+                })
 
 
     @staticmethod
