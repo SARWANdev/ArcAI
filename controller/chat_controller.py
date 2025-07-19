@@ -45,34 +45,17 @@ class ChatController:
                 return jsonify({"error": "user_id is required"}), 400
 
             new_conversation = self.conversation_service.create_conversation(user_id, document_ids, project_ids)
-
-            print("Created new convo")
-
             new_conversation.add_user_message(user_prompt)
-
-            print("Added user prompt")
-
             response = self.ai_service.send_chat_message(question=user_prompt, conversation=new_conversation)
-
-            print("Sending user message to ai service")
-
             string_response = self.ai_service.output_streaming_response(response, len)
-
-            print("Stringify the response")
-
-            print(string_response)
-
             new_conversation.add_ai_message(string_response)
-
-            print("Added ai message")
-
             self.conversation_service.update_messages(new_conversation.conversation_id, new_conversation.get_messages())
-
-            print("Putting it in database")
-
+            new_conversation.get_messages().pop(0)
+            list_of_messages = new_conversation.get_messages()
             return jsonify({
                 "success": True,
-                "data": "success"
+                "data": {"conversation_id" : new_conversation.conversation_id,
+                         "list_of_messages" : list_of_messages}
             }), 200
 
         except Exception as e:
