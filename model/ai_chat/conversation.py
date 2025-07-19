@@ -2,7 +2,6 @@ from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
 from database.repository.conversation_repository import ConversationRepository
 from services.upload_manager.embeddings_manager import EmbeddingsManager
-from services.ai_service import AIService
 #call 015733401006 before huge changes lol
 
 class Conversation:
@@ -90,6 +89,8 @@ class Conversation:
         return document_ids
     
     def get_vector_store(self):
+        from services.ai_service import AIService
+
         document_embeddings = []
         for document_id in self.document_ids or []:
             document_embeddings.append(self.embeddings_manager.get_embeddings(document_id=document_id))
