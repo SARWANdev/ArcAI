@@ -20,7 +20,7 @@ class ConversationRepository:
                 return conversation_id
             except DuplicateKeyError:
                 print("Conversation already exists")
-                return ""
+                
 
 
     @staticmethod

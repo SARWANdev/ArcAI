@@ -23,6 +23,8 @@ class EmbeddingsManager:
         # --- Serialize FAISS index to temp file ---
         with tempfile.TemporaryDirectory() as temp_dir:
             vector_store.save_local(temp_dir)
+        
+        a = input
 
         index_faiss_path = os.path.join(temp_dir, "index.faiss")
         with open(index_faiss_path, "rb") as f:

@@ -51,7 +51,6 @@ class Conversation:
             "_id": self.conversation_id,
             "user_id": self.user_id,
             "messages": self.messages,
-            "conversation_id": self.conversation_id,
             "document_ids": self.document_ids
         }
         
