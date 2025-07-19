@@ -76,6 +76,6 @@ class Conversation:
     def get_messages(self):
         return self.messages
     
-    def get_vector_store(self):
-        for document_id in self.document_ids:
+    #def get_vector_store(self):
+     #   for document_id in self.document_ids:
             
