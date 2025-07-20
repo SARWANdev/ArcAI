@@ -1,17 +1,18 @@
 from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
-from database.repository.conversation_repository import ConversationRepository
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, name, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None):
+    def __init__(self, user_id, name, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None, 
+                 created_at = None, updated_at = None, ):
         self.name = name
-        #self.conversation_repository = ConversationRepository
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
         self.document_ids = document_ids or []
         self.conversation_id = conversation_id
+        self.created_at = created_at or None
+        self.updated_at = updated_at or None
     
     # If project_ids are provided, get their document_ids and add them
         if project_ids:
@@ -20,11 +21,7 @@ class Conversation:
         #delete duplicates document ids
         self.remove_duplicate_document_ids()
            
-         
-        
-
-
-   
+            
     def add_user_message(self, message:str):
         self.messages.append({"role": "user",
                                 "content": message})
@@ -49,9 +46,12 @@ class Conversation:
     def to_dict(self) -> Dict[str, Any]:
         return {
             "_id": self.conversation_id,
+            "name": self.name,
             "user_id": self.user_id,
             "messages": self.messages,
-            "document_ids": self.document_ids
+            "document_ids": self.document_ids,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at        
         }
         
     def __format_user_message(self, message:str, context: str)->str:

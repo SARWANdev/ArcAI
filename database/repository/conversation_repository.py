@@ -14,7 +14,7 @@ class ConversationRepository:
                 conversation_id = str(result.inserted_id)
                 user_id = str(conversation_data["user_id"])
                 name = conversation_data["name"]
-                #ConversationRepository.add_to_es(conversation_id, name, user_id)
+                ConversationRepository.add_to_es(conversation_id, name, user_id)
                 return conversation_id
             except DuplicateKeyError:
                 print("Conversation already exists")
