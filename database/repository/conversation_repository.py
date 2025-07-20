@@ -3,7 +3,7 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from database.utils.mongo_connector import mongo_connection
 from database.utils.db_setup import es
-from date_time_utils import get_utc_zulu_timestamp
+from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 class ConversationRepository:
  
