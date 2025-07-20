@@ -51,10 +51,11 @@ class DocumentService:
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
         relative_path = relative_path_generator(user_id, project_id)
         bibtex_instance = BibTeX_Service(paper_name=original_name, pdf_hash=pdf_hash)
+        bibtex_str = bibtex_instance.formatted_bibtex_string
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
-                                                 authors = bibtex_instance.get_authors())
+                                                 authors = bibtex_instance.get_authors(), bibtex= bibtex_str)
         # TODO eather update the instance or the database described with the bibtex
 
 
