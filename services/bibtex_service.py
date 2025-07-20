@@ -12,7 +12,7 @@ class BibTeX_Service:
             self.__paper_name = paper_name.replace("_", " ")
             if self.__paper_name.lower().endswith('.pdf'):
                 self.__paper_name = self.__paper_name[:-4]
-            __unformatted_bibtex_string = self.__get_bibtex_str(paper_name=self.__paper_name)
+            __unformatted_bibtex_string = self.get_bibtex_str(paper_name=self.__paper_name)
             if __unformatted_bibtex_string:        
                 self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
                 self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
