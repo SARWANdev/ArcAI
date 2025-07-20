@@ -193,6 +193,13 @@ class DocumentService:
             if document_model:
                 documents_list.append(document_model)
         return documents_list
+    
+    def get_document_ids_from_project_id(self, project_id):
+        document_ids = []
+        documents = self.get_project_documents(project_id)
+        for document in documents or []:
+            document_ids.append(document.document_id)
+        return document_ids
 
     def delete_document(self, document_id):
         """
@@ -302,7 +309,24 @@ class DocumentService:
         if tag_name and tag_color:
             return TagModel(name=tag_name, color=tag_color)
         return None
-    
+
+    def get_project_tags(self, project_id: str):
+        documents = self.get_project_documents(project_id)
+        if not documents:
+            return {}
+
+        tag_set = {}
+
+        for doc in documents:
+            tag_name = doc.get_tag_name()
+            if not tag_name:
+                continue
+
+            tag_data = TagRegistryRepository.get_tag(tag_name)
+            if tag_data:
+                tag_set[tag_name] = tag_data["color"]
+
+        return tag_set
 
     def filter_documents(self, project_id: str, read: bool = None, favorite: bool = None, tag: str = None):
         all_docs = self.get_project_documents(project_id)
