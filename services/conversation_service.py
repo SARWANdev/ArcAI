@@ -1,7 +1,7 @@
 from database.repository.conversation_repository import ConversationRepository
 from model.ai_chat.conversation import Conversation as ConversationModel
 from bson import ObjectId
-
+from database.repository.date_time_utils import get_utc_zulu_timestamp
 class ConversationService:
 
     def __init__(self):
@@ -15,7 +15,9 @@ class ConversationService:
             user_id=user_id, 
             document_ids=document_ids, 
             project_ids=project_ids,
-            conversation_id=conversation_id
+            conversation_id=conversation_id,
+            created_at= get_utc_zulu_timestamp(),
+            updated_at= get_utc_zulu_timestamp()
             )
         self.conversation_repository.save(conversation_model.to_dict())
         return conversation_model
@@ -28,9 +30,10 @@ class ConversationService:
         history = []
         for conversation_data in conversations:
             conversation_model = ConversationModel(
-            conversation_id = conversation_data.get("_id"),
-            user_id = conversation_data.get("user_id"),
-            messages = conversation_data.get("messages"),
+                name = conversation_data.get("name"),
+                conversation_id = conversation_data.get("_id"),
+                user_id = conversation_data.get("user_id"),
+                messages = conversation_data.get("messages")
             )
             history.append(conversation_model)
         return history

@@ -3,6 +3,7 @@ from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from database.utils.mongo_connector import mongo_connection
 from database.utils.db_setup import es
+from date_time_utils import get_utc_zulu_timestamp
 
 class ConversationRepository:
  
@@ -14,7 +15,7 @@ class ConversationRepository:
                 conversation_id = str(result.inserted_id)
                 user_id = str(conversation_data["user_id"])
                 name = conversation_data["name"]
-                #ConversationRepository.add_to_es(conversation_id, name, user_id)
+                ConversationRepository.add_to_es(conversation_id, name, user_id)
                 return conversation_id
             except DuplicateKeyError:
                 print("Conversation already exists")
@@ -75,7 +76,6 @@ class ConversationRepository:
         
     @staticmethod
     def delete_conversation(conversation_id):
-
         try:
             with mongo_connection() as db:
                 result = db.conversations.delete_one({"_id": ObjectId(conversation_id)})
@@ -119,7 +119,6 @@ class ConversationRepository:
 
     @staticmethod
     def update_conversation_name(conversation_id, new_name) -> bool:
-
         try:
             with mongo_connection() as db:
                 result = db.conversations.update_one({"_id": ObjectId(conversation_id)},
@@ -151,6 +150,8 @@ class ConversationRepository:
             with mongo_connection() as db:
                 result = db.conversations.update_one({"_id": ObjectId(conversation_id)},
                                                     {"$set": {"messages": messages}})
+                db.coversations.update_one({"_id": ObjectId(conversation_id)},
+                                           {"$set": {"updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
         except Exception as e:
             print(f"ERROR: Updating conversation messages {e}")
