@@ -5,7 +5,7 @@ from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
 from database.repository.pdf_master_repository import PdfMasterDataBase
 
-from database.utils.db_setup import es
+#from database.utils.db_setup import es
 
 from model.document_reader.document import Document
 
@@ -123,6 +123,12 @@ class DocumentDataBase:
          except Exception as e:
              print(f"Document path could not be update: {e}")
              return False
+
+    @staticmethod
+    def get_note(document_id):
+        with mongo_connection() as db:
+            note = db.documents.find_one({"_id": ObjectId(document_id)}, {"note": 1}).get("note")
+            return note
         
     @staticmethod
     def update_vector_store_path(document_id, vector_store_path):
@@ -147,6 +153,7 @@ class DocumentDataBase:
 
     @staticmethod
     def update_bibtex(document_id, bibtex) -> bool:
+        #ACHTUNG: dont use this method use the one in pdf_master_repo
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)},
@@ -206,4 +213,6 @@ class DocumentDataBase:
         with mongo_connection() as db:
             pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
             return PdfMasterDataBase.get_user_id( pdf_master_id )
+
+
 
