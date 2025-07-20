@@ -18,7 +18,7 @@ class DocumentDataBase:
         with mongo_connection() as db:
             result = db.documents.insert_one(document.new_document_dict())
             doc_id = result.inserted_id
-            #DocumentDataBase.save_elastic(doc_id)
+            DocumentDataBase.save_elastic(doc_id)
             return str(doc_id)
 
     @staticmethod

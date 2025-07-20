@@ -285,6 +285,11 @@ class AIService:
         merged_store = self.merge_vector_stores(vector_stores)
         merged_store.save_local(save_path)
         return merged_store
+    
+    def generate_name_conversation(self, conversation:Conversation)->str:
+        Message = f"Generate a name or title for a Conversation with the Following Messages"
+        self.generate()
+        return conversation_name
 
 
 
