@@ -7,7 +7,7 @@ from database.utils.db_setup import es
 class ConversationRepository:
  
     @staticmethod
-    def save(conversation_data: dict) -> str:
+    def save(conversation_data: dict):
         with mongo_connection() as db:
             try:
                 result = db.conversations.insert_one(conversation_data)
@@ -18,6 +18,14 @@ class ConversationRepository:
                 return conversation_id
             except DuplicateKeyError:
                 print("Conversation already exists")
+                existing_conversation = db.conversations.find_one({
+                "user_id": conversation_data["user_id"],
+                "name": conversation_data.get("name"),
+                # Add other unique fields that might cause the duplicate
+                "document_ids": conversation_data.get("document_ids")
+            })
+            if existing_conversation:
+                return str(existing_conversation["_id"])
                 
 
     @staticmethod
