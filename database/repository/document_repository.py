@@ -5,7 +5,7 @@ from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
 from database.repository.pdf_master_repository import PdfMasterDataBase
 
-#from database.utils.db_setup import es
+from database.utils.db_setup import es
 
 from model.document_reader.document import Document
 
