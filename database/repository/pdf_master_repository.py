@@ -1,7 +1,9 @@
 from bson import ObjectId
 
+from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from model.document_reader.pdf_master import PdfMaster
+from services.bibtex_service import BibTeX_Service
 
 
 class PdfMasterDataBase:
@@ -174,10 +176,18 @@ class PdfMasterDataBase:
             return ""
 
     @staticmethod
-    def set_bibtex(pdf_master_id, new_bibtex):
+    def set_bibtex(pdf_master_id, new_bibtex ):
         try:
             with mongo_connection() as db:
-                db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"bibtex": new_bibtex}})
+                bibtex_instance = BibTeX_Service(new_bibtex)
+                year = bibtex_instance.get_year()
+                authors = bibtex_instance.get_authors()
+                source = bibtex_instance.get_source()
+                db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"bibtex": new_bibtex, "year": year,
+                                                                                     "source": source,
+                                                                                     "authors": authors,
+                                                                                     "updated_at": get_utc_zulu_timestamp()}})
+
         except Exception as e:
             print(f"Failed to set pages for PDF {pdf_master_id}: {e}")
 
