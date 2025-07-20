@@ -15,21 +15,21 @@ class BibTeX_Service:
             __unformatted_bibtex_string = self.__get_bibtex_str(paper_name=self.__paper_name)
             if __unformatted_bibtex_string:        
                 self.__bibtex_library = bibtexparser.loads(__unformatted_bibtex_string, parser=bibtexparser.bparser.BibTexParser())
-                self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+                self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
                 return
 
         
         
     def set_bibtex(self, bibtex:str):
         self.__bibtex_library = bibtexparser.loads(bibtex, parser=bibtexparser.bparser.BibTexParser())
-        self.__formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+        self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
 
     def create_misc_bibtex(self, author:str, title:str, year:int, citekey:str):
         bibtex = f"@misc{{{citekey}, author = {{{author}}}, title = {{{title}}}, year = {{{year}}}}}"
         return bibtex
         
 
-    def __get_bibtex_str(self, paper_name:str):
+    def get_bibtex_str(self, paper_name:str):
         cr = Crossref()
         cr.timeout=1200
         res = cr.works(query=paper_name, limit=1)
@@ -43,7 +43,7 @@ class BibTeX_Service:
         path = "F:/PSE/arcai/services/bibtex/"
         id = self.__bibtex_library.entries[0].get("ID")
         with open(path + self.pdf_hash + ".bib", "w") as file:
-            file.write(self.__formatted_bibtex_string)
+            file.write(self.formatted_bibtex_string)
             
     def get_file(self, path:str):
         id = self.__bibtex_library.entries[0].get("ID")
@@ -51,7 +51,7 @@ class BibTeX_Service:
             return file
 
     def get_bibtex_string(self)->str:
-        return self.__formatted_bibtex_string
+        return self.formatted_bibtex_string
 
     def get_paper_name(self)->str:
         return self.__paper_name
