@@ -194,7 +194,7 @@ class DocumentService:
                 documents_list.append(document_model)
         return documents_list
     
-    def get_document_ids_from_project_ids(self, project_id):
+    def get_document_ids_from_project_id(self, project_id):
         document_ids = []
         documents = self.get_project_documents(project_id)
         for document in documents or []:
