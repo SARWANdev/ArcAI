@@ -39,7 +39,7 @@ class EmbeddingsManager:
         return faiss_index_buffer, metadata_buffer
 
     @staticmethod
-    def load_remote_faiss_index(remote_index_path: str) -> bytes | None: #ACHTUNG: this is the path of the actual document
+    def load_remote_faiss_index(remote_index_path: str) -> FAISS | None: #ACHTUNG: this is the path of the actual document
 
         # Step 1: Create a temporary directory
         with tempfile.TemporaryDirectory() as temp_dir:
