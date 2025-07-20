@@ -64,10 +64,9 @@ class BibTeX_Service:
         authors = author_string.split(" and ")
         return str(authors)
     
-    def get_author1_last_name(self):
-        authors = self.get_authors()
-        author1 = authors[0]
-        return author1.split(", ")[0]
+    def get_author1(self):
+        return self.get_authors()[0]
+        
     
     def get_source(self):
         bib_dict = self.get_bibtex_library_dict()
