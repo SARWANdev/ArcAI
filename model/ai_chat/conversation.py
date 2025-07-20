@@ -3,8 +3,8 @@ from typing import Dict, Any
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, name, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None, 
-                 created_at = None, updated_at = None, ):
+    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None, 
+                 created_at = None, updated_at = None, name=None):
         self.name = name
         self.messages = messages or []
         self.initialise_system()
@@ -20,6 +20,9 @@ class Conversation:
             self.document_ids.extend(project_document_ids)
         #delete duplicates document ids
         self.remove_duplicate_document_ids()
+
+    def set_name(self, name):
+        self.name = name
            
             
     def add_user_message(self, message:str):
