@@ -4,7 +4,7 @@ from typing import Dict, Any
 
 class Conversation:
     def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None, 
-                 created_at = None, updated_at = None, name=None):
+                 created_at = None, updated_at = None, name=None, language=None):
         self.name = name
         self.messages = messages or []
         self.user_id = user_id
@@ -14,6 +14,7 @@ class Conversation:
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
+        self.DEFAULT_LANGUAGE = language or "Turkish"
     
     # If project_ids are provided, get their document_ids and add them
         if project_ids:
@@ -68,6 +69,7 @@ class Conversation:
                     4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
                     5. But again your main job is to answer the Message and only look at context if necessary
                     6. Here's the message again: {message}
+                    7. Answer only in {self.DEFAULT_LANGUAGE}.
                     """
                 
         return formatted_message
