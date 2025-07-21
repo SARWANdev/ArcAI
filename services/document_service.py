@@ -106,7 +106,7 @@ class DocumentService:
 
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
-        text = 
+        text = self.get_pdf_text(document_path)
         self.embeddings_storage(document_path, pdf_master_id)
         DocumentRepository.save_elastic(document_id, text)
 
