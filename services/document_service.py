@@ -55,7 +55,8 @@ class DocumentService:
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
-                                                 authors = bibtex_instance.get_authors(), bibtex= bibtex_str)
+                                                 authors = str(bibtex_instance.get_authors()), bibtex= bibtex_str,
+                                                 first_author= bibtex_instance.get_first_author(),)
         # TODO eather update the instance or the database described with the bibtex
 
 
