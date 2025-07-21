@@ -22,7 +22,7 @@ class DocumentDataBase:
             return str(doc_id)
 
     @staticmethod
-    def save_elastic(doc_id):
+    def save_elastic(doc_id, text):
         doc_id = str(doc_id)
         name = DocumentDataBase.get_name(doc_id)
         author = DocumentDataBase.get_authors(doc_id)
@@ -30,6 +30,7 @@ class DocumentDataBase:
             "user_id": DocumentDataBase.get_user_id(doc_id),
             "name": name,
             "author": author,
+            "text": text, 
             "suggest": {"input": [name, author]}
         })
 

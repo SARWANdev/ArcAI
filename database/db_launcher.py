@@ -11,6 +11,7 @@ def init_es():
                     "user_id":{"type": "text"},
                     "name": {"type": "text"},
                     "author": {"type": "text"},
+                    "text": {"type": "text"},
                     "suggest": {"type": "completion"}
                 }
             }
