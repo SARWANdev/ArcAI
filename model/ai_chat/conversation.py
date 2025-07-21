@@ -7,9 +7,10 @@ class Conversation:
                  created_at = None, updated_at = None, name=None):
         self.name = name
         self.messages = messages or []
-        self.initialise_system()
         self.user_id = user_id
-        self.document_ids = document_ids or []
+        print(document_ids)
+        self.document_ids = document_ids
+        print(self.document_ids)
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
@@ -19,7 +20,9 @@ class Conversation:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
             self.document_ids.extend(project_document_ids)
         #delete duplicates document ids
+        print("before duplicate",self.document_ids)
         self.remove_duplicate_document_ids()
+        print("before after", self.document_ids)
 
     def set_name(self, name):
         self.name = name
@@ -92,13 +95,16 @@ class Conversation:
     
     def get_vector_store(self):
         from services.upload_manager.embeddings_manager import EmbeddingsManager
-
+        print(10)
         from services.ai_service import AIService
-
+        print(11)
         document_embeddings = []
+        print(12)
         for document_id in self.document_ids or []:
+            print(document_id)
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
-
+            print(document_embeddings)
+        print(AIService().merge_vector_stores(document_embeddings))
         return AIService().merge_vector_stores(document_embeddings)
     
     def remove_duplicate_document_ids(self):
