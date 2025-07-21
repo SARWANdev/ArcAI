@@ -4,6 +4,7 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import Optional, Dict
 from database.repository.pdf_master_repository import PdfMasterDataBase
+
 from database.utils.db_setup import es
 
 from model.document_reader.document import Document
@@ -24,7 +25,7 @@ class DocumentDataBase:
     def save_elastic(doc_id):
         doc_id = str(doc_id)
         name = DocumentDataBase.get_name(doc_id)
-        author = DocumentDataBase.get_authors(doc_id)[0]
+        author = DocumentDataBase.get_authors(doc_id)
         es.index(index="documents", id=doc_id, body={
             "user_id": DocumentDataBase.get_user_id(doc_id),
             "name": name,

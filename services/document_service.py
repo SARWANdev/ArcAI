@@ -55,7 +55,8 @@ class DocumentService:
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
-                                                 authors = bibtex_instance.get_authors(), bibtex= bibtex_str)
+                                                 authors = str(bibtex_instance.get_authors()), bibtex= bibtex_str,
+                                                 first_author= bibtex_instance.get_first_author(),)
         # TODO eather update the instance or the database described with the bibtex
 
 
@@ -107,7 +108,11 @@ class DocumentService:
 
         self.embeddings_storage(document_path, pdf_master_id)
 
-        
+        #text_chunks = self.get_text_chunks(document=document_path)
+        #embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
+        #serialized_vector_store = EmbeddingsManager.serialize_vector_store( embeddings )
+        #path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
+        #save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
 
 
     def get_pdf_text(self, document) -> str:
