@@ -3,6 +3,7 @@ import zipfile
 
 from database.repository.document_repository import DocumentDataBase
 from database.repository.pdf_master_repository import PdfMasterDataBase
+from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 
 
@@ -45,9 +46,8 @@ def download_file(document_id):
     return zip_bytes
 
 def download_project(project_id):
-    document_ids = ""
-    #TODO: gets the docs ids from a project id
-    pass
+    document_ids = DocumentService().get_document_ids_from_project_id(project_id = project_id)
+    download_multiple_documents(document_ids)
 
 def download_multiple_documents(document_ids):
     """
@@ -63,13 +63,14 @@ def download_multiple_documents(document_ids):
             # Fetch document data
             pdf_master_id = DocumentDataBase.get_pdf_master_id(doc_id)
             file_hash = PdfMasterDataBase.get_pdf_hash(pdf_master_id)
+            doc_name = DocumentDataBase.get_name(doc_id)
             file_name = f"{file_hash}.pdf"
             remote_path = DocumentDataBase.get_path(doc_id)
             note_content = get_document_note(doc_id)  # Already bytes
             bib_content = get_document_bibtex(doc_id)  # Already bytes
 
             # Create a folder for this document in the ZIP
-            folder_name = f"document_{doc_id}/"
+            folder_name = f"document_{doc_name}/"
 
             # Add files to the folder
             zipf.writestr(f"{folder_name}note.txt", note_content)
@@ -83,11 +84,17 @@ def download_multiple_documents(document_ids):
     return zip_bytes
 
 download_file =  download_file("687cecea963f806c97db3c3d")
-
-# Optionally, save to disk for testing
 with open('output.zip', 'wb') as f:
     print("hola")
     f.write(download_file)
+
+list_of_docs = ["687ced1834f028bf0cce3bd8", "687d0f1662a4b5b2b039972a", "687d0f4f5be32d07a2b5960c"]
+multiple_docs = download_multiple_documents(list_of_docs)
+# Optionally, save to disk for testing
+with open('multiple.zip', 'wb') as f:
+    print("hola")
+    f.write(multiple_docs)
+
 
 
 

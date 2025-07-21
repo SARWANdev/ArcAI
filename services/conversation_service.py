@@ -8,7 +8,7 @@ class ConversationService:
         self.conversation_repository = ConversationRepository
 
 
-    def create_conversation(self, name, user_id, document_ids=None, project_ids=None):
+    def create_conversation(self, user_id, document_ids=None, project_ids=None, name = "Shrawan"):
         conversation_id = ObjectId()
         conversation_model = ConversationModel(
             name=name, 
@@ -54,6 +54,9 @@ class ConversationService:
     
     def update_messages(self, conversation_id, messages):
         self.conversation_repository.update_messages(conversation_id=conversation_id, messages=messages)
+
+    def update_name(self, conversation_id, new_name):
+        self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
     
         
     def add_to_history(self, conversation_id):
