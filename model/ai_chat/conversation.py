@@ -7,9 +7,10 @@ class Conversation:
                  created_at = None, updated_at = None, name=None):
         self.name = name
         self.messages = messages or []
-        self.initialise_system()
         self.user_id = user_id
-        self.document_ids = document_ids or []
+        print(document_ids)
+        self.document_ids = document_ids
+        print(self.document_ids)
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
@@ -19,7 +20,9 @@ class Conversation:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
             self.document_ids.extend(project_document_ids)
         #delete duplicates document ids
+        print("before duplicate",self.document_ids)
         self.remove_duplicate_document_ids()
+        print("before after", self.document_ids)
 
     def set_name(self, name):
         self.name = name
@@ -58,14 +61,15 @@ class Conversation:
         }
         
     def __format_user_message(self, message:str, context: str)->str:
-        formatted_message = f"""                      
-
-                You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
-                Question: {message} 
-                Context: {context} 
-                Answer: 
-
-                """
+        formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
+                    2. Your job is to reply to User Message. = {message}
+                    3. IF NECESSARY look at the attached Context = {context}
+                    3. Keep answers concise but friendly.  
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    5. But again your main job is to answer the Message and only look at context if necessary
+                    6. Here's the message again: {message}
+                    """
+                
         return formatted_message
     
     def format_last_user_message(self, context: str):
@@ -92,13 +96,16 @@ class Conversation:
     
     def get_vector_store(self):
         from services.upload_manager.embeddings_manager import EmbeddingsManager
-
+        print(10)
         from services.ai_service import AIService
-
+        print(11)
         document_embeddings = []
+        print(12)
         for document_id in self.document_ids or []:
+            print(document_id)
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
-
+            print(document_embeddings)
+        print(AIService().merge_vector_stores(document_embeddings))
         return AIService().merge_vector_stores(document_embeddings)
     
     def remove_duplicate_document_ids(self):

@@ -46,8 +46,8 @@ class LibraryController:
         try:
             # Get parameters from query string
             user_id = request.args.get("user_id")
-            sort_by = request.args.get("sort_by", "title")  # default to 'title'
-            order = request.args.get("order", "asc")  # default to 'asc'
+            sort_by = request.args.get("sort_by", "LastUpdated")  # default to 'title'
+            order = request.args.get("order", "desc")  # default to 'asc'
 
             # Map frontend field names to database columns
             if sort_by == "Title":
@@ -69,7 +69,7 @@ class LibraryController:
                     "Title": model.project_name,
                     "CreatedAt": model.created_at,
                     "LastUpdated": model.updated_at,
-                    "ProjectId" : str(model.id) # cant send the object id created by MongoDb hence it's converted to string
+                    "ProjectId" : str(model.id)
                     # Add other fields if needed
                 }
                 for model in project_model_list
