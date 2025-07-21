@@ -157,7 +157,12 @@ if __name__ == "__main__":
     #TEST : duplicate
     #DocumentService().duplicate_document("6877efc18d90ba0a1892d550", "6877ef9f8d90ba0a1892d544")
 
-    DocumentService().upload_document(path_1, "user_id_1", "project_id_1_1", os.path.basename(path_1))
+    #DocumentService().upload_document(path_1, "user_id_1", "project_id_1_1", os.path.basename(path_1))
+
+    #DocumentService().upload_document(path_2, "user_id_1", "project_id_1_1", os.path.basename(path_2))
+
+    DocumentService().upload_document(path_3, "user_id_1", "project_id_1_1", os.path.basename(path_3))
+
 
     #print(PdfMasterDataBase.get_authors("687bc16986f78260bd7da2f5"))
 

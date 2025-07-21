@@ -46,6 +46,7 @@ class DocumentService:
 
         # Create an empty notebook for the document
         self.notebook_service.update_document_notebook(new_document_id, "")
+        return new_document_id
 
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
@@ -55,7 +56,8 @@ class DocumentService:
         pdf_path_in_server = upload_document(local_path = document_path, relative_path = relative_path, pdf_hash = pdf_hash)
         new_pdf_master_instance = PdfMasterModel(path = pdf_path_in_server, pdf_hash = pdf_hash, user_id = user_id,
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
-                                                 authors = bibtex_instance.get_authors(), bibtex= bibtex_str)
+                                                 authors = str(bibtex_instance.get_authors()), bibtex= bibtex_str,
+                                                 first_author= bibtex_instance.get_first_author(),)
         # TODO eather update the instance or the database described with the bibtex
 
 
@@ -100,14 +102,19 @@ class DocumentService:
             pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
 
         #document_name = document_name_generator(document_path)
-        self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
+        document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
 
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
-
+        text = 
         self.embeddings_storage(document_path, pdf_master_id)
+        DocumentRepository.save_elastic(document_id, text)
 
-        
+        #text_chunks = self.get_text_chunks(document=document_path)
+        #embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
+        #serialized_vector_store = EmbeddingsManager.serialize_vector_store( embeddings )
+        #path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
+        #save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
 
 
     def get_pdf_text(self, document) -> str:

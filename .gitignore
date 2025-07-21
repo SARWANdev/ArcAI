@@ -9,3 +9,4 @@ test_data/UB04.pdf
 database/utils/mongo_configuration.py
 services/tests/upload_method_santiago.py
 services/tests/embeddings.py
+upload_method_santiago.py
