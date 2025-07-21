@@ -61,14 +61,15 @@ class Conversation:
         }
         
     def __format_user_message(self, message:str, context: str)->str:
-        formatted_message = f"""                      
-
-                You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
-                Question: {message} 
-                Context: {context} 
-                Answer: 
-
-                """
+        formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
+                    2. Your job is to reply to User Message. = {message}
+                    3. IF NECESSARY look at the attached Context = {context}
+                    3. Keep answers concise but friendly.  
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    5. But again your main job is to answer the Message and only look at context if necessary
+                    6. Here's the message again: {message}
+                    """
+                
         return formatted_message
     
     def format_last_user_message(self, context: str):
