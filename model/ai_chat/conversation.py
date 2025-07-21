@@ -3,13 +3,13 @@ from typing import Dict, Any
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str]|None = None, project_ids:list[str]|None = None, messages=None, conversation_id=None, 
+    def __init__(self, user_id, document_ids:list[str]|None , project_ids:list[str]|None = None, messages=None, conversation_id=None, 
                  created_at = None, updated_at = None, name=None):
         self.name = name
         self.messages = messages or []
         self.user_id = user_id
         print(document_ids)
-        self.document_ids = document_ids
+        self.document_ids = document_ids or []
         print(self.document_ids)
         self.conversation_id = conversation_id
         self.created_at = created_at or None
@@ -65,7 +65,7 @@ class Conversation:
                     2. Your job is to reply to User Message. = {message}
                     3. IF NECESSARY look at the attached Context = {context}
                     3. Keep answers concise but friendly.  
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and paste the unedited part from the context with Source: 
                     5. But again your main job is to answer the Message and only look at context if necessary
                     6. Here's the message again: {message}
                     """
@@ -111,6 +111,33 @@ class Conversation:
     def remove_duplicate_document_ids(self):
         if self.document_ids:
             self.document_ids = list(dict.fromkeys(self.document_ids))
+
+    def get_raw_messages(self):
+        content = ""
+        messages = self.get_messages()
+        for message in messages:
+            content += message["content"]
+            content += " "
+        return content
+
+
+
+conv = Conversation(user_id="1", document_ids=["a"])
+conv.add_user_message("Banana")
+conv.add_ai_message("Ooh na na")
+conv.add_user_message("Banana")
+conv.add_ai_message("Ooh na na")
+conv.add_user_message("Banana")
+conv.add_ai_message("Ooh na na")
+conv.add_user_message("Banana")
+conv.add_ai_message("Ooh na na")
+conv.add_user_message("Banana")
+conv.add_ai_message("Ooh na na")
+conv.add_user_message("Banana")
+conv.add_ai_message("Ooh na na")
+print(conv.get_messages(),"\n")
+print(conv.get_raw_messages())
+
 
            
 
