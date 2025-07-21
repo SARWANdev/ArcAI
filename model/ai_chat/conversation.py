@@ -116,6 +116,9 @@ class Conversation:
             content += " "
         return content
 
+    def eren_method(self):
+        print("eren is gay")
+
 
 
 conv = Conversation(user_id="1", document_ids=["a"])
