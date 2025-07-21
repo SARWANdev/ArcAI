@@ -7,7 +7,7 @@ from services.document_service import DocumentService
 from services.project_service import ProjectService
 from services.upload_manager.hash_manager import get_pdf_sha256
 from services.upload_manager.server_conection import download_document, upload_document, delete_remote_directory
-
+from database.utils.db_setup import es
 
 user_id_1 = ""
 user_id_2 = ""
@@ -61,7 +61,7 @@ project_id_1_2 = ""
 project_id_2_1 = ""
 project_id_2_2 = ""
 
-path_1 = r"C:\Users\User\PycharmProjects\arcai\papers\Automatic_Visual_Detection_of_Fresh_Poultry_Egg_Quality_Inspection_using_Image_Processing.pdf"
+path_1 = r"C:\Users\Migue\CursorProjects\arcai\papers\Automatic_Visual_Detection_of_Fresh_Poultry_Egg_Quality_Inspection_using_Image_Processing.pdf"
 path_2 = r"C:\Users\User\PycharmProjects\arcai\papers\Blending_Immersive_Gameplay_with_Intense_Exercise_Using_Asynchronous_Exergaming.pdf"
 path_3 = r"C:\Users\User\PycharmProjects\arcai\papers\Efficient_Embedding_of_Scale-Free_Graphs_in_the_Hyperbolic_Plane.pdf"
 path_4 = r"C:\Users\User\PycharmProjects\arcai\papers\Online_level_generation_in_Super_Mario_Bros_via_learning_constructive_primitives.pdf"
@@ -140,6 +140,16 @@ def __rename(document_name: str, ref_count: int) -> str:
     return new_name
 
 if __name__ == "__main__":
+    es.delete_by_query(
+        index="documents",
+        body={"query": {"term": {"user_id": "user_id_1"}}},
+        conflicts="proceed"
+    )
+    es.delete_by_query(
+        index="documents",
+        body={"query": {"term": {"user_id": "117530366620837166459"}}},
+        conflicts="proceed"
+    )
     #method_upload_document_TEST()
     #method_download_document_TEST()
     #method_delete_remote_directory_TEST()
@@ -156,8 +166,16 @@ if __name__ == "__main__":
 
     #TEST : duplicate
     #DocumentService().duplicate_document("6877efc18d90ba0a1892d550", "6877ef9f8d90ba0a1892d544")
-
+    #
     DocumentService().upload_document(path_1, "user_id_1", "project_id_1_1", os.path.basename(path_1))
+    es.delete_by_query(
+        index="documents",
+        body={"query": {"term": {"user_id": "user_id_1"}}},
+        conflicts="proceed"
+    )
+    #
+    #DocumentService().duplicate_document("687d140d451085eb6ca6836b", "project_id_1_1")
+
 
     #print(PdfMasterDataBase.get_authors("687bc16986f78260bd7da2f5"))
 
