@@ -8,8 +8,7 @@ from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 
-def get_project_note(document_id):
-    project_id = DocumentPropertiesRepository.get_project_id(document_id)
+def get_project_note(project_id):
     project_note = ProjectDataBase.get_note(project_id).encode("utf8")
     return project_note
 
@@ -23,6 +22,12 @@ def get_document_bibtex(document_id):
     bibtex = PdfMasterDataBase.get_bibtex(pdf_master_id)
     bibtex = bibtex.encode("utf8")
     return bibtex
+
+def download_bibtex(document_id):
+    pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+    bib_content = get_document_bibtex(document_id)
+    return bib_content
+
 
 def download_file(document_id):
     pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
@@ -53,9 +58,15 @@ def download_file(document_id):
 
 def download_project(project_id):
     document_ids = DocumentService().get_document_ids_from_project_id(project_id = project_id)
-    download_multiple_documents(document_ids)
+    doc_ids_str = []
+    for doc_id in document_ids:
+        doc_ids_str.append(str(doc_id))
+    zip_bytes = download_multiple_documents(doc_ids_str, project_id)
+    return zip_bytes
 
-def download_multiple_documents(document_ids):
+#download_project(project_id = "6872c3ee0a0cdc677aeddd91")
+
+def download_multiple_documents(document_ids, project_id):
     """
     Downloads multiple documents, each in their own folder inside a ZIP.
     Returns the ZIP file as in-memory bytes.
@@ -63,11 +74,11 @@ def download_multiple_documents(document_ids):
     ssh = ssh_connection()
     sftp = ssh.open_sftp()
     zip_buffer = io.BytesIO()
-
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        project_note = get_project_note(document_ids[0])  #TODO
+        project_note = get_project_note(project_id)  #TODO
         zipf.writestr( 'project_note.txt', project_note ) #TODO
         for doc_id in document_ids:
+            doc_id = str(doc_id)
             # Fetch document data
             pdf_master_id = DocumentDataBase.get_pdf_master_id(doc_id)
             file_hash = PdfMasterDataBase.get_pdf_hash(pdf_master_id)
@@ -76,16 +87,13 @@ def download_multiple_documents(document_ids):
             remote_path = DocumentDataBase.get_path(doc_id)
             note_content = get_document_note(doc_id)  # Already bytes
             bib_content = get_document_bibtex(doc_id)  # Already bytes
-
             # Create a folder for this document in the ZIP
             folder_name = f"document_{doc_name}/"
-
             # Add files to the folder
             zipf.writestr(f"{folder_name}note.txt", note_content)
             zipf.writestr(f"{folder_name}bibtex.bib", bib_content)
             with sftp.open(remote_path, 'rb') as pdf_file:
                 zipf.writestr(f"{folder_name}{file_name}", pdf_file.read())
-
     zip_bytes = zip_buffer.getvalue()
     sftp.close()
     ssh.close()
