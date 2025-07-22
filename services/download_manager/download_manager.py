@@ -24,6 +24,12 @@ def get_document_bibtex(document_id):
     bibtex = bibtex.encode("utf8")
     return bibtex
 
+def download_bibtex(document_id):
+    pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+    bib_content = get_document_bibtex(document_id)
+    return bib_content
+
+
 def download_file(document_id):
     pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
     file_hash = PdfMasterDataBase.get_pdf_hash( pdf_master_id )
