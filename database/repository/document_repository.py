@@ -172,13 +172,14 @@ class DocumentDataBase:
 
         
     @staticmethod
-    def search_documents(prefix, user_id):
+    def search_documents(user_id, prefix):
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
-            "size": 5,
+            "size": 8, 
             "query": {
                 "bool": {
                     "should": [
+                        # Autocomplete by name
                         {
                             "match_phrase_prefix": {
                                 "name": {
@@ -186,33 +187,43 @@ class DocumentDataBase:
                                 }
                             }
                         },
+                        # Autocomplete by author
                         {
                             "match_phrase_prefix": {
                                 "author": {
                                     "query": prefix
                                 }
                             }
+                        },
+                        # Whole text search
+                        {
+                            "match": {
+                                "content": {
+                                    "query": prefix,
+                                    "operator": "and"  # Solo documentos que tengan todas las palabras
+                                }
+                            }
                         }
                     ],
-                    "minimum_should_match": 1,
                     "filter": [
                         { "term": { "user_id": user_id } }
-                    ]
+                    ],
+                    "minimum_should_match": 1 
                 }
             }
         })
+
         hits = result["hits"]["hits"]
         return [
-            {"id": hit["_id"], "name": hit["_source"].get("name", "")}
+            {"id": hit["_id"], "name": hit["_source"].get("name", ""), "author": hit["_source"].get("author", ""), "content": hit["_source"].get("content", "")}
             for hit in hits
         ]
     
     
     @staticmethod
     def get_user_id(document_id):
-        with mongo_connection() as db:
-            pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-            return PdfMasterDataBase.get_user_id( pdf_master_id )
+        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
+        return PdfMasterDataBase.get_user_id( pdf_master_id )
 
 
 
