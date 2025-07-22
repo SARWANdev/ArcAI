@@ -90,22 +90,23 @@ class ChatController:
                 return jsonify({"error": "user_id is required"}), 400
 
             old_conversation = self.conversation_service.get_conversation(conversation_id)
-            old_conversation.add_user_message(user_prompt)
-            response = self.ai_service.send_chat_message(question=user_prompt, conversation=old_conversation)
-            print(21)
-            string_response = self.ai_service.output_streaming_response(response, len)
-            print(22)
-            old_conversation.add_ai_message(string_response)
-            print(23)
-            self.conversation_service.update_messages(old_conversation.conversation_id, old_conversation.get_messages())
-            print(24)
-            list_of_messages = old_conversation.get_messages()
-            print(list_of_messages)
-            return jsonify({
-                "success": True,
-                "data": {"conversation_id": str(old_conversation.conversation_id),
-                         "list_of_messages": list_of_messages}
-            }), 200
+            if old_conversation:
+                old_conversation.add_user_message(user_prompt)
+                response = self.ai_service.send_chat_message(question=user_prompt, conversation=old_conversation)
+                print(21)
+                string_response = self.ai_service.output_streaming_response(response, len)
+                print(22)
+                old_conversation.add_ai_message(string_response)
+                print(23)
+                self.conversation_service.update_messages(old_conversation.conversation_id, old_conversation.get_messages())
+                print(24)
+                list_of_messages = old_conversation.get_messages()
+                print(list_of_messages)
+                return jsonify({
+                    "success": True,
+                    "data": {"conversation_id": str(old_conversation.conversation_id),
+                            "list_of_messages": list_of_messages}
+                }), 200
 
         except Exception as e:
             print(e)
@@ -121,19 +122,19 @@ class ChatController:
         """
         Renames an existing chat session.
         """
-        return self.ai_service.rename_chat(chat_id, new_title)
+        return self.conversation_service.rename_chat(chat_id, new_title)
 
     def delete_chat(self, chat_id):
         """
         Deletes a chat session and its messages.
         """
-        return self.ai_service.delete_chat(chat_id)
+        return self.conversation_service.delete_chat(chat_id)
 
     def delete_all_chats(self, user_id):
         """
         Deletes all chat sessions for a user.
         """
-        return self.ai_service.delete_all_chats(user_id)
+        return self.conversation_service.delete_all_chats(user_id)
 
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
