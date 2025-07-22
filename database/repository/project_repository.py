@@ -27,6 +27,15 @@ class Project:
                 print(f"Project {project_name} already exists")
                 return ""
 
+    @staticmethod
+    def get_note(project_id):
+        try:
+            with mongo_connection() as db:
+                result = db.projects.find_one({"_id": ObjectId(project_id)}, {"note": 1}).get("note")
+                return str(result)
+        except Exception as e:
+            print(f"System can not return note from project {e}")
+            return ""
 
     @staticmethod
     def get_project_by_user_id(user_id: str) -> dict:

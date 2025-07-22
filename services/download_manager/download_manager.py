@@ -1,11 +1,17 @@
 import io
 import zipfile
 
+from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.document_repository import DocumentDataBase
 from database.repository.pdf_master_repository import PdfMasterDataBase
+from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 
+def get_project_note(document_id):
+    project_id = DocumentPropertiesRepository.get_project_id(document_id)
+    project_note = ProjectDataBase.get_note(project_id).encode("utf8")
+    return project_note
 
 def get_document_note(document_id):
     note = DocumentDataBase.get_note(document_id)
@@ -59,6 +65,8 @@ def download_multiple_documents(document_ids):
     zip_buffer = io.BytesIO()
 
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        project_note = get_project_note(document_ids[0])  #TODO
+        zipf.writestr( 'project_note.txt', project_note ) #TODO
         for doc_id in document_ids:
             # Fetch document data
             pdf_master_id = DocumentDataBase.get_pdf_master_id(doc_id)
@@ -83,17 +91,18 @@ def download_multiple_documents(document_ids):
     ssh.close()
     return zip_bytes
 
-download_file =  download_file("687cecea963f806c97db3c3d")
-with open('output.zip', 'wb') as f:
-    print("hola")
-    f.write(download_file)
+#download_file =  download_file("687f88042fe107c0c717f9ab")
+#with open('chimney.zip', 'wb') as f:
+#    print("hola")
+#    f.write(download_file)
 
-list_of_docs = ["687ced1834f028bf0cce3bd8", "687d0f1662a4b5b2b039972a", "687d0f4f5be32d07a2b5960c"]
-multiple_docs = download_multiple_documents(list_of_docs)
+#list_of_docs = ["687ced1834f028bf0cce3bd8", "687d0f1662a4b5b2b039972a", "687d0f4f5be32d07a2b5960c"]
+#list_of_docs = ["687f88042fe107c0c717f9ab"]
+#multiple_docs = download_multiple_documents(list_of_docs)
 # Optionally, save to disk for testing
-with open('multiple.zip', 'wb') as f:
-    print("hola")
-    f.write(multiple_docs)
+#with open('double.zip', 'wb') as f:
+#    print("hola")
+#    f.write(multiple_docs)
 
 
 
