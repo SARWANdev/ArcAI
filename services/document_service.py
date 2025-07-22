@@ -417,6 +417,15 @@ class DocumentService:
         pdf_name = self.document_repository.get_name( document_id )
         self.__create_document(document_name = pdf_name, project_id = project_id, pdf_master_id = pdf_master_id)
 
+    def move_document(self, document_id, new_project_id):
+        """
+        
+        :param document_id: 
+        :param new_project_id: 
+        :return: 
+        """
+
+        self.document_properties_repo.set_new_project_id(document_id, new_project_id)
 
 
 
