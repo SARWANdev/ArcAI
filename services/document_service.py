@@ -98,8 +98,10 @@ class DocumentService:
 
         if existing_pdf_master:
             pdf_master_id = str(existing_pdf_master.get("_id"))
+
         else:
             pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
+            self.embeddings_storage(document_path, pdf_master_id)
 
         #document_name = document_name_generator(document_path)
         document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
@@ -107,7 +109,7 @@ class DocumentService:
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
         text = self.get_pdf_text(document_path)
-        self.embeddings_storage(document_path, pdf_master_id)
+
         DocumentRepository.save_elastic(document_id, text)
 
         #text_chunks = self.get_text_chunks(document=document_path)
