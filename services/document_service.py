@@ -47,6 +47,8 @@ class DocumentService:
         # Create an empty notebook for the document
         self.notebook_service.update_document_notebook(new_document_id, "")
         return new_document_id
+    
+        #create a conversation for the document
 
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):

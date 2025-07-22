@@ -5,7 +5,7 @@ from typing import Dict, Any
 # call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids: list[str] | None = None, project_ids: list[str] | None = None,
+    def __init__(self, user_id, document_ids: list[str] = [], project_ids: list[str] | None = None,
                  messages=None, conversation_id=None,
                  created_at=None, updated_at=None, name=None):
         self.name = name
@@ -95,11 +95,8 @@ class Conversation:
 
     def get_vector_store(self):
         from services.upload_manager.embeddings_manager import EmbeddingsManager
-        print(10)
         from services.ai_service import AIService
-        print(11)
         document_embeddings = []
-        print(12)
         for document_id in self.document_ids or []:
             print(document_id)
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
