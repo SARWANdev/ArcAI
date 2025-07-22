@@ -417,16 +417,6 @@ class DocumentService:
         pdf_name = self.document_repository.get_name( document_id )
         self.__create_document(document_name = pdf_name, project_id = project_id, pdf_master_id = pdf_master_id)
 
-    def move_document(self, document_id, target_project_id):
-        """
-        this method should update the project_id
-        :param document_id:
-        :param target_project_id:
-        :return:
-        """
-        self.document_properties_repo.set_new_project_id(document_id, target_project_id)
-
-
 
 
 
@@ -453,8 +443,8 @@ class DocumentService:
         #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
         return str()
     
-    def search_documents(self, user_id, prefix):
-        result = self.document_repository.search_documents(user_id, prefix)
+    def search_documents(user_id, prefix):
+        result = DocumentRepository.search_documents(user_id, prefix)
         return result
     
     def get_document_vector_store(self, document_id):
