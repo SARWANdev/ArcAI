@@ -84,3 +84,13 @@ class DocumentPropertiesRepository:
             print(f"Tag name could not be update: {e}")
             return False
 
+    @staticmethod
+    def set_new_project_id(document_id, new_project_id) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"project_id": new_project_id}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"New project id could not be set: {e}")
+            return False
+
