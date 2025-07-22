@@ -51,7 +51,8 @@ class ChatController:
             print(3)
             self.conversation_service.update_name(new_conversation.conversation_id,
                                                   self.ai_service.generate_conversation_name(new_conversation))
-            new_conversation.set_name(self.ai_service.generate_conversation_name(new_conversation))
+            if not new_conversation.name:
+                new_conversation.set_name(self.ai_service.generate_conversation_name(new_conversation))
             print(4)
             response = self.ai_service.send_chat_message(question=user_prompt, conversation=new_conversation)
             print(5)
