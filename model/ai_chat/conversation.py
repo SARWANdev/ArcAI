@@ -7,7 +7,6 @@ class Conversation:
                  created_at = None, updated_at = None, name=None):
         self.name = name
         self.messages = messages or []
-        self.initialise_system()
         self.user_id = user_id
         print(document_ids)
         self.document_ids = document_ids
@@ -38,14 +37,7 @@ class Conversation:
     def add_system_message(self, message: str):
         self.messages.append({"role": "system",
                                 "content": message})
-        
-    def initialise_system(self):
-        self.add_system_message(f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
-                    2. Your job is to reply to User Message.
-                    3. If necessary look at the attached Context
-                    3. Keep answers concise but friendly.  
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
-                    """)
+
 
 
     def to_dict(self) -> Dict[str, Any]:
@@ -95,12 +87,14 @@ class Conversation:
     
     def get_vector_store(self):
         from services.upload_manager.embeddings_manager import EmbeddingsManager
-
+        print("getting vector store")
         from services.ai_service import AIService
 
         document_embeddings = []
         for document_id in self.document_ids or []:
+            print("document-id:  " + document_id)
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
+            print(document_embeddings)
 
         return AIService().merge_vector_stores(document_embeddings)
     
@@ -121,21 +115,7 @@ class Conversation:
 
 
 
-conv = Conversation(user_id="1", document_ids=["a"])
-conv.add_user_message("Banana")
-conv.add_ai_message("Ooh na na")
-conv.add_user_message("Banana")
-conv.add_ai_message("Ooh na na")
-conv.add_user_message("Banana")
-conv.add_ai_message("Ooh na na")
-conv.add_user_message("Banana")
-conv.add_ai_message("Ooh na na")
-conv.add_user_message("Banana")
-conv.add_ai_message("Ooh na na")
-conv.add_user_message("Banana")
-conv.add_ai_message("Ooh na na")
-print(conv.get_messages(),"\n")
-print(conv.get_raw_messages())
+
 
 
            
