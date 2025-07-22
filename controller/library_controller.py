@@ -1,9 +1,11 @@
 from bson import ObjectId
+from io import BytesIO
 
+from services.download_manager.download_manager import download_project
 from services.library_service import LibraryService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
-from flask import Blueprint, Flask, jsonify, request
+from flask import Blueprint, Flask, jsonify, request, send_file
 
 class LibraryController:
     def __init__(self, app : Flask):
@@ -95,8 +97,33 @@ class LibraryController:
                 "error": str(e)
             }), 500
 
-    def download_project(self, project_id):
-       pass
+    def download_project(self):
+        try:
+            user_id = request.args.get("user_id")
+            project_id = request.args.get("project_id")
+            print(user_id, project_id)
+            if not user_id or not project_id:
+                return jsonify({"error": "Missing user_id or project_id"}), 400
+
+            project = download_project(project_id)
+
+            if not project:
+                return jsonify({"error": "Project could not be downloaded"}), 404
+
+            zip_stream = BytesIO(project)
+
+            return send_file(
+                zip_stream,
+                mimetype="application/zip",
+                download_name=f"project_{project_id}.zip",  # Filename when downloading
+                as_attachment=True  # Forces download
+            )
+
+        except Exception as e:
+            # Log the error for debugging
+            print(f"Error in download_project: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
 
     def delete_project(self):
         try:
@@ -153,6 +180,7 @@ class LibraryController:
     # To register all the library-routes
     def register_library_routes(self, app):
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
+        self.library.add_url_rule("/library/download", view_func=self.download_project)
         self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
         self.library.add_url_rule("/library/delete-project", view_func=self.delete_project, methods=["DELETE"])
         self.library.add_url_rule("/library/rename-project", view_func=self.rename_project, methods=["PATCH"])
