@@ -48,6 +48,7 @@ class LibraryController:
             user_id = request.args.get("user_id")
             sort_by = request.args.get("sort_by", "LastUpdated")  # default to 'title'
             order = request.args.get("order", "desc")  # default to 'asc'
+            print(user_id, sort_by, order)
 
             # Map frontend field names to database columns
             if sort_by == "Title":

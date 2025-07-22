@@ -1,5 +1,6 @@
 from io import BytesIO
 from services.document_service import DocumentService
+from services.download_manager.download_manager import download_file
 from services.notebook_service import NotebookService
 from database.repository.document_repository import DocumentDataBase
 from services.ai_service import AIService
@@ -351,27 +352,57 @@ class DocumentController:
 
     def download_document(self):
         try:
+            # Extract query parameters
             user_id = request.args.get("user_id")
             document_id = request.args.get("document_id")
-            print(user_id, document_id)
+
             if not user_id or not document_id:
-                return jsonify({"error": "Missing user_id or project_id"}), 400
+                return jsonify({"error": "Missing user_id or document_id"}), 400
 
+            # Retrieve ZIP file bytes from your helper function
+            file_bytes = download_file(document_id)  # Should return raw zip bytes
 
-            file = self.document_service.download_document(document_id)
-            # The file is not giving none instead of a file object
-            file_name = file.name
+            if not file_bytes:
+                return jsonify({"error": "Document could not be downloaded"}), 404
 
-            print(file_name, file)
+            # Create an in-memory file object from the bytes
+            zip_stream = BytesIO(file_bytes)
 
-            return jsonify({
-                "status": "success",
-                "message": "Document retrieved successfully",
-            }), 200
+            # Return the file as a download
+            return send_file(
+                zip_stream,
+                mimetype="application/zip",
+                download_name=f"document_{document_id}.zip",  # Filename when downloading
+                as_attachment=True  # Forces download
+            )
 
         except Exception as e:
             print(f"Error in download_document: {e}")
             return jsonify({"error": "Internal server error"}), 500
+
+    def move_document(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = data.get("document_id")
+            project_id = data.get("project_id")
+
+            # Validate input
+            if not user_id or not document_id or not project_id:
+                return jsonify({"error": "Missing user_id, document_id, or project_id"}), 400
+
+            self.document_service.move_document(document_id, project_id)
+
+            # --- Database logic to move the document ---
+            # For example:
+            print(user_id, document_id, project_id)
+
+            return jsonify({"message": "Document moved successfully"}), 200
+
+        except Exception as e:
+            print(f"Error in move_document: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
 
     def register_document_routes(self, app):
         app.add_url_rule("/document/upload", view_func=self.upload_document, methods=["POST"])
@@ -387,5 +418,6 @@ class DocumentController:
         app.add_url_rule("/document/tag", view_func=self.remove_document_tag, methods=["DELETE"])
         app.add_url_rule("/document/note", view_func=self.get_document_note)
         app.add_url_rule("/document/note", view_func=self.save_document_note, methods=['POST'])
+        app.add_url_rule("/document/move", view_func=self.move_document, methods=["POST"])
         app.add_url_rule("/document/download", view_func=self.download_document)
         app.register_blueprint(self.document)
