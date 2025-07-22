@@ -17,7 +17,6 @@ class Conversation:
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
-
         # If project_ids are provided, get their document_ids and add them
         if project_ids:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
@@ -42,13 +41,7 @@ class Conversation:
         self.messages.append({"role": "system",
                               "content": message})
 
-    def initialise_system(self):
-        self.add_system_message(f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
-                    2. Your job is to reply to User Message.
-                    3. If necessary look at the attached Context
-                    3. Keep answers concise but friendly.  
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and explain where you got the message from with Source: 
-                    """)
+
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -61,15 +54,16 @@ class Conversation:
             "updated_at": self.updated_at
         }
 
-    def __format_user_message(self, message: str, context: str) -> str:
-        formatted_message = f"""                      
-
-                You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise.
-                Question: {message} 
-                Context: {context} 
-                Answer: 
-
-                """
+    def __format_user_message(self, message:str, context: str)->str:
+        formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
+                    2. Your job is to reply to User Message. = {message}
+                    3. IF NECESSARY look at the attached Context = {context}
+                    3. Keep answers concise but friendly.  
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and paste the unedited part from the context with Source: 
+                    5. But again your main job is to answer the Message and only look at context if necessary
+                    6. Here's the message again: {message}
+                    """
+                
         return formatted_message
 
     def format_last_user_message(self, context: str):
