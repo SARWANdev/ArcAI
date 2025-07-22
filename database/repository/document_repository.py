@@ -172,7 +172,7 @@ class DocumentDataBase:
 
         
     @staticmethod
-    def search_documents(user_id, prefix):
+    def search_documents(user_id, query):
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
             "size": 8, 
@@ -183,7 +183,7 @@ class DocumentDataBase:
                         {
                             "match_phrase_prefix": {
                                 "name": {
-                                    "query": prefix
+                                    "query": query
                                 }
                             }
                         },
@@ -191,7 +191,7 @@ class DocumentDataBase:
                         {
                             "match_phrase_prefix": {
                                 "author": {
-                                    "query": prefix
+                                    "query": query
                                 }
                             }
                         },
@@ -199,7 +199,7 @@ class DocumentDataBase:
                         {
                             "match": {
                                 "content": {
-                                    "query": prefix,
+                                    "query": query,
                                     "operator": "and"  # Solo documentos que tengan todas las palabras
                                 }
                             }
