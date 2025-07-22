@@ -69,21 +69,14 @@ class DocumentService:
 
     # this method is possibly the one that has to be called
     def upload_file(self, file, user_id, project_id):
-        print(1)
         original_name = file.filename
-        print(2)
         suffix = "." + file.filename.split(".")[1]
-        print(3)
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-            print(4)
             tmp.write(file.read())
-            print(5)
             tmp_path = tmp.name
-        print(6)
         self.upload_document(document_path = tmp_path, user_id = user_id, project_id = project_id, original_name=original_name)
-        print(7)
+
         os.remove(tmp_path)
-        print(8)
 
 
 
@@ -426,6 +419,15 @@ class DocumentService:
         pdf_name = self.document_repository.get_name( document_id )
         self.__create_document(document_name = pdf_name, project_id = project_id, pdf_master_id = pdf_master_id)
 
+    def move_document(self, document_id, new_project_id):
+        """
+        
+        :param document_id: 
+        :param new_project_id: 
+        :return: 
+        """
+
+        self.document_properties_repo.set_new_project_id(document_id, new_project_id)
 
 
 
@@ -452,8 +454,8 @@ class DocumentService:
         #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
         return str()
     
-    def search_documents(self, user_id, query):
-        result = self.document_repository.search_documents(user_id, query)
+    def search_documents(user_id, prefix):
+        result = DocumentRepository.search_documents(user_id, prefix)
         return result
     
     def get_document_vector_store(self, document_id):
