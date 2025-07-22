@@ -1,4 +1,4 @@
-from database.repository.project_repository import Project as ProjectRepository
+from database.repository.project_repository import Project as ProjectRepository, Project
 from database.repository.document_repository import DocumentDataBase as DocumentRepository
 from model.document_reader.project import Project as ProjectModel
 from database.repository.library_repository import Library as LibraryRepository
@@ -61,6 +61,7 @@ class ProjectService:
         documents_in_project = self.document_repository.get_documents_by_project( project_id )
         project_path = self.project_repository.get_project_by_id(project_id) #get the path of the project
         if not documents_in_project:
+            Project.delete_project(project_id)
             return None
 
         for document_data in documents_in_project:
