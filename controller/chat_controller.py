@@ -39,7 +39,6 @@ class ChatController:
             user_id = data.get("user_id")
             user_prompt = data.get("user_prompt")
             document_ids = data.get("document_ids")
-            print(document_ids)
             project_ids = data.get("project_ids")
 
             if not user_id:
@@ -47,14 +46,20 @@ class ChatController:
             new_conversation = self.conversation_service.create_conversation(user_id=user_id, document_ids=document_ids,
                                                                              project_ids=project_ids)
             new_conversation.add_user_message(user_prompt)
+
             self.conversation_service.update_name(new_conversation.conversation_id,
                                                   self.ai_service.generate_conversation_name(new_conversation))
-            new_conversation.set_name(self.ai_service.generate_conversation_name(new_conversation))
+            if not new_conversation.name:
+                new_conversation.set_name(self.ai_service.generate_conversation_name(new_conversation))
+
             response = self.ai_service.send_chat_message(question=user_prompt, conversation=new_conversation)
+
             string_response = self.ai_service.output_streaming_response(response, len)
             new_conversation.add_ai_message(string_response)
             self.conversation_service.update_messages(new_conversation.conversation_id, new_conversation.get_messages())
             list_of_messages = new_conversation.get_messages()
+            print(new_conversation.conversation_id)
+            print(new_conversation.name)
             return jsonify({
                 "success": True,
                 "data": {"conversation_id": str(new_conversation.conversation_id),
@@ -79,17 +84,23 @@ class ChatController:
                 return jsonify({"error": "user_id is required"}), 400
 
             old_conversation = self.conversation_service.get_conversation(conversation_id)
-            old_conversation.add_user_message(user_prompt)
-            response = self.ai_service.send_chat_message(question=user_prompt, conversation=old_conversation)
-            string_response = self.ai_service.output_streaming_response(response, len)
-            old_conversation.add_ai_message(string_response)
-            self.conversation_service.update_messages(old_conversation.conversation_id, old_conversation.get_messages())
-            list_of_messages = old_conversation.get_messages()
-            return jsonify({
-                "success": True,
-                "data": {"conversation_id": str(old_conversation.conversation_id),
-                         "list_of_messages": list_of_messages}
-            }), 200
+            if old_conversation:
+                old_conversation.add_user_message(user_prompt)
+                response = self.ai_service.send_chat_message(question=user_prompt, conversation=old_conversation)
+
+                string_response = self.ai_service.output_streaming_response(response, len)
+
+                old_conversation.add_ai_message(string_response)
+
+                self.conversation_service.update_messages(old_conversation.conversation_id, old_conversation.get_messages())
+
+                list_of_messages = old_conversation.get_messages()
+                print(list_of_messages)
+                return jsonify({
+                    "success": True,
+                    "data": {"conversation_id": str(old_conversation.conversation_id),
+                            "list_of_messages": list_of_messages}
+                }), 200
 
         except Exception as e:
             print(e)
@@ -129,23 +140,26 @@ class ChatController:
     def get_chat_history(self, user_id):
         pass
 
+    def get_conversation(self, chat_id):
+        pass
+
     def rename_chat(self, chat_id, new_title):
         """
         Renames an existing chat session.
         """
-        return self.ai_service.rename_chat(chat_id, new_title)
+        return self.conversation_service.rename_chat(chat_id, new_title)
 
     def delete_chat(self, chat_id):
         """
         Deletes a chat session and its messages.
         """
-        return self.ai_service.delete_chat(chat_id)
+        return self.conversation_service.delete_chat(chat_id)
 
     def delete_all_chats(self, user_id):
         """
         Deletes all chat sessions for a user.
         """
-        return self.ai_service.delete_all_chats(user_id)
+        return self.conversation_service.delete_all_chats(user_id)
 
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])

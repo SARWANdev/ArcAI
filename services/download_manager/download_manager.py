@@ -8,6 +8,24 @@ from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 
+#Chimnay method for front end
+def download_project(project_id):
+    document_ids = DocumentService().get_document_ids_from_project_id(project_id=project_id)
+    doc_ids_str = []
+    for doc_id in document_ids:
+        doc_ids_str.append(str(doc_id))
+    zip_bytes = download_multiple_documents(doc_ids_str, project_id)
+    return zip_bytes
+
+#Chimnay method for front end
+def download_project_bibtex(project_id):
+    document_ids = DocumentService().get_document_ids_from_project_id(project_id=project_id)
+    doc_ids_str = []
+    for doc_id in document_ids:
+        doc_ids_str.append(str(doc_id))
+
+    return download_multiple_bibtex(doc_ids_str)
+
 def get_project_note(project_id):
     project_note = ProjectDataBase.get_note(project_id).encode("utf8")
     return project_note
@@ -22,6 +40,7 @@ def get_document_bibtex(document_id):
     bibtex = PdfMasterDataBase.get_bibtex(pdf_master_id)
     bibtex = bibtex.encode("utf8")
     return bibtex
+
 
 def download_file(document_id):
     pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
@@ -50,15 +69,25 @@ def download_file(document_id):
     ssh.close()
     return zip_bytes
 
-def download_project(project_id):
-    document_ids = DocumentService().get_document_ids_from_project_id(project_id = project_id)
-    doc_ids_str = []
-    for doc_id in document_ids:
-        doc_ids_str.append(str(doc_id))
-    zip_bytes = download_multiple_documents(doc_ids_str, project_id)
+
+def download_multiple_bibtex(doc_ids_str):
+    ssh = ssh_connection()
+    sftp = ssh.open_sftp()
+    zip_buffer = io.BytesIO()
+
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
+
+        for document_id in doc_ids_str:
+            doc_name = DocumentDataBase.get_name(document_id)
+            bib_content = get_document_bibtex(document_id)
+            zipf.writestr(f"{doc_name}_bibtex.bib", bib_content)
+
+    zip_bytes = zip_buffer.getvalue()
+
+    sftp.close()
+    ssh.close()
     return zip_bytes
 
-#download_project(project_id = "6872c3ee0a0cdc677aeddd91")
 
 def download_multiple_documents(document_ids, project_id):
     """
