@@ -47,6 +47,8 @@ class DocumentService:
         # Create an empty notebook for the document
         self.notebook_service.update_document_notebook(new_document_id, "")
         return new_document_id
+    
+        #create a conversation for the document
 
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
@@ -452,9 +454,11 @@ class DocumentService:
         #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
         return str()
     
-    def search_documents(user_id, prefix):
-        result = DocumentRepository.search_documents(user_id, prefix)
-        return result
+    def search_documents(self, user_id, query):
+        results = self.document_repository.search_documents(user_id, query)
+        if not results:
+            results = self.document_repository.search_contents(user_id, query)
+        return results
     
     def get_document_vector_store(self, document_id):
         pass
