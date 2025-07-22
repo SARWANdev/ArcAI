@@ -451,8 +451,10 @@ class DocumentService:
         return str()
     
     def search_documents(self, user_id, query):
-        result = self.document_repository.search_documents(user_id, query)
-        return result
+        results = self.document_repository.search_documents(user_id, query)
+        if not results:
+            results = self.document_repository.search_contents(user_id, query)
+        return results
     
     def get_document_vector_store(self, document_id):
         pass

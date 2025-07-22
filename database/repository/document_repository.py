@@ -175,7 +175,7 @@ class DocumentDataBase:
     def search_documents(user_id, query):
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
-            "size": 8, 
+            "size": 5, 
             "query": {
                 "bool": {
                     "should": [
@@ -194,15 +194,6 @@ class DocumentDataBase:
                                     "query": query
                                 }
                             }
-                        },
-                        # Whole text search
-                        {
-                            "match": {
-                                "content": {
-                                    "query": query,
-                                    "operator": "and"  # Solo documentos que tengan todas las palabras
-                                }
-                            }
                         }
                     ],
                     "filter": [
@@ -212,10 +203,44 @@ class DocumentDataBase:
                 }
             }
         })
+        hits = result["hits"]["hits"]
+        return [
+            {"id": hit["_id"], "name": hit["_source"].get("name", ""), "author": hit["_source"].get("author", "")}
+            for hit in hits
+        ]
+
+    @staticmethod
+    def search_contents(user_id, query):
+        es.indices.refresh(index="documents")
+        result = es.search(index="documents", body={
+            "size": 5,
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "match": {
+                                "text": {
+                                    "query": query,
+                                    "operator": "and",
+                                    "fuzziness": "AUTO"
+                                }
+                            }
+                        }
+                    ],
+                    "filter": [
+                        {
+                            "term": {
+                                "user_id": user_id
+                            }
+                        }
+                    ]
+                }
+            }
+        })
 
         hits = result["hits"]["hits"]
         return [
-            {"id": hit["_id"], "name": hit["_source"].get("name", ""), "author": hit["_source"].get("author", ""), "content": hit["_source"].get("content", "")}
+            {"id": hit["_id"], "name": hit["_source"].get("name", ""), "author": hit["_source"].get("author", ""), "text": hit["_source"].get("text", "")}
             for hit in hits
         ]
     

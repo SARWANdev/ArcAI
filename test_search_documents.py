@@ -14,11 +14,11 @@ documents_by_user = {
     "alice": [
         {"name": "Trip to Japan", "author": "Anuel AA", "content": "This is a document about Japan."},
         {"name": "Ramen Recipes", "author": "Bad Bunny", "content": "This document is about ramen recipes."},
-        {"name": "la jumpa", "author": "Arcangel", "content": "Y yo la vi, anda con dos La amiga me miró Al VIP se pegó Claro que sí, claro que entró Hola Mi nombre es Arcángel, un gusto, un placer Hoy tú te vas con una leyenda que no va a volver a nacer (ey)"}
+        {"name": "la jumpa", "author": "Arcangel", "content": "Y yo la vi, anda con dos"}
     ],
     "bob": [
-        {"name": "Startup Ideas", "author": "Bob Author", "content": "This document discusses startup ideas."},
-        {"name": "AI Projects", "author": "Myke Towers", "content": "This document covers AI projects."},
+        {"name": "Startup Ideas", "author": "Sting", "content": "This document discusses startup ideas."},
+        {"name": "AI Projects", "author": "Bob Marelu", "content": "This document covers AI projects."},
         {"name": "Me gustas tu", "author": "Myke Towers", "content": "me gusta viajar me gustas tú"}
     ]
 }
@@ -69,16 +69,17 @@ if __name__ == "__main__":
     for user in users:
         es.delete_by_query(
             index="documents",
-            body={"query": {"term": {"user:id": user}}},
+            body={"query": {"term": {"user_id": user}}},
             conflicts="proceed"
         )
-        save_documents()
-        while True:
-            user = choose_user()
-            search_documents(user)
-            again = input("\nDo you want to end the test? (y/n): ")
-            if again.lower() == "y":
-                break
-        clean_up()
+    save_documents()
+    while True:
+        user = choose_user()
+        search_documents(user)
+        again = input("\nDo you want to end the test? (y/n): ")
+        if again.lower() == "y":
+            break
+       
+    clean_up()
 
 
