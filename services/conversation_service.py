@@ -9,7 +9,7 @@ class ConversationService:
     def __init__(self):
         self.conversation_repository = ConversationRepository
 
-    def create_conversation(self, user_id, document_ids=None, project_ids=None, name="Shrawan"):
+    def create_conversation(self, user_id, document_ids, project_ids=None, name="Shrawan"):
         conversation_id = ObjectId()
         conversation_model = ConversationModel(
             name=name,
@@ -22,6 +22,20 @@ class ConversationService:
         )
         self.conversation_repository.save(conversation_model.to_dict())
         return conversation_model
+    
+    def create_document_conversation(self, user_id, document_id):
+        conversation_id = ObjectId()
+       
+        conversation_model = ConversationModel(
+            name=document_id,
+            document_ids=[document_id],
+            user_id=user_id,
+            conversation_id=conversation_id,
+            created_at=get_utc_zulu_timestamp(),
+            updated_at=get_utc_zulu_timestamp()
+        )
+
+        
 
     def get_conversation_history(self, user_id):
         conversations = ConversationRepository.get_user_conversations(user_id)
@@ -40,6 +54,18 @@ class ConversationService:
 
     def get_conversation(self, conversation_id):
         conversation_data = ConversationRepository.get_conversation_by_id(conversation_id)
+        if not conversation_data:
+            return None
+        conversation_model = ConversationModel(
+            conversation_id=conversation_data.get("_id"),
+            user_id=conversation_data.get("user_id"),
+            messages=conversation_data.get("messages"),
+            document_ids=conversation_data.get("document_ids")
+        )
+        return conversation_model
+    
+    def get_conversation_by_document_id(self, document_id):
+        conversation_data = ConversationRepository.get_conversation_by_name(name=document_id)
         if not conversation_data:
             return None
         conversation_model = ConversationModel(
