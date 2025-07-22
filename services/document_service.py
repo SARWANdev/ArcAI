@@ -67,14 +67,21 @@ class DocumentService:
 
     # this method is possibly the one that has to be called
     def upload_file(self, file, user_id, project_id):
+        print(1)
         original_name = file.filename
+        print(2)
         suffix = "." + file.filename.split(".")[1]
+        print(3)
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            print(4)
             tmp.write(file.read())
+            print(5)
             tmp_path = tmp.name
+        print(6)
         self.upload_document(document_path = tmp_path, user_id = user_id, project_id = project_id, original_name=original_name)
-
+        print(7)
         os.remove(tmp_path)
+        print(8)
 
 
 

@@ -162,7 +162,7 @@ if __name__ == "__main__":
     #DocumentService().upload_document(path_2, "user_id_1", "project_id_1_1", os.path.basename(path_2))
     tmp_path = r"C:\Users\Chinm\Downloads\Online_level_generation_in_Super_Mario_Bros_via_learning_constructive_primitives.pdf"
 
-    DocumentService().upload_document(tmp_path, "user_chm_1", "project_chm_1", os.path.basename(tmp_path))
+    DocumentService().upload_document(tmp_path, "user_chm_2", "project_chm_2", os.path.basename(tmp_path))
 
 
     #print(PdfMasterDataBase.get_authors("687bc16986f78260bd7da2f5"))
