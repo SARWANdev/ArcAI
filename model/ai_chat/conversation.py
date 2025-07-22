@@ -3,14 +3,14 @@ from typing import Dict, Any
 #call 015733401006 before huge changes lol
 
 class Conversation:
-    def __init__(self, user_id, document_ids:list[str]|None , project_ids:list[str]|None = None, messages=None, conversation_id=None, 
+    def __init__(self, user_id, document_ids:list[str]=[] , project_ids:list[str]|None = None, messages=None, conversation_id=None, 
                  created_at = None, updated_at = None, name=None):
         self.name = name
         self.messages = messages or []
         self.initialise_system()
         self.user_id = user_id
         print(document_ids)
-        self.document_ids = document_ids or []
+        self.document_ids = document_ids
         print(self.document_ids)
         self.conversation_id = conversation_id
         self.created_at = created_at or None

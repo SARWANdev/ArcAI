@@ -98,19 +98,19 @@ class ChatController:
         """
         Renames an existing chat session.
         """
-        return self.ai_service.rename_chat(chat_id, new_title)
+        return self.conversation_service.rename_chat(chat_id, new_title)
 
     def delete_chat(self, chat_id):
         """
         Deletes a chat session and its messages.
         """
-        return self.ai_service.delete_chat(chat_id)
+        return self.conversation_service.delete_chat(chat_id)
     
     def delete_all_chats(self, user_id):
         """
         Deletes all chat sessions for a user.
         """
-        return self.ai_service.delete_all_chats(user_id)
+        return self.conversation_service.delete_all_chats(user_id)
 
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
