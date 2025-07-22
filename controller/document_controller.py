@@ -18,9 +18,6 @@ class DocumentController:
         self.ai_service = AIService()
         self.register_document_routes(app)
 
-    def download_document(self, document_id):
-        pass
-
     def download_notebook(self, notebook_id):
         pass
 
@@ -281,12 +278,106 @@ class DocumentController:
                 "error":str(e)
             }), 500
 
+    def get_document_note(self):
+        try:
+            user_id = request.args.get("user_id")
+            document_id = request.args.get("document_id")
+            if not user_id or not document_id:
+                return jsonify({"error": "Missing user_id or project_id"}), 400
 
+            note = self.notebook_service.get_documents_notebook(document_id)
+            if note is None:
+                note = ""
+            return jsonify({
+                "status": "success",
+                "note": note,
+                "message": "Notes from document retrieved successfully",
+            }), 200
+
+        except Exception as e:
+            # Log the error for debugging
+            print(f"Error in get_document_note: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
+    def save_document_note(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            document_id = data.get("document_id")
+            note = data.get("note")
+            if not user_id or not document_id:
+                return jsonify({"error": "Missing user_id or project_id"}), 400
+
+            self.notebook_service.update_document_notebook(document_id, note)
+            return jsonify({"message": "Note saved"}), 200
+        except Exception as e:
+            print(f"Error in save_document_note: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
+
+    def duplicate_document(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            project_id = data.get("project_id")
+            document_id = data.get("document_id")
+            if not user_id or not project_id or not document_id:
+                return jsonify({"error": "Missing user_id or project_id or document_id"}), 400
+
+            self.document_service.duplicate_document(document_id, project_id)
+            return jsonify({"message": "Document duplicated"}), 200
+        except Exception as e:
+            print(f"Error in duplicate_document: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
+
+    def get_document_bibtex(self):
+        try:
+            user_id = request.args.get("user_id")
+            document_id = request.args.get("document_id")
+            print(user_id, document_id)
+            if not user_id or not document_id:
+                return jsonify({"error": "Missing user_id or project_id"}), 400
+
+
+            return jsonify({
+                "status": "success",
+                "message": "Bibtex from document retrieved successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in get_document_bibtex: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
+    def download_document(self):
+        try:
+            user_id = request.args.get("user_id")
+            document_id = request.args.get("document_id")
+            print(user_id, document_id)
+            if not user_id or not document_id:
+                return jsonify({"error": "Missing user_id or project_id"}), 400
+
+
+            file = self.document_service.download_document(document_id)
+            # The file is not giving none instead of a file object
+            file_name = file.name
+
+            print(file_name, file)
+
+            return jsonify({
+                "status": "success",
+                "message": "Document retrieved successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in download_document: {e}")
+            return jsonify({"error": "Internal server error"}), 500
 
     def register_document_routes(self, app):
         app.add_url_rule("/document/upload", view_func=self.upload_document, methods=["POST"])
         app.add_url_rule("/document/delete", view_func=self.delete_document, methods=["DELETE"])
         app.add_url_rule("/document/get-document", view_func=self.get_document)
+        app.add_url_rule("/document/duplicate", view_func=self.duplicate_document, methods=["POST"])
         app.add_url_rule("/document/save", view_func=self.save_document, methods=["POST"])
         app.add_url_rule("/document/favourite", view_func=self.make_document_favourite, methods=["POST"])
         app.add_url_rule("/document/favourite", view_func=self.delete_favourite, methods=["DELETE"])
@@ -294,4 +385,7 @@ class DocumentController:
         app.add_url_rule("/document/read", view_func=self.delete_document_read, methods=["DELETE"])
         app.add_url_rule("/document/tag", view_func=self.add_document_tag, methods=["POST"])
         app.add_url_rule("/document/tag", view_func=self.remove_document_tag, methods=["DELETE"])
+        app.add_url_rule("/document/note", view_func=self.get_document_note)
+        app.add_url_rule("/document/note", view_func=self.save_document_note, methods=['POST'])
+        app.add_url_rule("/document/download", view_func=self.download_document)
         app.register_blueprint(self.document)
