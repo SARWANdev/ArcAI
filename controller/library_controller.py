@@ -101,7 +101,6 @@ class LibraryController:
         try:
             user_id = request.args.get("user_id")
             project_id = request.args.get("project_id")
-            print(user_id, project_id)
             if not user_id or not project_id:
                 return jsonify({"error": "Missing user_id or project_id"}), 400
 

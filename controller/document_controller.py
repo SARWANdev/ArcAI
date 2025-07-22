@@ -1,10 +1,10 @@
 from io import BytesIO
 from services.document_service import DocumentService
-from services.download_manager.download_manager import download_file
+from services.download_manager.download_manager import download_file, get_document_bibtex
 from services.notebook_service import NotebookService
 from database.repository.document_repository import DocumentDataBase
 from services.ai_service import AIService
-from flask import Blueprint,Flask, jsonify, request, send_file
+from flask import Blueprint,Flask, jsonify, request, send_file, Response
 from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
@@ -331,25 +331,6 @@ class DocumentController:
             print(f"Error in duplicate_document: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
-
-    def get_document_bibtex(self):
-        try:
-            user_id = request.args.get("user_id")
-            document_id = request.args.get("document_id")
-            print(user_id, document_id)
-            if not user_id or not document_id:
-                return jsonify({"error": "Missing user_id or project_id"}), 400
-
-
-            return jsonify({
-                "status": "success",
-                "message": "Bibtex from document retrieved successfully",
-            }), 200
-
-        except Exception as e:
-            print(f"Error in get_document_bibtex: {e}")
-            return jsonify({"error": "Internal server error"}), 500
-
     def download_document(self):
         try:
             # Extract query parameters
@@ -395,12 +376,36 @@ class DocumentController:
 
             # --- Database logic to move the document ---
             # For example:
-            print(user_id, document_id, project_id)
 
             return jsonify({"message": "Document moved successfully"}), 200
 
         except Exception as e:
             print(f"Error in move_document: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
+    def get_document_bibtex(self):
+        try:
+            user_id = request.args.get("user_id")
+            document_id = request.args.get("document_id")
+            print(user_id, document_id)
+
+            if not user_id or not document_id:
+                return jsonify({"error": "Missing user_id or document_id"}), 400
+
+            bibtex = get_document_bibtex(document_id)  # This should return a string
+
+            if not bibtex:
+                return jsonify({"error": "BibTeX not found"}), 404
+
+            # Return as a file response
+            return Response(
+                bibtex,
+                mimetype="application/x-bibtex",
+                headers={"Content-Disposition": "attachment;filename=export.bib"}
+            )
+
+        except Exception as e:
+            print(f"Error in get_document_bibtex: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
 
@@ -420,4 +425,5 @@ class DocumentController:
         app.add_url_rule("/document/note", view_func=self.save_document_note, methods=['POST'])
         app.add_url_rule("/document/move", view_func=self.move_document, methods=["POST"])
         app.add_url_rule("/document/download", view_func=self.download_document)
+        app.add_url_rule("/document/bibtex", view_func=self.get_document_bibtex)
         app.register_blueprint(self.document)

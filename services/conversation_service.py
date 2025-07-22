@@ -34,6 +34,11 @@ class ConversationService:
             created_at=get_utc_zulu_timestamp(),
             updated_at=get_utc_zulu_timestamp()
         )
+        print("gonna save")
+        self.conversation_repository.save(conversation_model.to_dict())
+        print("done")
+        return conversation_model
+
 
         
 

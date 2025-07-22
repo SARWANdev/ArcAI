@@ -128,7 +128,7 @@ class AIService:
                     "messages": conversation.format_last_user_message(context=context),
                     }
         response = requests.post(url=chat_url, json=payload, stream=True)
-        
+        print("context", response)
         return response
         
     def send_system_message(self, system_message:str, conversation: Conversation):
