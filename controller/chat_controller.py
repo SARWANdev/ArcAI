@@ -49,7 +49,7 @@ class ChatController:
             print(2)
             new_conversation.add_user_message(user_prompt)
             print(3)
-            self.conversation_service.rename_chat(new_conversation.conversation_id,
+            self.conversation_service.update_name(new_conversation.conversation_id,
                                                   self.ai_service.generate_conversation_name(new_conversation))
             new_conversation.set_name(self.ai_service.generate_conversation_name(new_conversation))
             print(4)
