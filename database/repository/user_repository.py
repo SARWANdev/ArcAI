@@ -20,6 +20,7 @@ class User:
         self.updated_at = self.created_at
 
     def new_user(self):
+        #test line
         if not self.sub_id:
             raise ValueError("Google 'sub' ID is required")
 
