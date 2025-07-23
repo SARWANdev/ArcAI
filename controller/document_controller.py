@@ -452,6 +452,7 @@ class DocumentController:
             print(f"Error in get_document_bibtex_string: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
+        
 
 
     def register_document_routes(self, app):
