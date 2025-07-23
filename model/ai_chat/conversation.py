@@ -50,6 +50,7 @@ class Conversation:
             "updated_at": self.updated_at
         }
     
+    @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Conversation":
         return cls(
             name=data.get("name"),
