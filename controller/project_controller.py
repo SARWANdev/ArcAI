@@ -46,7 +46,7 @@ class ProjectController:
             if not all([user_id, document_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
             
-            result = self.project_service.rename_project(document_id, new_name)
+            result = self.document_service.rename_document(document_id, new_name)
             if result:
                 return jsonify({
                     "status": "success", 
@@ -232,6 +232,7 @@ class ProjectController:
 
     def register_project_routes(self, app):
         app.add_url_rule("/project/get-documents", view_func=self.get_project_documents)
+        app.add_url_rule("/project/rename", view_func=self.rename_document, methods=['PATCH']) 
         app.add_url_rule("/project/note", view_func=self.get_project_note)
         app.add_url_rule("/project/tags", view_func=self.get_project_tags)
         app.add_url_rule("/project/note", view_func=self.save_project_note, methods=['POST'])
