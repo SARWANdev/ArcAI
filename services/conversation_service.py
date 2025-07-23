@@ -52,8 +52,6 @@ class ConversationService:
             key_func = lambda c: c.get('name', '').lower()
         elif sort_by == 'created':
             key_func = lambda c: c.get('created_at', '')
-        elif sort_by == 'updated':
-            key_func = lambda c: c.get('updated_at', '')
         else:
             raise ValueError(f"Invalid sort_by: {sort_by}")
         

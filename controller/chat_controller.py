@@ -165,7 +165,7 @@ class ChatController:
         try:
             # Get paramaeters from query string
             user_id = request.args.get("user_id")
-            sort_by = request.args.get("sort_by", "LastUpdated")
+            sort_by = request.args.get("sort_by", "CreatedAt")
             order = request.args.get("order", "desc")
             print(user_id, sort_by, order)
 
@@ -174,8 +174,7 @@ class ChatController:
                 sort_by = "name"
             elif sort_by == "CreatedAt":
                 sort_by = "created"
-            elif sort_by == "LastUpdated":
-                sort_by = "updated"
+
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
@@ -186,7 +185,6 @@ class ChatController:
                 {
                     "Title": model.conversation_name,
                     "CreatedAt": model.created_at,
-                    "LastUpdated": model.updated_at,
                     "ConversationId": str(model.id)
                 }
                 for model in conversation_model_list
@@ -214,5 +212,6 @@ class ChatController:
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
         app.add_url_rule("/chat/follow-up", view_func=self.follow_up, methods=["POST"])
+        app.add_url_rule("/chat/history", view_func = self.get_user_conversations)
         app.add_url_rule("/chat/conversation/document", view_func=self.get_conversation_for_document, methods=["POST"])
         app.register_blueprint(self.chat)
