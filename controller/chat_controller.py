@@ -208,6 +208,34 @@ class ChatController:
                 "error": str(e)
             }), 500
 
+    def get_conversation_from_conversation_id(self):
+        try:
+            # Extract query parameters
+            data = request.get_json()
+            user_id = data.get("user_id")
+            conversation_id = data.get("conversation_id")
+
+            print(user_id, conversation_id)
+
+            if not user_id or not conversation_id:
+                return jsonify({"error": "Missing user_id or conversation_id"}), 400
+
+            conversation = self.conversation_service.get_conversation(conversation_id)
+            conversation_id = conversation.conversation_id
+            conversation_messages = conversation.get_messages()
+
+            return jsonify({
+                "status": "success",
+                "data": {
+                    "conversation_id": str(conversation_id),
+                    "list_of_messages": conversation_messages
+                }
+            }), 200
+
+
+        except Exception as e:
+            print(f"Error in get_conversation_from_conversation_id: {e}")
+            return jsonify({"error": "Internal server error"}), 500
 
 
     def register_chat_routes(self, app):
@@ -215,4 +243,5 @@ class ChatController:
         app.add_url_rule("/chat/follow-up", view_func=self.follow_up, methods=["POST"])
         app.add_url_rule("/chat/history", view_func = self.get_user_conversations)
         app.add_url_rule("/chat/conversation/document", view_func=self.get_conversation_for_document, methods=["POST"])
+        app.add_url_rule("/chat/conversation", view_func=self.get_conversation_from_conversation_id, methods=["POST"])
         app.register_blueprint(self.chat)
