@@ -185,7 +185,6 @@ class LibraryController:
             user_id = request.args.get("user_id")
             query = request.args.get("query")
             print(user_id, query)
-            print
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
