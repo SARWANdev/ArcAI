@@ -179,7 +179,7 @@ class PdfMasterDataBase:
     def set_bibtex(pdf_master_id, new_bibtex ):
         try:
             with mongo_connection() as db:
-                bibtex_instance = BibTeX_Service(new_bibtex)
+                bibtex_instance = BibTeX_Service().from_bibtex(new_bibtex)
                 year = bibtex_instance.get_year()
                 authors = bibtex_instance.get_authors()
                 source = bibtex_instance.get_source()

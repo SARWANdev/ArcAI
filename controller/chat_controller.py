@@ -176,6 +176,7 @@ class ChatController:
                 sort_by = "created"
 
 
+
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
@@ -183,9 +184,9 @@ class ChatController:
 
             conversation_list = [
                 {
-                    "Title": model.conversation_name,
+                    "Title": model.name,
                     "CreatedAt": model.created_at,
-                    "ConversationId": str(model.id)
+                    "ConversationId": str(model.conversation_id)
                 }
                 for model in conversation_model_list
             ]
@@ -193,14 +194,14 @@ class ChatController:
                 "status": "success",
                 "message": "History retrieved successfully",
                 "data": {
-                    "projects": conversation_list,
+                    "conversations": conversation_list,
                     "sort_by": sort_by,
                     "order": order
                 }
             }), 200
         
         except Exception as e:
-            print(f"Error in get_user_projects: {str(e)}")
+            print(f"Error in get_user_conversation: {str(e)}")
             return jsonify({
                 "status": "error",
                 "message": "Failed to retrieve projects",
