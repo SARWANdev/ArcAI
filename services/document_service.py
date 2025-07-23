@@ -107,7 +107,8 @@ class DocumentService:
             self.embeddings_storage(document_path, pdf_master_id)
 
         #document_name = document_name_generator(document_path)
-        document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
+        #document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
+        document_id = self.__create_document(original_name, project_id, pdf_master_id)
         print("IMMA MAKE CONVERSATION NOW")
         ConversationService().create_document_conversation(user_id=user_id, document_id=document_id)
         print("madeit")
