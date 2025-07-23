@@ -251,4 +251,16 @@ class DocumentDataBase:
         return PdfMasterDataBase.get_user_id( pdf_master_id )
 
 
+    @staticmethod
+    def set_document_name(document_id, new_name):
+        try:
+            with mongo_connection() as db:
+                result = db.documents.update_one({"_id": ObjectId(document_id)},{"$set": {"name": new_name}})
+                return result.modified_count > 0
+        except Exception as e:
+            print(f"Document name could not be set: {e}")
+            return False
+
+
+
 
