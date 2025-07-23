@@ -17,7 +17,7 @@ def download_project(project_id):
     zip_bytes = download_multiple_documents(doc_ids_str, project_id)
     return zip_bytes
 
-#Chimnay method for front end
+#Chimnay method for front-end
 def download_project_bibtex(project_id):
     document_ids = DocumentService().get_document_ids_from_project_id(project_id=project_id)
     doc_ids_str = []
