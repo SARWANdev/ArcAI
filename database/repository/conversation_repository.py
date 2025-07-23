@@ -28,7 +28,6 @@ class ConversationRepository:
             if existing_conversation:
                 return str(existing_conversation["_id"])
                 
-
     @staticmethod
     def add_to_es(id, name, user_id):
         es.index(index="conversations", id=id, body={
@@ -37,36 +36,7 @@ class ConversationRepository:
                     "suggest": {"input": name}
                 })
 
-
-    @staticmethod
-    def get_conversations_by_user_id(user_id):
-        with mongo_connection() as db:
-            return list (db.conversations.find({"user_id": user_id}))
-
-    @staticmethod
-    def get_history(user_id):
-        
-        es.indices.refresh(index="conversations")
-        query = {
-            "query": {
-                "match": {
-                    "user_id": user_id
-                }
-            }
-        }
-        result = es.search(index="conversations", body=query)
-        return [doc['_source'] for doc in result['hits']['hits']]
-
-    @staticmethod
-    def add_to_history(conversation_data: dict):
-        id = conversation_data.get("_id")
-        result = es.index(index="conversations", id=id, body={
-                    "user_id": conversation_data["user_id"],
-                    "name": conversation_data["name"],
-                    "suggest": {"input": conversation_data["name"]}
-                })
-        return result["result"] == "created" or result["result"] == "updated"
-
+    
     @staticmethod
     def get_conversation_by_id(conversation_id):
         with mongo_connection() as db:

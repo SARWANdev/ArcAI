@@ -117,9 +117,6 @@ class ConversationService:
     def update_name(self, conversation_id, new_name):
         self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
 
-    def add_to_history(self, conversation_id):
-        return ConversationRepository.add_to_history(conversation_id)
-
     def rename_chat(self, conversation_id, new_name):
         return ConversationRepository.update_conversation_name(conversation_id, new_name)
 
