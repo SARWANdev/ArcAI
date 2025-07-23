@@ -160,6 +160,56 @@ class ChatController:
         Deletes all chat sessions for a user.
         """
         return self.conversation_service.delete_all_chats(user_id)
+    
+    def get_user_conversations(self):
+        try:
+            # Get paramaeters from query string
+            user_id = request.args.get("user_id")
+            sort_by = request.args.get("sort_by", "LastUpdated")
+            order = request.args.get("order", "desc")
+            print(user_id, sort_by, order)
+
+            # Map frontend field names to database columns
+            if sort_by == "Title":
+                sort_by = "name"
+            elif sort_by == "CreatedAt":
+                sort_by = "created"
+            elif sort_by == "LastUpdated":
+                sort_by = "updated"
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            conversation_model_list = self.conversation_service.sort_history(user_id, sort_by, order)
+
+            conversation_list = [
+                {
+                    "Title": model.conversation_name,
+                    "CreatedAt": model.created_at,
+                    "LastUpdated": model.updated_at,
+                    "ConversationId": str(model.id)
+                }
+                for model in conversation_model_list
+            ]
+            return jsonify({
+                "status": "success",
+                "message": "History retrieved successfully",
+                "data": {
+                    "projects": conversation_list,
+                    "sort_by": sort_by,
+                    "order": order
+                }
+            }), 200
+        
+        except Exception as e:
+            print(f"Error in get_user_projects: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to retrieve projects",
+                "error": str(e)
+            }), 500
+
+
 
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])

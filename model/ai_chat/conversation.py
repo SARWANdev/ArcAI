@@ -49,6 +49,17 @@ class Conversation:
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
+    
+    def from_dict(cls, data: Dict[str, Any]) -> "Conversation":
+        return cls(
+            name=data.get("name"),
+            conversation_id=data.get("_id"),
+            user_id=data.get("user_id"),
+            document_ids=data.get("document_ids"),
+            messages=data.get("messages"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at")
+        )
 
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
