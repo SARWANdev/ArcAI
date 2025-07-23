@@ -464,9 +464,22 @@ class DocumentService:
         return str()
     
     def search_documents(self, user_id, query):
-        results = self.document_repository.search_documents(user_id, query)
-        if not results:
-            results = self.document_repository.search_contents(user_id, query)
+        hits = self.document_repository.search_documents(user_id, query)
+        if not hits:
+            hits = self.document_repository.search_contents(user_id, query)
+
+        if not hits:
+            return []
+        
+        document_ids = [doc['id'] for doc in hits]
+        document_list = []
+        for id in document_ids:
+            document_data = self.document_repository.get_by_document_id(id)
+            document_list.append(DocumentModel.from_dict(document_data))
+        return document_list
+
+
+
         return results
     
     def get_document_vector_store(self, document_id):
