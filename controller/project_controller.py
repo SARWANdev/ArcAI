@@ -2,6 +2,7 @@ from database.repository.document_repository import DocumentDataBase as Document
 from services.notebook_service import NotebookService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
+from bson import ObjectId
 from flask import Blueprint, Flask, jsonify, request, json
 
 class ProjectController:
@@ -35,8 +36,32 @@ class ProjectController:
     def download_document(self, document_id):
         pass
 
-    def rename_document(self, document_id, name):
-        pass
+    def rename_document(self):
+        try:
+            data = request.get_json()
+            user_id = data.get('user_id')
+            document_id = ObjectId(data.get('document_id'))
+            new_name = data.get('name')
+
+            if not all([user_id, document_id, new_name]):
+                return jsonify({'error': 'Missing required fields'}), 400
+            
+            result = self.project_service.rename_project(document_id, new_name)
+            if result:
+                return jsonify({
+                    "status": "success", 
+                    "message": "Document renamed successfully"
+                    }), 200
+            else:
+                return jsonify({
+                    "status": "error",
+                    "message": "Failed to rename the document"
+                }), 500
+        except Exception as e:
+            return jsonify({
+                "status": "error", "message": str(e)
+            }), 500
+
 
     def get_project_documents(self):
         try:

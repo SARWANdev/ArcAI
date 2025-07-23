@@ -161,9 +161,15 @@ class LibraryController:
 
             result = self.project_service.rename_project(project_id, new_name)
             if result:
-                return jsonify({"status": "success", "message": "Project renamed successfully"}), 200
+                return jsonify({
+                    "status": "success", 
+                    "message": "Project renamed successfully"
+                    }), 200
             else:
-                return jsonify({"status": "error", "message": "Failed to rename the project"}), 500
+                return jsonify({
+                    "status": "error", 
+                    "message": "Failed to rename the project"
+                    }), 500
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
 
