@@ -23,9 +23,9 @@ class UserService:
         user_model.prefered_mode = user_data.get('preferred_mode')
         return user_model
         
-    def deactivate_user(self, user_id):
+    def delete_user_contents(self, user_id):
         # Deactivates a user's account. Returns the result of the operation 
-        return self.user_repository.deactivate_user(user_id)
+        return self.user_repository.delete_user_contents(user_id)
 
     def get_preference(self, user_id):
         # Return user preferences (e.g., UI mode)
