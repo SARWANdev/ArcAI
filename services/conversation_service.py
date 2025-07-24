@@ -148,14 +148,14 @@ class ConversationService:
 
     def get_conversation_by_document_id(self, document_id: Any) -> Optional[ConversationModel]:
         """
-        Get a conversation by document ID (using name as document_id).
+        Get a conversation by document ID.
 
-        :param document_id: The document ID (used as conversation name) to search for.
+        :param document_id: The document ID to search for.
         :type document_id: Any
         :return: The conversation model if found, else None.
         :rtype: ConversationModel or None
         """
-        conversation_data = self.conversation_repository.get_conversation_by_name(name=document_id)
+        conversation_data = self.conversation_repository.get_conversation_by_document(document_id)
         if not conversation_data:
             return None
         return ConversationModel.from_dict(conversation_data)
