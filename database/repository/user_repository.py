@@ -24,7 +24,8 @@ class UserRepository:
                 user_id = str(result.inserted_id)
                 return user_id
             except pymongo.errors.DuplicateKeyError:
-                print(f"User {user.new_user_dict().get("_id")} already exists")
+                user_id = user.new_user_dict().get("_id")
+                print(f"User {user_id} already exists")
                 return str()
 
     @staticmethod

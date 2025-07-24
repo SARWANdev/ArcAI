@@ -1,6 +1,9 @@
+from bson import ObjectId
+
 from services.user_management.user_service import UserService
 from services.user_management.authentication_service import AuthenticationService
 from flask import Blueprint, Flask, request, jsonify
+
 
 class UserController:
     def __init__(self, auth_service: AuthenticationService, app : Flask):
@@ -20,6 +23,39 @@ class UserController:
     def logout(self):
         return self.auth_service.logout()
 
+    def get_user_verification(self):
+        return self.auth_service.get_user_verification()
+
+    def get_user_profile(self, user_id):
+        pass
+
+    def update_user_profile(self, user_id, first_name=None, last_name=None, email=None):
+        pass
+
+    def update_preferred_mode(self):
+        try:
+            data = request.get_json()
+            user_id = data.get("user_id")
+            mode = data.get("mode")
+            value = False
+            # Validate input
+            if not user_id or not mode:
+                return jsonify({"error": "Missing user_id or mode"}), 400
+
+            if mode == "light":
+                value = True
+
+            self.user_service.update_preference(user_id=user_id, value = value)
+
+            # --- Database logic to move the document ---
+            # For example:
+
+            return jsonify({"message": "Update mode successfully"}), 200
+
+        except Exception as e:
+            print(f"Error in update_preferred_mode: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
     def delete_account(self):
         try:
             data = request.get_json()  # Parse JSON body
@@ -38,18 +74,6 @@ class UserController:
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    def get_user_verification(self):
-        return self.auth_service.get_user_verification()
-
-    def get_user_profile(self, user_id):
-        pass
-
-    def update_user_profile(self, user_id, first_name=None, last_name=None, email=None):
-        pass
-
-    def update_preferred_mode(self, user_id, mode):
-        pass
-
     def get_user_projects(self, user_id):
         pass
 
@@ -60,5 +84,6 @@ class UserController:
         self.authenticate.add_url_rule("/logout", view_func=self.logout)
         self.authenticate.add_url_rule("/user-info", view_func=self.get_user_verification)
         self.authenticate.add_url_rule("/user/delete", view_func=self.delete_account, methods=["DELETE"])
+        app.add_url_rule("/user/toggle", view_func=self.update_preferred_mode, methods=['POST'])
         # To register the blueprint in the application variable
         app.register_blueprint(self.authenticate)

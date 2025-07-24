@@ -74,12 +74,14 @@ class ConversationRepository:
     def delete_all_conversations(user_id):
         try:
             with mongo_connection() as db:
+                print(1)
                 filter_query = {
                     "user_id": user_id,
-                    "document_id": {"$ne": None}
+                    "document_id": None
                 }
-
-                result = db.conversations.delete_many({filter_query})
+                print(2)
+                result = db.conversations.delete_many(filter_query)
+                print(3)
                 es.delete_by_query(index = "conversations", body={
                     "query": {
                         "term": {
