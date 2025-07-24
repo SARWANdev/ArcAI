@@ -5,13 +5,14 @@ from dotenv import find_dotenv, load_dotenv
 from os import environ as env
 from flask_cors import CORS
 
-import library_controller
 from controller.chat_controller import ChatController
 from controller.project_controller import ProjectController
-from services.user_management.authentication_service import AuthenticationService
 from controller.user_controller import UserController
 from controller.library_controller import LibraryController
 from controller.document_controller import DocumentController
+
+from services.user_management.authentication_service import AuthenticationService
+
 from dotenv import load_dotenv
 
 load_dotenv()

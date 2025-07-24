@@ -7,7 +7,6 @@ from langchain_community.embeddings import OllamaEmbeddings
 from database.repository.conversation_repository import ConversationRepository
 import os
 from dotenv import load_dotenv
-import paramiko
 load_dotenv()
 
 class AIService:
