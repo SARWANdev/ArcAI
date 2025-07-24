@@ -1,6 +1,7 @@
 from model.document_reader.document import Document
 from typing import Dict, Any
 from datetime import datetime
+from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 
 class Project():
@@ -13,8 +14,22 @@ class Project():
         # self.documents = []
         self.note = None
 
+    def new_project_dict(self):
+        project_dict = {
+            "user_id": self.user_id,
+            "project_name": self.project_name,
+            "note": "",
+            "created_at": get_utc_zulu_timestamp(),
+            "updated_at": get_utc_zulu_timestamp()
+        }
+
+        return project_dict
+        
     def rename(self, name):
         self.name = name
+    
+    def get_name(self):
+        return self.name
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert the Project instance to a MongoDB-compatible dictionary"""
@@ -23,9 +38,10 @@ class Project():
             "project_name": self.project_name,
             "user_id": self.user_id,
             "created_at": self.created_at,
-            "updated_at": self.updated_at or datetime.utcnow(),
+            "updated_at": self.updated_at or get_utc_zulu_timestamp(),
             "note": self.note,
         }
+
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Project":

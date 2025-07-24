@@ -5,6 +5,7 @@ from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel
 from services.document_service import DocumentService
 from services.notebook_service import NotebookService
+from bson import ObjectId
 
 
 class ProjectService:
@@ -15,25 +16,17 @@ class ProjectService:
         self.document_repository = DocumentRepository
         self.notebook_service = NotebookService()
 
-    #TODO: When thge user clicks on the "Create Project" button, a new line for a new Project will appear with an empty name,
-    #TODO: and the user can fill in the name, but we should limit the name to (255)? characters.
-    #TODO: We might not allow the project to have a same name as another project.
+
     def create_project(self, user_id, project_name):
-        # 1. Create a domain object (model) for internal use
         project_model = ProjectModel(
             project_name=project_name,
             user_id=user_id,
         )
-        
-
-        # 2. 2. Save to DB using static repository
-        project_id = self.project_repository.new_project(user_id, project_name, note="")
-        project_model.id = project_id  # assign back the ID
+        project_id = self.project_repository.save(project_model)        
+        project_model.id = project_id 
         self.notebook_service.update_project_notebook(project_id, "")
 
-       
-
-        return project_model  # or wrap this in a DTO if needed
+        return project_model
 
 
     def get_project(self, project_id):

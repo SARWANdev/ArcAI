@@ -3,6 +3,7 @@ import pymongo.errors
 
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
+from model.document_reader.project import Project 
 from bson import ObjectId
 
 
@@ -26,6 +27,18 @@ class Project:
             except pymongo.errors.DuplicateKeyError:
                 print(f"Project {project_name} already exists")
                 return ""
+    
+    @staticmethod
+    def save(project: Project) -> str:
+        with mongo_connection() as db:
+            try:
+                result = db.projects.insert_one(project.new_project_dict())
+                project_id = str(result.inserted_id)
+                return project_id
+            except pymongo.errors.DuplicateKeyError:
+                print(f"Project {project.get_name()} already exists")
+                return ""
+    
 
     @staticmethod
     def get_note(project_id):
