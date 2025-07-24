@@ -38,7 +38,7 @@ class UserService:
         
     def delete_user_contents(self, user_id):
         # Deactivates a user's account. Returns the result of the operation 
-        return self.user_repository.delete_user_contents(user_id)
+        return self.user_repository.deactivate_user(user_id)
 
     def remove_user(self, user_id):
         """
@@ -60,7 +60,7 @@ class UserService:
 
         user_path =  posixpath.join(remote_dir, user_id)
         delete_remote_directory(user_path)
-        self.deactivate_user(user_id)
+        self.delete_user_contents(user_id)
 
         #put or call the logout function
 
