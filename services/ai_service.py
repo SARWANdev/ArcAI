@@ -58,9 +58,9 @@ class AIService:
             Performs a similarity search in the vector store and returns the most relevant context.
     """
     
-    __DEFAULT_BASE_URL = os.getenv("OLLAMA_DEFAULT_BASE_URL") or "http://127.0.0.1:11435" #TODO:Change this to the server one on the server
-    __DEFAULT_EMBEDDING_MODEL_NAME = os.getenv("OLLAMA_DEFAULT_EMBEDDING_MODEL") or "nomic-embed-text"
-    __DEFAULT_LLM_NAME = os.getenv("OLLAMA_DEFAULT_LLM") or "gemma3"
+    __DEFAULT_BASE_URL = os.getenv("OLLAMA_DEFAULT_BASE_URL", "http://127.0.0.1:11435") #TODO:Change this to the server one on the server
+    __DEFAULT_EMBEDDING_MODEL_NAME = os.getenv("OLLAMA_DEFAULT_EMBEDDING_MODEL", "nomic-embed-text")
+    __DEFAULT_LLM_NAME = os.getenv("OLLAMA_DEFAULT_LLM", "gemma3")
     __GENERATE_PATH = "/api/generate"
     __CHAT_PATH = "/api/chat"
     from model.ai_chat.conversation import Conversation
