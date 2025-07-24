@@ -94,3 +94,13 @@ class UserRepository:
         except Exception as e:
             print(f"Error deactivating the account: {str(e)}")
             return False
+
+    @staticmethod
+    def get_view_mode(user_id: str) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.users.find_one({"_id": user_id}, { "view_mode": 1 }).get("view_mode")
+                return bool(result)
+        except Exception as e:
+            print(f"Error getting view mode: {str(e)}")
+            return False

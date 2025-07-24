@@ -20,24 +20,6 @@ class DocumentController:
         self.ai_service = AIService()
         self.register_document_routes(app)
 
-    def download_notebook(self, notebook_id):
-        pass
-
-    def edit_notebook(self, notebook_id, prompt):
-        pass
-
-    def highlight_document(self, document_id, text):
-        pass
-
-    def get_document_metadata(self, document_id):
-        pass
-
-    def get_document_summary(self, document_id):
-        pass
-
-    def get_chat(self, chat_id):
-        pass
-
     def add_document_tag(self):
         try:
             data = request.get_json()
@@ -203,7 +185,6 @@ class DocumentController:
                 "error": str(e)
             }), 500
 
-
     def delete_favourite(self):
         try:
             # Get parameters from query string
@@ -312,7 +293,6 @@ class DocumentController:
         except Exception as e:
             print(f"Error in save_document_note: {e}")
             return jsonify({"error": "Internal server error"}), 500
-
 
     def duplicate_document(self):
         try:
@@ -451,9 +431,6 @@ class DocumentController:
         except Exception as e:
             print(f"Error in get_document_bibtex_string: {e}")
             return jsonify({"error": "Internal server error"}), 500
-
-        
-
 
     def register_document_routes(self, app):
         app.add_url_rule("/document/upload", view_func=self.upload_document, methods=["POST"])

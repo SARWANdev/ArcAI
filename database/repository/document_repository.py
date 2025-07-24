@@ -12,7 +12,6 @@ from model.document_reader.document import Document
 
 class DocumentDataBase:
 
-    # this method store an object Document and returns the Mong _id.
     @staticmethod
     def save(document: Document) -> str:
         with mongo_connection() as db:
@@ -114,33 +113,10 @@ class DocumentDataBase:
             return False
 
     @staticmethod
-    def update_path(document_id, path) -> bool:
-         try:
-             with mongo_connection() as db:
-                 result = db.documents.update_one({"_id": ObjectId(document_id)},
-                                         {"$set": {"path": path, "updated_at": get_utc_zulu_timestamp()}})
-                 return result.modified_count > 1
-         except Exception as e:
-             print(f"Document path could not be update: {e}")
-             return False
-
-    @staticmethod
     def get_note(document_id):
         with mongo_connection() as db:
             note = db.documents.find_one({"_id": ObjectId(document_id)}, {"note": 1}).get("note")
             return note
-        
-    @staticmethod
-    def update_vector_store_path(document_id, vector_store_path):
-        try:
-            with mongo_connection() as db:
-                result = db.documents.update_one({"_id": ObjectId(document_id)},
-                                        {"$set": {"vector_store_path": vector_store_path,
-                                                  "updated_at": get_utc_zulu_timestamp()}})
-                return result.modified_count > 0
-        except Exception as e:
-            print(f"Embeddings path could not be update: {e}")
-            return False
 
     @staticmethod
     def get_bibtex_by_document_id(document_id) -> str:
@@ -151,26 +127,6 @@ class DocumentDataBase:
             print(f"Bibtex could not be retrieved: {e}")
             return str()
 
-    @staticmethod
-    def update_bibtex(document_id, bibtex) -> bool:
-        #ACHTUNG: dont use this method use the one in pdf_master_repo
-        try:
-            with mongo_connection() as db:
-                result = db.documents.update_one({"_id": ObjectId(document_id)},
-                                        {"$set": {"bibtex": bibtex,
-                                                      "updated_at": get_utc_zulu_timestamp()}})
-                return result.modified_count > 0
-        except Exception as e:
-            print(f"Bibtex could not be update: {e}")
-            return False
-        
-    @staticmethod
-    def get_pdf(document_id, path):
-        #Gets a document's pdf to be downloaded or shown
-        #TODO: finish this
-        pass
-
-        
     @staticmethod
     def search_documents(user_id, query):
         es.indices.refresh(index="documents")
@@ -249,18 +205,3 @@ class DocumentDataBase:
     def get_user_id(document_id):
         pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
         return PdfMasterDataBase.get_user_id( pdf_master_id )
-
-    #DONT USE THIS METHODDD
-    @staticmethod
-    def set_document_name(document_id, new_name):
-        try:
-            with mongo_connection() as db:
-                result = db.documents.update_one({"_id": ObjectId(document_id)},{"$set": {"name": new_name}})
-                return result.modified_count > 0
-        except Exception as e:
-            print(f"Document name could not be set: {e}")
-            return False
-
-
-
-
