@@ -3,6 +3,8 @@ from authlib.integrations.flask_client import OAuth
 from database.repository.user_repository import User as UserRepository
 from flask import url_for, session, redirect, jsonify
 
+from model.user_profile.user import User
+
 
 class AuthenticationService:
     def __init__(self, app):
@@ -38,11 +40,12 @@ class AuthenticationService:
             email = session["user"]["userinfo"]["email"]
             # Through UserRepository we will check if the user is already present in db
             try:
-                user = UserRepository(first_name=first_name, last_name=last_name, email=email, sub_id=sub_id)
-                user.new_user()
-                #UserRepository.activate_user(sub_id)
+                #user = UserRepository(first_name=first_name, last_name=last_name, email=email, sub_id=sub_id)
+                #user.new_user()
+                new_user = User(user_id=sub_id, first_name=first_name, last_name=last_name, email=email)
+                self.user_repository.save(new_user)
+
             except Exception as e:
-                #UserRepository.activate_user(sub_id)
                 print(e) # Shows that the user already exists
             finally:
                 UserRepository.activate_user(sub_id)
