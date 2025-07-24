@@ -75,6 +75,8 @@ class LibraryController:
                 for model in project_model_list
             ]
 
+            print(project_list)
+
             # Return both success message AND the project data
             return jsonify({
                 "status": "success",

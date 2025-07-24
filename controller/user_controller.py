@@ -1,6 +1,6 @@
 from services.user_management.user_service import UserService
 from services.user_management.authentication_service import AuthenticationService
-from flask import Blueprint, Flask
+from flask import Blueprint, Flask, request, jsonify
 
 class UserController:
     def __init__(self, auth_service: AuthenticationService, app : Flask):
@@ -21,7 +21,22 @@ class UserController:
         return self.auth_service.logout()
 
     def delete_account(self):
-        return self.auth_service.logout()
+        try:
+            data = request.get_json()  # Parse JSON body
+            user_id = data.get("user_id")
+            print(user_id)
+            if not user_id:
+                return {"error": "user_id missing"}, 400
+
+            self.user_service.remove_user(user_id)
+
+            # Optionally log the user out
+            self.auth_service.logout()
+
+            return jsonify({"message": "Account deleted successfully"}), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     def get_user_verification(self):
         return self.auth_service.get_user_verification()
@@ -44,5 +59,6 @@ class UserController:
         self.authenticate.add_url_rule("/callback", view_func=self.callback)
         self.authenticate.add_url_rule("/logout", view_func=self.logout)
         self.authenticate.add_url_rule("/user-info", view_func=self.get_user_verification)
+        self.authenticate.add_url_rule("/user/delete", view_func=self.delete_account, methods=["DELETE"])
         # To register the blueprint in the application variable
         app.register_blueprint(self.authenticate)

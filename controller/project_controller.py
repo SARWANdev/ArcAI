@@ -42,11 +42,12 @@ class ProjectController:
             user_id = data.get('user_id')
             document_id = ObjectId(data.get('document_id'))
             new_name = data.get('name')
-
+            print(user_id, document_id, new_name)
             if not all([user_id, document_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
-            
+            print("renaming document")
             result = self.document_service.rename_document(document_id, new_name)
+            print("document renamed")
             if result:
                 return jsonify({
                     "status": "success", 

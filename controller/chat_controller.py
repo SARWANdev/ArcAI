@@ -278,6 +278,30 @@ class ChatController:
                 "status": "error", "message": str(e)
             }), 500
 
+    def delete_all(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            print(user_id)
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.conversation_service.delete_all_chats(user_id)
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "All conversations deleted successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in delete_all: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to delete all conversations",
+                "error": str(e)
+            }), 500
+
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
         app.add_url_rule("/chat/follow-up", view_func=self.follow_up, methods=["POST"])
@@ -286,4 +310,5 @@ class ChatController:
         app.add_url_rule("/chat/conversation", view_func=self.get_conversation_from_conversation_id, methods=["POST"])
         app.add_url_rule("/chat/delete", view_func=self.delete_chat, methods=["DELETE"])
         app.add_url_rule("/chat/rename", view_func=self.rename_chat, methods=['PATCH'])
+        app.add_url_rule("/chat/delete-all", view_func=self.delete_all, methods=['DELETE'])
         app.register_blueprint(self.chat)
