@@ -17,8 +17,8 @@ conversations = db["conversations"]
 es = Elasticsearch(
     cloud_id=os.getenv("ELASTIC_URI", "https://127.0.0.1:9200"),
     basic_auth=(
-        os.getenv("ELASTIC_USER", "elastic)",
+        os.getenv("ELASTIC_USER", "elastic"),
         os.getenv("ELASTIC_PASSWORD", "ZJM0fN6SIt=Zm0=JQZ5H")
-        ),
+    ),
     verify_certs=False  # Ignore certified autosigned
 )
