@@ -11,9 +11,7 @@ class Conversation:
         self.name = name
         self.messages = messages or []
         self.user_id = user_id
-        print(document_ids)
         self.document_ids = document_ids
-        print(self.document_ids)
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
@@ -22,9 +20,7 @@ class Conversation:
             project_document_ids = self.get_document_ids_from_project_ids(project_ids)
             self.document_ids.extend(project_document_ids)
         # delete duplicates document ids
-        print("before duplicate", self.document_ids)
         self.remove_duplicate_document_ids()
-        print("before after", self.document_ids)
 
     def set_name(self, name):
         self.name = name
@@ -53,6 +49,18 @@ class Conversation:
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Conversation":
+        return cls(
+            name=data.get("name"),
+            conversation_id=data.get("_id"),
+            user_id=data.get("user_id"),
+            document_ids=data.get("document_ids"),
+            messages=data.get("messages"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at")
+        )
 
     def __format_user_message(self, message:str, context: str)->str:
         formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  
@@ -63,6 +71,7 @@ class Conversation:
                     5. But again your main job is to answer the Message and only look at context if necessary
                     6. Here's the message again: {message}
                     """
+        print(formatted_message)
                 
         return formatted_message
 
@@ -92,10 +101,7 @@ class Conversation:
         from services.ai_service import AIService
         document_embeddings = []
         for document_id in self.document_ids or []:
-            print(document_id)
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
-            print(document_embeddings)
-        print(AIService().merge_vector_stores(document_embeddings))
         return AIService().merge_vector_stores(document_embeddings)
 
     def remove_duplicate_document_ids(self):

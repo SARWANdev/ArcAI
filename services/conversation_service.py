@@ -34,8 +34,38 @@ class ConversationService:
             created_at=get_utc_zulu_timestamp(),
             updated_at=get_utc_zulu_timestamp()
         )
+        print("gonna save")
+        self.conversation_repository.save(conversation_model.to_dict())
+        print("done")
+        return conversation_model
 
+
+    def sort_history(self, user_id, sort_by, order='asc'):
+        history_data = self.conversation_repository.get_user_conversations(user_id)
+        if not history_data:
+            return[]
+
+        reverse = (order == "desc") 
+
+        #Choose key
+        if sort_by == 'name':
+            key_func = lambda c: c.get('name', '').lower()
+        elif sort_by == 'created':
+            key_func = lambda c: c.get('created_at', '')
+        else:
+            raise ValueError(f"Invalid sort_by: {sort_by}")
         
+        # Sort in Python
+        sorted_history = sorted(history_data, key=key_func, reverse=reverse)
+
+        #Map to ConversationModel
+        conversations_list = []
+        for c in sorted_history:
+            conversation_model = ConversationModel.from_dict(c)
+            conversations_list.append(conversation_model)
+        
+        return conversations_list
+
 
     def get_conversation_history(self, user_id):
         conversations = ConversationRepository.get_user_conversations(user_id)
@@ -47,7 +77,10 @@ class ConversationService:
                 name=conversation_data.get("name"),
                 conversation_id=conversation_data.get("_id"),
                 user_id=conversation_data.get("user_id"),
-                messages=conversation_data.get("messages")
+                document_ids=conversation_data.get("document_ids"),
+                messages=conversation_data.get("messages"),
+                created_at=conversation_data.get("created_at"),
+                updated_at=conversation_data.get("updated_at")
             )
             history.append(conversation_model)
         return history

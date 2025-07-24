@@ -18,6 +18,23 @@ class Document:
         self.created_at = created_at
         self.updated_at = updated_at
 
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            name=data.get("name"),
+            project_id=data.get("project_id"),
+            pdf_master_id=data.get("pdf_master_id"),
+            note=data.get("note"),
+            tag_name=data.get("tag_name"),
+            tag_color=data.get("tag_color"),
+            read=data.get("read"),
+            favorite=data.get("favorite"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+            document_id=str(data.get("_id"))
+        )
+
+
 
 
     def new_document_dict(self):

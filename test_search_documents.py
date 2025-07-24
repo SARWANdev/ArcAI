@@ -51,7 +51,7 @@ def search_documents(user_id):
     else:
         print("\n🎯 Search results:")
         for r in results:
-            print(f"- {r['name']}")
+            print(r.name)
 
 # Cleanup the test data
 def clean_up():
@@ -72,9 +72,14 @@ if __name__ == "__main__":
             body={"query": {"term": {"user_id": user}}},
             conflicts="proceed"
         )
-    save_documents()
+    es.delete_by_query(
+        index="documents",
+        body={"query": {"term": {"user_id": user}}},
+        conflicts="proceed"
+    )
+
     while True:
-        user = choose_user()
+        user = 116135893247275440058
         search_documents(user)
         again = input("\nDo you want to end the test? (y/n): ")
         if again.lower() == "y":

@@ -18,6 +18,7 @@ from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import CharacterTextSplitter
 from services.ai_service import AIService
 from services.bibtex_service import BibTeX_Service
+from services.conversation_service import ConversationService
 
 from services.upload_manager.hash_manager import get_pdf_sha256, document_name_generator, relative_path_generator
 from services.upload_manager.embeddings_manager import EmbeddingsManager
@@ -46,9 +47,9 @@ class DocumentService:
 
         # Create an empty notebook for the document
         self.notebook_service.update_document_notebook(new_document_id, "")
+
         return new_document_id
     
-        #create a conversation for the document
 
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name):
@@ -106,13 +107,21 @@ class DocumentService:
             self.embeddings_storage(document_path, pdf_master_id)
 
         #document_name = document_name_generator(document_path)
-        document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
-
+        #document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
+        document_id = self.__create_document(original_name, project_id, pdf_master_id)
+        print("IMMA MAKE CONVERSATION NOW")
+        ConversationService().create_document_conversation(user_id=user_id, document_id=document_id)
+        print("madeit")
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
         text = self.get_pdf_text(document_path)
 
+        # create a conversation for the document
+
+
         DocumentRepository.save_elastic(document_id, text)
+
+
 
         #text_chunks = self.get_text_chunks(document=document_path)
         #embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks) #TODO save to database
@@ -455,11 +464,21 @@ class DocumentService:
         return str()
     
     def search_documents(self, user_id, query):
-        results = self.document_repository.search_documents(user_id, query)
-        if not results:
-            results = self.document_repository.search_contents(user_id, query)
-        return results
-    
+        hits = self.document_repository.search_documents(user_id, query)
+        if not hits:
+            hits = self.document_repository.search_contents(user_id, query)
+
+        if not hits:
+            return []
+        
+        document_ids = [doc['id'] for doc in hits]
+        document_list = []
+        for id in document_ids:
+            document_data = self.document_repository.get_by_document_id(id)
+            document_list.append(DocumentModel.from_dict(document_data))
+        return document_list
+   
+   
     def get_document_vector_store(self, document_id):
         pass
 
@@ -473,3 +492,9 @@ class DocumentService:
 
         return new_name
 
+    def rename_document(self, document_id, new_name):
+        success = self.document_repository.set_document_name(document_id, new_name)
+        if success:
+            print(f"Successfully updated name: {new_name}")
+        else:
+            print(f"Failed to update name: {new_name}")
