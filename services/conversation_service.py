@@ -128,5 +128,13 @@ class ConversationService:
         return ConversationRepository.delete_all_conversations(user_id)
 
     def search_conversations(self, user_id, search):
-        result = ConversationRepository.search_conversation(user_id, search)
-        return result
+        hits = ConversationRepository.search_conversation(user_id, search)
+        if not hits:
+            return []
+        
+        conversation_ids = [chat['id'] for chat in hits]
+        conversation_list = []
+        for id in conversation_ids:
+            conversation_data = self.conversation_repository.get_conversation_by_id(id)
+            conversation_list.append(ConversationModel.from_dict(conversation_data))
+        return conversation_list
