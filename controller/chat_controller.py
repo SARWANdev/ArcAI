@@ -259,18 +259,12 @@ class ChatController:
             if not all([user_id, conversation_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
             print("renaming")
-            result = self.conversation_service.rename_chat(conversation_id, new_name)
+            self.conversation_service.rename_chat(conversation_id, new_name)
             print("renamed")
-            if result:
-                return jsonify({
-                    "status": "success",
-                    "message": "Conversation renamed successfully"
-                }), 200
-            else:
-                return jsonify({
-                    "status": "error",
-                    "message": "Failed to rename the conversation"
-                }), 500
+            return jsonify({
+                "status": "success",
+                "message": "Conversation renamed successfully"
+            }), 200
         except Exception as e:
             return jsonify({
                 "status": "error", "message": str(e)
