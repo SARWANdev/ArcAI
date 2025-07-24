@@ -31,6 +31,7 @@ class DocumentService:
     def __init__(self):
         self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository
+        self.conversation_repository = ConversationRepository
         self.pdf_master_repository = PdfMasterDataBase
         self.notebook_service = NotebookService()
         self.ai_service = AIService()
@@ -244,6 +245,8 @@ class DocumentService:
         self.document_repository.delete_document( document_id )
 
         self.pdf_master_repository.decrement_ref_count( pdf_master_id )
+
+        self.conversation_repository.delete_conversation_for_document(document_id)
 
         ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
 

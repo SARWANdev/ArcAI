@@ -62,6 +62,7 @@ class ConversationRepository:
         with mongo_connection() as db:
             return db.conversations.find_one({"document_id": document_id})
         
+        
     @staticmethod
     def delete_conversation(conversation_id):
         try:
@@ -74,6 +75,16 @@ class ConversationRepository:
             print(f"Conversation could not be deleted: {e}")
             return False
     
+    @staticmethod
+    def delete_conversation_for_document(document_id):
+        try:
+            with mongo_connection() as db:
+                result = db.conversations.delete_one({"document_id": document_id})
+                return result.deleted_count > 0
+        except Exception as e:
+            print(f"Conversation could not be deleted: {e}")
+            return False
+
     @staticmethod
     def clear_history(user_id):
         try:
