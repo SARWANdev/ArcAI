@@ -119,7 +119,7 @@ class ChatController:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
 
             conversation = self.conversation_service.get_conversation_by_document_id(document_id)
-            conversation_id = conversation.conversation_id
+            conversation_id = conversation.get_conversation_id()
             conversation_messages = conversation.get_messages()
             print(conversation_id)
             print(conversation_messages)

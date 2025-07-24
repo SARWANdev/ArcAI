@@ -135,6 +135,9 @@ class Conversation:
         :rtype: str | None
         """
         return self.document_id
+    
+    def get_conversation_id(self):
+        return self.conversation_id
 
     def __format_user_message(self, message: str, context: str) -> str:
         """

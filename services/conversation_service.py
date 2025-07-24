@@ -157,6 +157,7 @@ class ConversationService:
         conversation_data = self.conversation_repository.get_conversation_by_document(document_id)
         if not conversation_data:
             return None
+        print(conversation_data.get("name")) 
         return ConversationModel.from_dict(conversation_data)
 
     def update_messages(self, conversation_id: Any, messages: List[Any]) -> None:
