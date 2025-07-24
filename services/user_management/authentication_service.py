@@ -59,14 +59,14 @@ class AuthenticationService:
             return jsonify({"error": str(e)}), 400
 
     # Endpoint to get information about the user: name, picture, sub and user-verification
-    @staticmethod
-    def get_user_verification():
+    def get_user_verification(self):
         if "user" not in session:
             return jsonify({"user-verification": False}), 401
         return jsonify({"user-verification": True,
                         "sub" : session["user"]["userinfo"]["sub"],
                         "picture" : session["user"]["userinfo"]["picture"],
-                        "name" : session["user"]["userinfo"]["given_name"]}), 200
+                        "name" : session["user"]["userinfo"]["given_name"],
+                        "userPreference" : self.user_repository.get_view_mode(session["user"]["userinfo"]["sub"][14:])}), 200
 
     # Endpoint to clear the session and redirect the user back to login page
     @staticmethod

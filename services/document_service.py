@@ -6,6 +6,7 @@ from database.repository.document_properties_repository import DocumentPropertie
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
+from database.repository.project_repository import Project as ProjectRepository
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -42,6 +43,8 @@ class DocumentService:
         new_name = self.__rename_according_ref_count(document_name, pdf_master_id)
         new_document_instance = DocumentModel(name = new_name, project_id = project_id, pdf_master_id = pdf_master_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
+        user_id = ProjectRepository.get_user_id(project_id)
+        ConversationService().create_document_conversation(user_id, document_id=new_document_id)
         #self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
@@ -62,14 +65,11 @@ class DocumentService:
                                                  year = bibtex_instance.get_year(), source = bibtex_instance.get_source(),
                                                  authors = str(bibtex_instance.get_authors()), bibtex= bibtex_str,
                                                  first_author= bibtex_instance.get_first_author(),)
-        # TODO eather update the instance or the database described with the bibtex
 
-
-           # string type
         pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
         return pdf_master_id
 
-    # this method is possibly the one that has to be called
+    # Endpoint Method
     def upload_file(self, file, user_id, project_id):
         original_name = file.filename
         suffix = "." + file.filename.split(".")[1]
@@ -109,10 +109,7 @@ class DocumentService:
 
         #document_name = document_name_generator(document_path)
         #document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
-        document_id = self.__create_document(original_name, project_id, pdf_master_id)
-        print("IMMA MAKE CONVERSATION NOW")
-        ConversationService().create_document_conversation(user_id=user_id, document_id=document_id)
-        print("madeit")
+        document_id = self.__create_document(original_name, project_id, pdf_master_id, user_id)
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
         text = self.get_pdf_text(document_path)
@@ -246,7 +243,7 @@ class DocumentService:
 
         self.pdf_master_repository.decrement_ref_count( pdf_master_id )
 
-        self.conversation_repository.delete_conversation_for_document(document_id)
+        self.conversation_repository.delete_conversation_for_document(str(document_id))
 
         ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
 
@@ -412,12 +409,6 @@ class DocumentService:
         pdf = self.document_repository.get_pdf(document_id, path)
         return pdf
 
-    def highlight_document(self, document_id, text):
-        pass
-
-    def process_document_metadata(self, document_id):
-        pass
-
     def duplicate_document(self, document_id, project_id):
         """
         1. gets the pdf_master_id
@@ -441,15 +432,6 @@ class DocumentService:
 
         self.document_properties_repo.set_new_project_id(document_id, new_project_id)
 
-
-
-
-    def extract_text_from_document(self, document_id):
-        pass
-
-    def get_text_chunks_from_document(self, document_id):
-        pass
-
     def download_bibtex(self, document_id):
         # Get a document's bibtex and returns it as a buffer, with it's name
         document_data = self.document_repository.get_by_document_id(document_id)
@@ -460,11 +442,6 @@ class DocumentService:
         buffer = io.BytesIO()
         buffer.write(bibtex.encode('utf-8'))
         return buffer, title
-        
-
-    def name_assigner(self):
-        #takes the pdf information from the Bibtex and assigns a name, possibly athorLastName-first3Wordsof the title and date
-        return str()
     
     def search_documents(self, user_id, query):
         hits = self.document_repository.search_documents(user_id, query)
@@ -480,10 +457,6 @@ class DocumentService:
             document_data = self.document_repository.get_by_document_id(id)
             document_list.append(DocumentModel.from_dict(document_data))
         return document_list
-
-
-    def get_document_vector_store(self, document_id):
-        pass
 
     def __rename_according_ref_count(self, document_name: str, pdf_master_id: str) -> str:
         ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)

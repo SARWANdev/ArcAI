@@ -5,6 +5,7 @@ from database.utils.mongo_connector import mongo_connection
 class Notebook:
     """
     Repository for notebook operations on projects and documents in the database.
+    
     Provides static methods to get and update notebook content.
     """
 
