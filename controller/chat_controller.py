@@ -143,18 +143,6 @@ class ChatController:
     def get_conversation(self, chat_id):
         pass
 
-    def rename_chat(self, chat_id, new_title):
-        """
-        Renames an existing chat session.
-        """
-        return self.conversation_service.rename_chat(chat_id, new_title)
-
-    def delete_chat(self, chat_id):
-        """
-        Deletes a chat session and its messages.
-        """
-        return self.conversation_service.delete_chat(chat_id)
-
     def delete_all_chats(self, user_id):
         """
         Deletes all chat sessions for a user.
@@ -237,6 +225,58 @@ class ChatController:
             print(f"Error in get_conversation_from_conversation_id: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
+    def delete_chat(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            conversation_id = data.get("conversation_id")
+            print(user_id, conversation_id)
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.conversation_service.delete_chat(conversation_id)
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "Conversation deleted successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in delete_chat: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to delete the chat",
+                "error": str(e)
+            }), 500
+
+    def rename_chat(self):
+        try:
+            data = request.get_json()
+            user_id = data.get('user_id')
+            conversation_id = data.get('conversation_id')
+            new_name = data.get('name')
+            print(user_id, conversation_id, new_name)
+
+            if not all([user_id, conversation_id, new_name]):
+                return jsonify({'error': 'Missing required fields'}), 400
+            print("renaming")
+            result = self.conversation_service.rename_chat(conversation_id, new_name)
+            print("renamed")
+            if result:
+                return jsonify({
+                    "status": "success",
+                    "message": "Conversation renamed successfully"
+                }), 200
+            else:
+                return jsonify({
+                    "status": "error",
+                    "message": "Failed to rename the conversation"
+                }), 500
+        except Exception as e:
+            return jsonify({
+                "status": "error", "message": str(e)
+            }), 500
 
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
@@ -244,4 +284,6 @@ class ChatController:
         app.add_url_rule("/chat/history", view_func = self.get_user_conversations)
         app.add_url_rule("/chat/conversation/document", view_func=self.get_conversation_for_document, methods=["POST"])
         app.add_url_rule("/chat/conversation", view_func=self.get_conversation_from_conversation_id, methods=["POST"])
+        app.add_url_rule("/chat/delete", view_func=self.delete_chat, methods=["DELETE"])
+        app.add_url_rule("/chat/rename", view_func=self.rename_chat, methods=['PATCH'])
         app.register_blueprint(self.chat)
