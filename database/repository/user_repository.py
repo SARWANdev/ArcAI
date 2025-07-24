@@ -117,7 +117,7 @@ class User:
             return False
 
     @staticmethod
-    def deactivate_user(user_id: str):
+    def delete_user_contents(user_id: str):
         try:
             with mongo_connection() as db:
                 result = db.users.update_one({"_id": ObjectId(user_id)},
