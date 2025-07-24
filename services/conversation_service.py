@@ -173,7 +173,7 @@ class ConversationService:
         """
         self.conversation_repository.update_messages(conversation_id=conversation_id, messages=messages)
 
-    def update_name(self, conversation_id: Any, new_name: str) -> None:
+    def update_name(self, conversation_id: Any, new_name: str) ->  bool:
         """
         Update the name of a conversation.
 
@@ -184,9 +184,9 @@ class ConversationService:
         :return: None
         :rtype: None
         """
-        self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
+        return self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
 
-    def rename_chat(self, conversation_id: Any, new_name: str) -> None:
+    def rename_chat(self, conversation_id: Any, new_name: str) -> bool:
         """
         Rename a chat (alias for update_name).
 
@@ -197,7 +197,7 @@ class ConversationService:
         :return: None
         :rtype: None
         """
-        self.update_name(conversation_id, new_name)
+        return self.update_name(conversation_id, new_name)
 
     def delete_chat(self, conversation_id: Any) -> None:
         """
