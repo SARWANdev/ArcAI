@@ -1,6 +1,7 @@
 import pymongo
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
+from traits.trait_types import self
 
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
@@ -46,9 +47,14 @@ class User:
     @staticmethod
     def save(user: User) -> str:
         with mongo_connection() as database_connection:
-            result = database_connection.users.insert_one( user.new_user_dict() )
-            user_id = str(result.inserted_id)
-            return user_id
+            try:
+                result = database_connection.users.insert_one( user.new_user_dict() )
+                user_id = str(result.inserted_id)
+                return user_id
+            except pymongo.errors.DuplicateKeyError:
+                print(f"User {user.new_user_dict().get("_id")} already exists")
+                return str()
+
     @staticmethod
     def get_user_by_id(user_id: str) -> dict:
         try:
