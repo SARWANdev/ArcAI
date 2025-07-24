@@ -46,7 +46,11 @@ class ConversationRepository:
     @staticmethod
     def get_user_conversations(user_id):
         with mongo_connection() as db:
-            return list(db.conversations.find({"user_id": user_id}))
+            filter_query = {
+                    "user_id": user_id,
+                    "document_id": None
+                }
+            return list(db.conversations.find(filter_query))
         
     @staticmethod
     def get_conversation_by_name(name):
@@ -74,14 +78,12 @@ class ConversationRepository:
     def delete_all_conversations(user_id):
         try:
             with mongo_connection() as db:
-                print(1)
                 filter_query = {
                     "user_id": user_id,
                     "document_id": None
                 }
-                print(2)
+
                 result = db.conversations.delete_many(filter_query)
-                print(3)
                 es.delete_by_query(index = "conversations", body={
                     "query": {
                         "term": {

@@ -7,6 +7,7 @@ from langchain_community.embeddings import OllamaEmbeddings
 from database.repository.conversation_repository import ConversationRepository
 import os
 from dotenv import load_dotenv
+import paramiko
 load_dotenv()
 
 class AIService:
@@ -57,7 +58,7 @@ class AIService:
             Performs a similarity search in the vector store and returns the most relevant context.
     """
     
-    __DEFAULT_BASE_URL = os.getenv("OLLAMA_DEFAULT_BASE_URL") or "http://127.0.0.1:11435"
+    __DEFAULT_BASE_URL = os.getenv("OLLAMA_DEFAULT_BASE_URL") or "http://127.0.0.1:11435" #TODO:Change this to the server one on the server
     __DEFAULT_EMBEDDING_MODEL_NAME = os.getenv("OLLAMA_DEFAULT_EMBEDDING_MODEL") or "nomic-embed-text"
     __DEFAULT_LLM_NAME = os.getenv("OLLAMA_DEFAULT_LLM") or "gemma3"
     __GENERATE_PATH = "/api/generate"
@@ -307,6 +308,8 @@ class AIService:
         response = self.generate(prompt=prompt)
         name = self.output_streaming_response(response=response, output_function=len, mode="generate")
         return name
+    
+
 
 
 
