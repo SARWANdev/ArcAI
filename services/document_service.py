@@ -6,6 +6,7 @@ from database.repository.document_properties_repository import DocumentPropertie
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
+from database.repository.project_repository import Project as ProjectRepository
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -42,6 +43,8 @@ class DocumentService:
         new_name = self.__rename_according_ref_count(document_name, pdf_master_id)
         new_document_instance = DocumentModel(name = new_name, project_id = project_id, pdf_master_id = pdf_master_id)  # instance of the model Document
         new_document_id = self.document_repository.save(new_document_instance)  # saves the new document instance in the database collection documents
+        user_id = ProjectRepository.get_user_id(project_id)
+        ConversationService().create_document_conversation(user_id, document_id=new_document_id)
         #self.document_repository.set_pdf_master_id(new_document_id, pdf_master_id)  # set the pdf_master_id in the database for that collection
         self.pdf_master_repository.increment_ref_count(pdf_master_id)  # increase by one the number of references of the pdf master
 
@@ -106,10 +109,7 @@ class DocumentService:
 
         #document_name = document_name_generator(document_path)
         #document_id = self.__create_document(os.path.basename(document_path), project_id, pdf_master_id) #TODO method the generate the name according bibtex
-        document_id = self.__create_document(original_name, project_id, pdf_master_id)
-        print("IMMA MAKE CONVERSATION NOW")
-        ConversationService().create_document_conversation(user_id=user_id, document_id=document_id)
-        print("madeit")
+        document_id = self.__create_document(original_name, project_id, pdf_master_id, user_id)
         #generate embeddings and vector store
         #TO run this lines of code , make sure the ollama tunel is running in the server
         text = self.get_pdf_text(document_path)

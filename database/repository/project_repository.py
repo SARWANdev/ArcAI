@@ -22,7 +22,6 @@ class Project:
                 print(f"Project {project.get_name()} already exists")
                 return ""
     
-
     @staticmethod
     def get_note(project_id):
         try:
@@ -41,7 +40,6 @@ class Project:
         except Exception as e:
             print(e)
             raise
-
 
     @staticmethod
     def get_project_by_id(project_id: str) -> dict:
@@ -63,20 +61,6 @@ class Project:
         except Exception as e:
             print(f"Error getting project by name: {str(e)}")
             raise
-
-
-    # MIGHT BE REDUNDNAT GOTTA CHECK
-    @staticmethod
-    def get_project_by_name_and_user(project_name: str, user_id: str) -> dict:
-        try:
-            with mongo_connection() as db:
-                return db.projects.find_one({
-                    "project_name": project_name,
-                    "user_id": user_id
-                })
-        except Exception as e:
-            print(f"Error finding project by name and user: {e}")
-            return None
 
     @staticmethod
     def update_name(project_id, new_name) -> bool:
@@ -101,6 +85,15 @@ class Project:
         except Exception as e:
             print(f"Project could not be deleted: {e}")
             return False
+        
+    @staticmethod
+    def get_user_id(project_id) -> str:
+        try:
+            with mongo_connection() as db:
+                return db.projects.find_one({"_id": ObjectId(project_id)},{"user_id": 1}).get("user_id")
+        except Exception as e:
+            print(f"Error getting user id from project {e}")
+            return str()
 
 
 
