@@ -232,18 +232,18 @@ class ConversationService:
         """
         self.conversation_repository.delete_all_conversations(user_id)
 
-    def search_conversations(self, user_id: Any, search: str) -> List[Any]:
+    def search_conversations(self, user_id: Any, query: str) -> List[Any]:
         """
-        Search conversations for a user by a search term.
+        Search conversations for a user by a query.
 
         :param user_id: The ID of the user whose conversations to search.
         :type user_id: Any
-        :param search: The search term to filter conversations.
-        :type search: str
+        :param query: The query to filter conversations.
+        :type query: str
         :return: List of conversations matching the search term, excluding those with a document ID.
         :rtype: list
         """
-        hits = self.conversation_repository.search_conversation(user_id, search)
+        hits = self.conversation_repository.search_conversation(user_id, query)
         if not hits:
             return []
 
