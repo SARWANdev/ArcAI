@@ -229,11 +229,10 @@ class ConversationService:
         :type user_id: Any
         :param search: The search term to filter conversations.
         :type search: str
-        :return: List of conversations matching the search term.
+        :return: List of conversations matching the search term, excluding those with a document ID.
         :rtype: list
         """
-        
-        hits = ConversationRepository.search_conversation(user_id, search)
+        hits = self.conversation_repository.search_conversation(user_id, search)
         if not hits:
             return []
 
