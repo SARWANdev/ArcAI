@@ -1,6 +1,3 @@
-"""
-Service layer for managing conversations.
-"""
 from typing import List, Optional, Any
 from database.repository.conversation_repository import ConversationRepository
 from model.ai_chat.conversation import Conversation as ConversationModel
@@ -10,7 +7,7 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 class ConversationService:
     """
-    Service for handling conversation-related operations.
+    Service layer for handling conversation-related operations.
     """
 
     def __init__(self):
