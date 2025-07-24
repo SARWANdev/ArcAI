@@ -18,7 +18,7 @@ class Document:
         self.created_at = created_at
         self.updated_at = updated_at
 
-
+    
 
     def new_document_dict(self):
         document_dic = {
@@ -35,6 +35,21 @@ class Document:
         }
         return document_dic
 
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            name=data.get("name"),
+            project_id=data.get("project_id"),
+            pdf_master_id=data.get("pdf_master_id"),
+            note=data.get("note"),
+            tag_name=data.get("tag_name"),
+            tag_color=data.get("tag_color"),
+            read=data.get("read"),
+            favorite=data.get("favorite"),
+            created_at=data.get("created_at"),
+            updated_at=data.get("updated_at"),
+            document_id=data.get("document_id")
+        )
 
     #TODO: Make sure that the read and favorite functions are to a certain convention, 
     # either setters and getters or just functions
