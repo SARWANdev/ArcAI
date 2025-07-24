@@ -4,13 +4,14 @@ import posixpath
 from dotenv import load_dotenv
 
 from database.repository.user_repository import UserRepository as UserRepository
-from model.user_profile.user import User as UserModel
-from model.user_profile.view_mode import ViewMode
+from model.user_profile.user import User as UserModel, User
+
 from database.repository.library_repository import Library as LibraryRepository, Library
 from model.document_reader.library import Library as LibraryModel
+from services.conversation_service import ConversationService
 from services.project_service import ProjectService
 from services.upload_manager.server_conection import delete_remote_directory
-from services.user_management.authentication_service import AuthenticationService
+
 
 load_dotenv()
 remote_dir = os.getenv("REMOTE_DIR")
@@ -20,38 +21,29 @@ class UserService:
     def __init__(self):
         self.user_repository = UserRepository
         self.project_service = ProjectService()
+        self.conversation_service = ConversationService()
 
     def get_user_profile(self, user_id):
-        #Fetch user data from DB
-        user_data = UserRepository.get_user_by_id(user_id)
+        """
+        Get user model Object by user_id.
+
+        :param user_id: The id of the user.
+        :return: User model Object.
+        """
+        user_data = self.user_repository.get_user_by_id(user_id)
         if not user_data:
             return None
-        # Map DB fields to UserModel
-        user_model = UserModel(
-            user_id = user_data.get('user_id'),
-            first_name = user_data.get('first_name'),
-            last_name = user_data.get('last_name'),
-            email = user_data.get('email')
-        )
-        user_model.prefered_mode = user_data.get('preferred_mode')
+        user_model = User.from_dict(user_data)
         return user_model
-        
-    def delete_user_contents(self, user_id):
-        # Deactivates a user's account. Returns the result of the operation 
-        return self.user_repository.delete_user_contents(user_id)
+
 
     def remove_user(self, user_id):
         """
-        1. delete all documents in each folder
-        2. delete all projects in each folder
-        3. delete all empty folders
+        this method removes a user from the database and deletes all its documents in the server
+        as well switches off the bool variable active to false
 
-        last step: deactivate user account if the rest was succesful
-        :param user_id:
-        :return:
+        :param user_id: is the id of the user
         """
-
-        #get all project_ids as strings
         project_ids = Library.get_user_library(user_id)
 
         for project_id  in project_ids:
@@ -60,32 +52,32 @@ class UserService:
 
         user_path =  posixpath.join(remote_dir, user_id)
         delete_remote_directory(user_path)
-        self.delete_user_contents(user_id)
+        self.user_repository.deactivate_user(user_id)
+        self.conversation_service.delete_all_chats(user_id)
 
-        #put or call the logout function
 
 
 
     def get_preference(self, user_id):
-        # Return user preferences (e.g., UI mode)
-        user_data = UserRepository.get_user_by_id(user_id)
+        """
+        this method returns the preference of the user
+        :param user_id: the id of the user
+        :return: a bool, True is light mode and False is dark mode
+        """
+        user_data = self.user_repository.get_user_by_id(user_id)
         if not user_data:
             return None
-        preference = user_data.get('preferred_mode')
+        preference = user_data.get('view_mode')
         return preference
 
     def update_preference(self, user_id, value):
-        # Update a user preference like dark/light mode
-        result = self.user_repository.update_view_mode(user_id, value)
-        return result == 1
-        
+        """
+        this method updates the preference of the user either to dark of light mode
 
-    def get_user_library(self, user_id):
-        #return the user's library
-        library_data = LibraryRepository.get_user_library(user_id)
-        if not library_data:
-            return None
-        library_model = LibraryModel()
-        return library_data
-        #TODO: convert all objects into model classes
+        :param user_id: the id of the user
+        :param value: True is light mode and False is dark mode
+        :return: True if update was successful, False otherwise
+        """
+        return self.user_repository.update_view_mode(user_id, value)
+
         

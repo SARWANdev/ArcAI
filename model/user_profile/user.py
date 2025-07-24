@@ -1,13 +1,13 @@
 from database.repository.date_time_utils import get_utc_zulu_timestamp
-from model.user_profile.view_mode import ViewMode
 
 class User:
-    def __init__(self, user_id, first_name, last_name, email):
+    def __init__(self, user_id, first_name, last_name, email, view_mode = None, active = None):
         self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        self.prefered_mode = ViewMode.LIGHT  # by default maybe it's set to light mode
+        self.view_mode = view_mode
+        self.active = active
 
     def new_user_dict(self):
         user_dic = {
@@ -22,3 +22,14 @@ class User:
             "updated_at": get_utc_zulu_timestamp(),
         }
         return user_dic
+
+    @classmethod
+    def from_dict(cls, user: dict):
+        return cls(
+            user_id = user.get("_id") or user.get("user_id"),
+            first_name = user.get("first_name"),
+            last_name = user.get("last_name"),
+            email = user.get("email"),
+            view_mode = user.get("view_mode"),
+            active = user.get("active"),
+        )
