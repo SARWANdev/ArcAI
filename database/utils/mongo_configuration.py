@@ -1,4 +1,8 @@
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 MONGO_CONFIG = {
-    "URI": "mongodb://localhost:27017/",
-    "DB_NAME": "arc_ai",
+    "URI": os.getenv("MONGO_URI"),
+    "DB_NAME": os.getenv("DB_NAME"),
 }
