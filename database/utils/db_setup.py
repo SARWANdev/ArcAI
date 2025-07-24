@@ -1,9 +1,12 @@
 from pymongo import MongoClient
 from contextlib import contextmanager
 from elasticsearch import Elasticsearch
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient(os.getenv("MONGO_URI") or "mongodb://localhost:27017/")
 db = client["arcai1"]
 users = db["users"]
 projects = db["projects"]
@@ -12,7 +15,10 @@ conversations = db["conversations"]
 
 #es = Elasticsearch("http://localhost:9201", basic_auth=("elastic", "TB=IE8CncAGH6+2jG48w")) #JUST FOR DANI
 es = Elasticsearch(
-    "https://127.0.0.1:9200",
-    basic_auth=("elastic", "ZJM0fN6SIt=Zm0=JQZ5H"),
+    cloud_id=os.getenv("ELASTIC_URI") or "https://127.0.0.1:9200",
+    basic_auth=(
+        os.getenv("ELASTIC_USER") or "elastic",
+        os.getenv("ELASTIC_PASSWORD") or "ZJM0fN6SIt=Zm0=JQZ5H"
+        ),
     verify_certs=False  # Ignore certified autosigned
 )
