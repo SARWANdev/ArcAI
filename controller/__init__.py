@@ -12,16 +12,16 @@ from services.user_management.authentication_service import AuthenticationServic
 from controller.user_controller import UserController
 from controller.library_controller import LibraryController
 from controller.document_controller import DocumentController
+from dotenv import load_dotenv
 
-# Load environment variables
-ENV_FILE = find_dotenv()
-if ENV_FILE:
-    load_dotenv(ENV_FILE)
+load_dotenv()
+
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 # Create Flask app
 app = Flask(__name__)
 app.secret_key = env.get("APP_SECRET_KEY")
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+CORS(app, supports_credentials=True, origins=[frontend_url])
 
 
 # Initialize OAuth
