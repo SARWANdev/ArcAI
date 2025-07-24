@@ -4,13 +4,15 @@ from typing import Dict, Any
 
 class Conversation:
     """
-    Represents a conversation between a user and the AI assistant, including messages, associated documents, and metadata.
+    Represents a conversation between a user and the AI assistant, including messages, associated documents, projects, and metadata.
 
     :param user_id: The ID of the user participating in the conversation.
     :type user_id: str
     :param document_ids: List of document IDs associated with the conversation.
     :type document_ids: list[str]
-    :param project_ids: List of project IDs whose documents are to be included.
+    :param document_id: (Optional) A single document ID associated with the conversation (legacy or for backward compatibility).
+    :type document_id: str | None
+    :param project_ids: List of project IDs whose documents are to be included in the conversation.
     :type project_ids: list[str] | None
     :param messages: List of message dictionaries in the conversation.
     :type messages: list[dict] | None
@@ -30,7 +32,7 @@ class Conversation:
         self.name = name
         self.messages = messages or []
         self.user_id = user_id
-        self.document_id = document_id,
+        self.document_id = document_id
         self.document_ids = document_ids
         self.conversation_id = conversation_id
         self.created_at = created_at or None
@@ -57,6 +59,7 @@ class Conversation:
 
         :param message: The message content from the user.
         :type message: str
+        Appends a dictionary with role 'user' and the message content to the messages list.
         """
         self.messages.append({"role": "user",
                               "content": message})
@@ -67,6 +70,7 @@ class Conversation:
 
         :param message: The message content from the AI.
         :type message: str
+        Appends a dictionary with role 'ai' and the message content to the messages list.
         """
         self.messages.append({
             "role": "ai",
@@ -79,6 +83,7 @@ class Conversation:
 
         :param message: The message content from the system.
         :type message: str
+        Appends a dictionary with role 'system' and the message content to the messages list.
         """
         self.messages.append({"role": "system",
                               "content": message})
@@ -123,17 +128,23 @@ class Conversation:
         )
     
     def get_document_id(self):
+        """
+        Get the single document_id associated with the conversation (if any).
+
+        :return: The document_id or None.
+        :rtype: str | None
+        """
         return self.document_id
 
     def __format_user_message(self, message: str, context: str) -> str:
         """
-        Format a user message with context for the AI assistant.
+        Format a user message with context for the AI assistant, following ArcAI's prompt structure.
 
         :param message: The user's message.
         :type message: str
         :param context: The context to be included for the AI.
         :type context: str
-        :return: Formatted message string.
+        :return: Formatted message string for the AI.
         :rtype: str
         """
         formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  \
@@ -165,14 +176,14 @@ class Conversation:
         """
         Get the list of messages in the conversation.
 
-        :return: List of message dictionaries.
+        :return: List of message dictionaries, each with a 'role' and 'content'.
         :rtype: list[dict]
         """
         return self.messages
 
     def get_document_ids_from_project_ids(self, project_ids: list[str]):
         """
-        Retrieve document IDs associated with the given project IDs.
+        Retrieve document IDs associated with the given project IDs by querying the DocumentService.
 
         :param project_ids: List of project IDs.
         :type project_ids: list[str]
@@ -191,7 +202,7 @@ class Conversation:
         """
         Retrieve the merged vector store for all documents in the conversation.
 
-        :return: Merged vector store object.
+        :return: Merged vector store object for the conversation's documents.
         :rtype: Any
         """
         from services.upload_manager.embeddings_manager import EmbeddingsManager
