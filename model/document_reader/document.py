@@ -48,7 +48,7 @@ class Document:
             favorite=data.get("favorite"),
             created_at=data.get("created_at"),
             updated_at=data.get("updated_at"),
-            document_id=data.get("document_id")
+            document_id=str(data.get("_id"))
         )
 
     #TODO: Make sure that the read and favorite functions are to a certain convention, 
