@@ -118,7 +118,7 @@ class Conversation:
         """
         return cls(
             name=data.get("name"),
-            conversation_id=data.get("_id"),
+            conversation_id=str(data.get("_id")),
             user_id=data.get("user_id"),
             document_id=data.get("document_id"),
             document_ids=data.get("document_ids") or [],
