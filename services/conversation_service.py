@@ -232,8 +232,7 @@ class ConversationService:
         :return: List of conversations matching the search term.
         :rtype: list
         """
-        return self.conversation_repository.search_conversation(user_id, search)
-    def search_conversations(self, user_id, search):
+        
         hits = ConversationRepository.search_conversation(user_id, search)
         if not hits:
             return []
