@@ -65,24 +65,15 @@ class ConversationRepository:
             return False
     
     @staticmethod
-    def clear_history(self, user_id):
-        history = self.get_history(user_id)
-        try:
-            with mongo_connection() as db:
-                for conversation in history:
-                    id = conversation["_id"]
-                    result = db.conversations.delete_one({"_id": ObjectId(id)})
-                    es.delete(index = "conversations", id = id)
-                return result.deleted_count > 0
-        except Exception as e:
-            print(f"History could not be cleared: {e}")
-            return False
-
-    @staticmethod
     def delete_all_conversations(user_id):
         try:
             with mongo_connection() as db:
-                result = db.conversations.delete_many({"user_id": user_id})
+                filter_query = {
+                    "user_id": user_id,
+                    "document_id": {"$ne": None}
+                }
+
+                result = db.conversations.delete_many({filter_query})
                 es.delete_by_query(index = "conversations", body={
                     "query": {
                         "term": {
