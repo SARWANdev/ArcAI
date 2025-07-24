@@ -113,16 +113,14 @@ class ChatController:
             user_id = data.get("user_id")
             document_id = data.get("document_id")
 
-            print(user_id, document_id)
 
             if not user_id or not document_id:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
 
-            conversation = self.conversation_service.get_conversation_by_document_id(document_id)
-            conversation_id = conversation.get_conversation_id()
+            conversation = self.conversation_service.get_conversation_by_document_id(document_id[0])
+            conversation_id = conversation.conversation_id
             conversation_messages = conversation.get_messages()
-            print(conversation_id)
-            print(conversation_messages)
+
 
             return jsonify({
                 "status": "success",
@@ -261,18 +259,12 @@ class ChatController:
             if not all([user_id, conversation_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
             print("renaming")
-            result = self.conversation_service.rename_chat(conversation_id, new_name)
+            self.conversation_service.rename_chat(conversation_id, new_name)
             print("renamed")
-            if result:
-                return jsonify({
-                    "status": "success",
-                    "message": "Conversation renamed successfully"
-                }), 200
-            else:
-                return jsonify({
-                    "status": "error",
-                    "message": "Failed to rename the conversation"
-                }), 500
+            return jsonify({
+                "status": "success",
+                "message": "Conversation renamed successfully"
+            }), 200
         except Exception as e:
             return jsonify({
                 "status": "error", "message": str(e)
