@@ -5,6 +5,9 @@ from typing import Callable
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import OllamaEmbeddings
 from database.repository.conversation_repository import ConversationRepository
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 class AIService:
     """
@@ -54,9 +57,9 @@ class AIService:
             Performs a similarity search in the vector store and returns the most relevant context.
     """
     
-    __DEFAULT_BASE_URL = "http://127.0.0.1:11435"
-    __DEFAULT_EMBEDDING_MODEL_NAME = "nomic-embed-text"
-    __DEFAULT_LLM_NAME = "gemma3"
+    __DEFAULT_BASE_URL = os.getenv("OLLAMA_DEFAULT_BASE_URL") or "http://127.0.0.1:11435"
+    __DEFAULT_EMBEDDING_MODEL_NAME = os.getenv("OLLAMA_DEFAULT_EMBEDDING_MODEL") or "nomic-embed-text"
+    __DEFAULT_LLM_NAME = os.getenv("OLLAMA_DEFAULT_LLM") or "gemma3"
     __GENERATE_PATH = "/api/generate"
     __CHAT_PATH = "/api/chat"
     from model.ai_chat.conversation import Conversation
@@ -69,7 +72,7 @@ class AIService:
         self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
         self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
         self.__base_url = base_url if base_url else self.__DEFAULT_BASE_URL
-        self.embeddings = OllamaEmbeddings(base_url=self.__base_url, model=self.__embedding_model_name, show_progress=True)
+        self.embeddings = OllamaEmbeddings(base_url=self.__DEFAULT_BASE_URL, model=self.__DEFAULT_EMBEDDING_MODEL_NAME, show_progress=True)
 
     def set_ollama_url(self, ollama_url:str):
         self.__ollama_api_url = ollama_url
