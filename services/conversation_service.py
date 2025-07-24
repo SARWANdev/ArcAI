@@ -210,7 +210,18 @@ class ConversationService:
         """
         self.conversation_repository.delete_conversation(conversation_id)
 
-    def delete_all_chats(self, user_id: Any) -> None:
+    def clear_history(self, user_id: Any) -> None:
+        """
+        Clears a user's conversations history.
+
+        :param user_id: The ID of the user whose history is cleared.
+        :type user_id: Any
+        :return: None
+        :rtype: None
+        """
+        self.conversation_repository.clear_history(user_id)
+
+    def delete_all_converstations(self, user_id: Any) -> None:
         """
         Delete all conversations for a user.
 

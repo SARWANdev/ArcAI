@@ -143,11 +143,11 @@ class ChatController:
     def get_conversation(self, chat_id):
         pass
 
-    def delete_all_chats(self, user_id):
+    def delete_all_conversations(self, user_id):
         """
         Deletes all chat sessions for a user.
         """
-        return self.conversation_service.delete_all_chats(user_id)
+        return self.conversation_service.delete_all_conversations(user_id)
     
     def get_user_conversations(self):
         try:
@@ -287,7 +287,7 @@ class ChatController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            self.conversation_service.delete_all_chats(user_id)
+            self.conversation_service.delete_all_conversations(user_id)
             # Return both success message
             return jsonify({
                 "status": "success",

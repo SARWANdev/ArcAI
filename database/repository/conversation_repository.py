@@ -75,7 +75,7 @@ class ConversationRepository:
             return False
     
     @staticmethod
-    def delete_all_conversations(user_id):
+    def clear_history(user_id):
         try:
             with mongo_connection() as db:
                 filter_query = {
@@ -84,6 +84,23 @@ class ConversationRepository:
                 }
 
                 result = db.conversations.delete_many(filter_query)
+                es.delete_by_query(index = "conversations", body={
+                    "query": {
+                        "term": {
+                            "user_id": user_id
+                        }
+                    }
+                })
+                return result.deleted_count > 0
+        except Exception as e:
+            print(f"Chat history could not be deleted: {e}")
+            return False
+        
+    @staticmethod
+    def delete_all_conversations(user_id):
+        try:
+            with mongo_connection() as db:
+                result = db.conversations.delete_many({"user_id": user_id})
                 es.delete_by_query(index = "conversations", body={
                     "query": {
                         "term": {

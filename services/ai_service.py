@@ -50,7 +50,7 @@ class AIService:
             Renames a chat session. (Not implemented)
         delete_chat(conversation_id):
             Deletes a chat session. (Not implemented)
-        delete_all_chats(user_id):
+        delete_all_conversations(user_id):
             Deletes all chat sessions for a user. (Not implemented)
         get_vector_store(text_chunks: list[str], embedding_path: str | None = None) -> FAISS:
             Creates a FAISS vector store from text chunks using the embedding model.

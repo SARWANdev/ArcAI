@@ -80,7 +80,7 @@ def clean_up():
 # Main loop
 if __name__ == '__main__':
     for user in users:
-            service.delete_all_chats(user)
+            service.delete_all_conversations(user)
     save_chats()
     while True:
         user = choose_user()
