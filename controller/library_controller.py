@@ -152,7 +152,7 @@ class LibraryController:
             user_id = data.get('user_id')
             project_id = ObjectId(data.get('project_id'))
             new_name = data.get('name')
-
+            
             if not all([user_id, project_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
 
