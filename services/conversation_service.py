@@ -53,7 +53,7 @@ class ConversationService:
         self.conversation_repository.save(conversation_model.to_dict())
         return conversation_model
 
-    def create_document_conversation(self, user_id: Any, document_id: Any) -> ConversationModel:
+    def create_document_conversation(self, user_id: Any, document_id: Any) -> ConversationModel|None:
         """
         Create a conversation for a single document.
 
@@ -65,16 +65,24 @@ class ConversationService:
         :rtype: ConversationModel
         """
         conversation_id = ObjectId()
-        conversation_model = ConversationModel(
-            name=str(document_id),
-            document_ids=[document_id],
-            user_id=user_id,
-            conversation_id=conversation_id,
-            created_at=get_utc_zulu_timestamp(),
-            updated_at=get_utc_zulu_timestamp()
-        )
-        self.conversation_repository.save(conversation_model.to_dict())
-        return conversation_model
+        from services.document_service import DocumentService
+        document = DocumentService().get_document(document_id=document_id)
+        if document: 
+            name = document.name
+            conversation_model = ConversationModel(
+                
+                name=f"Conversation on {name}",
+                document_ids=[document_id],
+                user_id=user_id,
+                conversation_id=conversation_id,
+                created_at=get_utc_zulu_timestamp(),
+                updated_at=get_utc_zulu_timestamp(),
+                document_id=document_id
+            )
+            self.conversation_repository.save(conversation_model.to_dict())
+            return conversation_model
+        print("Couldn't find valid Document")
+        
 
     def sort_history(
         self,
