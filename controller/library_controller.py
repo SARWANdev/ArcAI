@@ -186,12 +186,10 @@ class LibraryController:
             # Get parameters from query string
             user_id = request.args.get("user_id")
             query = request.args.get("query")
-            print(user_id, query)
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            print("searching")
             searches = self.document_service.search_documents(user_id, query)
             documents = []
             for document in searches:
@@ -207,6 +205,7 @@ class LibraryController:
         except Exception as e:
             return jsonify({"status": "error", "message":str(e)}),500
 
+
     # To register all the library-routes
     def register_library_routes(self, app):
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
@@ -214,5 +213,5 @@ class LibraryController:
         self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
         self.library.add_url_rule("/library/delete-project", view_func=self.delete_project, methods=["DELETE"])
         self.library.add_url_rule("/library/rename-project", view_func=self.rename_project, methods=["PATCH"])
-        self.library.add_url_rule("/library/search", view_func=self.search_documents)
+        self.library.add_url_rule("/library/search/document", view_func=self.search_documents)
         app.register_blueprint(self.library)

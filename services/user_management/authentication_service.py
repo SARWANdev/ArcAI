@@ -4,6 +4,11 @@ from database.repository.user_repository import UserRepository as UserRepository
 from flask import url_for, session, redirect, jsonify
 
 from model.user_profile.user import User
+from dotenv import load_dotenv
+
+load_dotenv()
+
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 
 class AuthenticationService:
@@ -49,7 +54,7 @@ class AuthenticationService:
                 print(e) # Shows that the user already exists
             finally:
                 UserRepository.activate_user(sub_id)
-                return redirect("http://localhost:5173/home")
+                return redirect(f"{frontend_url}/home")
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
@@ -67,4 +72,4 @@ class AuthenticationService:
     @staticmethod
     def logout():
         session.clear()
-        return redirect("http://localhost:5173")
+        return redirect(frontend_url)

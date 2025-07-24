@@ -111,7 +111,7 @@ class ChatController:
             # Extract query parameters
             data = request.get_json()
             user_id = data.get("user_id")
-            document_id = data.get("document_id")[0]
+            document_id = data.get("document_id")
 
             print(user_id, document_id)
 
@@ -287,7 +287,7 @@ class ChatController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            self.conversation_service.delete_all_conversations(user_id)
+            self.conversation_service.delete_all_converstations(user_id)
             # Return both success message
             return jsonify({
                 "status": "success",
@@ -302,6 +302,34 @@ class ChatController:
                 "error": str(e)
             }), 500
 
+    def search_chats(self):
+        try:
+            # Get parameters from query string
+            user_id = request.args.get("user_id")
+            query = request.args.get("query")
+            print("searching chats")
+            print(user_id, query)
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            print("searching")
+
+            searches = self.conversation_service.search_conversations(user_id, query)
+
+            chats = []
+            for chat in searches:
+                dictionary = {"Title": chat.name, "ConversationId": chat.conversation_id}
+                chats.append(dictionary)
+
+            return jsonify({
+                "status": "success",
+                "results": chats,
+                "message": "Search retrieved successfully",
+            }), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message": str(e)}), 500
+
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
         app.add_url_rule("/chat/follow-up", view_func=self.follow_up, methods=["POST"])
@@ -311,4 +339,5 @@ class ChatController:
         app.add_url_rule("/chat/delete", view_func=self.delete_chat, methods=["DELETE"])
         app.add_url_rule("/chat/rename", view_func=self.rename_chat, methods=['PATCH'])
         app.add_url_rule("/chat/delete-all", view_func=self.delete_all, methods=['DELETE'])
+        app.add_url_rule("/chat/search", view_func=self.search_chats)
         app.register_blueprint(self.chat)
