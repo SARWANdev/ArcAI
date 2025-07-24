@@ -20,6 +20,9 @@ class UserController:
     def logout(self):
         return self.auth_service.logout()
 
+    def delete_account(self):
+        return self.auth_service.logout()
+
     def get_user_verification(self):
         return self.auth_service.get_user_verification()
 
