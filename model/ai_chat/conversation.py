@@ -121,7 +121,7 @@ class Conversation:
             conversation_id=data.get("_id"),
             user_id=data.get("user_id"),
             document_id=data.get("document_id"),
-            document_ids=data.get("document_ids"),
+            document_ids=data.get("document_ids") or [],
             messages=data.get("messages"),
             created_at=data.get("created_at"),
             updated_at=data.get("updated_at")
