@@ -23,12 +23,14 @@ class Conversation:
     :param name: Name of the conversation.
     :type name: str | None
     """
-    def __init__(self, user_id, document_ids: list[str] = [], project_ids: list[str] | None = None,
+    def __init__(self, user_id, document_ids: list[str] = [], 
+                 document_id = None, project_ids: list[str] | None = None,
                  messages=None, conversation_id=None,
                  created_at=None, updated_at=None, name=None):
         self.name = name
         self.messages = messages or []
         self.user_id = user_id
+        self.document_id = document_id,
         self.document_ids = document_ids
         self.conversation_id = conversation_id
         self.created_at = created_at or None
@@ -93,6 +95,7 @@ class Conversation:
             "name": self.name,
             "user_id": self.user_id,
             "messages": self.messages,
+            "document_id": self.document_id,
             "document_ids": self.document_ids,
             "created_at": self.created_at,
             "updated_at": self.updated_at
@@ -112,11 +115,15 @@ class Conversation:
             name=data.get("name"),
             conversation_id=data.get("_id"),
             user_id=data.get("user_id"),
+            document_id=data.get("document_id"),
             document_ids=data.get("document_ids"),
             messages=data.get("messages"),
             created_at=data.get("created_at"),
             updated_at=data.get("updated_at")
         )
+    
+    def get_document_id(self):
+        return self.document_id
 
     def __format_user_message(self, message: str, context: str) -> str:
         """

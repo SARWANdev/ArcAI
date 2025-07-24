@@ -242,5 +242,7 @@ class ConversationService:
         conversation_list = []
         for id in conversation_ids:
             conversation_data = self.conversation_repository.get_conversation_by_id(id)
-            conversation_list.append(ConversationModel.from_dict(conversation_data))
+            conversation_model = ConversationModel.from_dict(conversation_data)
+            if not conversation_model.get_document_id():
+                conversation_list.append(conversation_model)
         return conversation_list
