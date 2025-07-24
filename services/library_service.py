@@ -1,5 +1,4 @@
 from database.repository.library_repository import Library as LibraryRepository
-from model.document_reader.library import Library as LibraryModel
 from model.document_reader.project import Project
 
 class LibraryService:

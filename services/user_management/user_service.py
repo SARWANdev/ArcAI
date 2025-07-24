@@ -4,10 +4,9 @@ import posixpath
 from dotenv import load_dotenv
 
 from database.repository.user_repository import UserRepository as UserRepository
-from model.user_profile.user import User as UserModel, User
+from model.user_profile.user import User as UserModel
 
-from database.repository.library_repository import Library as LibraryRepository, Library
-from model.document_reader.library import Library as LibraryModel
+from database.repository.library_repository import Library as LibraryRepository
 from services.conversation_service import ConversationService
 from services.project_service import ProjectService
 from services.upload_manager.server_conection import delete_remote_directory
@@ -48,7 +47,7 @@ class UserService:
         user_data = self.user_repository.get_user_by_id(user_id)
         if not user_data:
             return None
-        user_model = User.from_dict(user_data)
+        user_model = UserModel.from_dict(user_data)
         return user_model
 
     def remove_user(self, user_id):
@@ -60,7 +59,7 @@ class UserService:
         :type user_id: str
         :returns: None
         """
-        project_ids = Library.get_user_library(user_id)
+        project_ids = LibraryRepository.get_user_library(user_id)
 
         for project_id in project_ids:
             project_id = str(project_id.get('_id'))
