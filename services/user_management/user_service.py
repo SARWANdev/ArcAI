@@ -53,7 +53,7 @@ class UserService:
         user_path =  posixpath.join(remote_dir, user_id)
         delete_remote_directory(user_path)
         self.user_repository.deactivate_user(user_id)
-        self.conversation_service.delete_all_conversations(user_id)
+        self.conversation_service.delete_all_converstations(user_id)
 
 
 

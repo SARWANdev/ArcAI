@@ -493,8 +493,10 @@ class DocumentService:
         return new_name
 
     def rename_document(self, document_id, new_name):
-        success = self.document_repository.set_document_name(document_id, new_name)
+        success = self.document_repository.update_document_name(document_id, new_name)
         if success:
             print(f"Successfully updated name: {new_name}")
         else:
             print(f"Failed to update name: {new_name}")
+
+        return success

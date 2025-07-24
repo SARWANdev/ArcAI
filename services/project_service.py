@@ -69,8 +69,8 @@ class ProjectService:
         return self.project_repository.delete_project(project_id)
 
     def rename_project(self, project_id, project_name):
-        result = self.project_repository.update_name(project_id, project_name)
-        return result == 1  # True if updated, False otherwise
+
+        return self.project_repository.update_name(project_id, project_name)  # True if updated, False otherwise
 
     def download_project(self, project_id):
         pass
