@@ -246,7 +246,7 @@ class DocumentService:
 
         self.pdf_master_repository.decrement_ref_count( pdf_master_id )
 
-        self.conversation_repository.delete_conversation_for_document(document_id)
+        self.conversation_repository.delete_conversation_for_document(str(document_id))
 
         ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
 
