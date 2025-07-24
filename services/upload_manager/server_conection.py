@@ -142,7 +142,8 @@ def delete_remote_directory(file_path: str):
             password=ssh_password
         )
         #get
-        remote_directory_path = os.path.dirname(file_path)
+        #remote_directory_path = os.path.dirname(file_path)
+        remote_directory_path = file_path
         # Build the command to delete the directory recursively
         command = f"rm -rf '{remote_directory_path}'"
         stdin, stdout, stderr = ssh.exec_command(command)

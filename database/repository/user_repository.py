@@ -54,7 +54,7 @@ class User:
     def get_user_by_id(user_id: str) -> dict:
         try:
             with mongo_connection() as db:
-                return db.users.find_one({"_id": ObjectId(user_id) })
+                return db.users.find_one({"_id": user_id })
         except Exception as e:
             print(f"Database error: {str(e)}")
             raise
@@ -76,7 +76,7 @@ class User:
         try:
             with mongo_connection() as db:
                 result = db.users.update_one(
-                    {'_id': ObjectId(user_id)},
+                    {'_id': user_id},
                     {'$set': {
                         'first_name': new_name,
                         "updated_at": get_utc_zulu_timestamp(),
@@ -92,7 +92,7 @@ class User:
         try:
             with mongo_connection() as db:
                 result = db.users.update_one(
-                    {'_id': ObjectId(user_id)},
+                    {'_id': user_id},
                     {'$set': {
                         'last_name': new_last_name,
                         "updated_at": get_utc_zulu_timestamp(),
@@ -107,7 +107,7 @@ class User:
     def update_view_mode(user_id: str, view_mode: bool) -> bool:
         try:
             with mongo_connection() as db:
-                result = db.users.update_one({"_id": ObjectId(user_id)},
+                result = db.users.update_one({"_id": user_id},
                                              {"$set": {"view_mode": view_mode, "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
 
@@ -119,7 +119,7 @@ class User:
     def deactivate_user(user_id: str):
         try:
             with mongo_connection() as db:
-                result = db.users.update_one({"_id": ObjectId(user_id)},
+                result = db.users.update_one({"_id": user_id},
                                              {"$set": {"active": False, "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
         except Exception as e:

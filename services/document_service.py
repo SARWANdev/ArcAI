@@ -248,8 +248,8 @@ class DocumentService:
         ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
 
         if ref_count == 0:
-
-            delete_remote_directory( remote_path )
+            remote_dir_path = os.path.dirname(remote_path)
+            delete_remote_directory( remote_dir_path )
             self.pdf_master_repository.delete_pdf_master( pdf_master_id )
 
 
