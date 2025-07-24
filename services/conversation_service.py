@@ -53,7 +53,7 @@ class ConversationService:
         self.conversation_repository.save(conversation_model.to_dict())
         return conversation_model
 
-    def create_document_conversation(self, user_id: Any, document_id: Any) -> ConversationModel|None:
+    def create_document_conversation(self, user_id: Any, document_id: Any) -> ConversationModel | None:
         """
         Create a conversation for a single document.
 
@@ -61,8 +61,8 @@ class ConversationService:
         :type user_id: Any
         :param document_id: The document ID to associate with the conversation.
         :type document_id: Any
-        :return: The created conversation model instance.
-        :rtype: ConversationModel
+        :return: The created conversation model instance, or None if the document is not found.
+        :rtype: ConversationModel or None
         """
         conversation_id = ObjectId()
         from services.document_service import DocumentService
@@ -70,7 +70,6 @@ class ConversationService:
         if document: 
             name = document.name
             conversation_model = ConversationModel(
-                
                 name=f"Conversation on {name}",
                 document_ids=[document_id],
                 user_id=user_id,
@@ -232,7 +231,7 @@ class ConversationService:
         """
         self.conversation_repository.delete_all_conversations(user_id)
 
-    def search_conversations(self, user_id: Any, query: str) -> List[Any]:
+    def search_conversations(self, user_id: Any, query: str) -> list:
         """
         Search conversations for a user by a query.
 
@@ -240,7 +239,7 @@ class ConversationService:
         :type user_id: Any
         :param query: The query to filter conversations.
         :type query: str
-        :return: List of conversations matching the search term, excluding those with a document ID.
+        :return: List of conversations matching the query, excluding those with a document ID.
         :rtype: list
         """
         hits = self.conversation_repository.search_conversation(user_id, query)
