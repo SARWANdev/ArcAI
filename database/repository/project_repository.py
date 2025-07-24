@@ -12,23 +12,6 @@ from bson import ObjectId
 class Project:
     
     @staticmethod
-    def new_project(user_id, project_name, note=None) -> str:
-        project_data = {
-            "user_id": user_id,  # Google's unique 'sub'
-            "project_name": project_name,
-            "note": "",
-            "created_at": get_utc_zulu_timestamp(),
-            "updated_at": get_utc_zulu_timestamp()
-        }
-        with mongo_connection() as db:
-            try:
-                result = db.projects.insert_one(project_data)
-                return str(result.inserted_id)
-            except pymongo.errors.DuplicateKeyError:
-                print(f"Project {project_name} already exists")
-                return ""
-    
-    @staticmethod
     def save(project: Project) -> str:
         with mongo_connection() as db:
             try:

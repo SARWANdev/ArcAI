@@ -155,7 +155,7 @@ class ConversationRepository:
 
 
     @staticmethod
-    def search_conversation(user_id, prefix):
+    def search_conversation(user_id, query):
         # Searchs for a conversation by its title
         es.indices.refresh(index="conversations")
         result = es.search(index="conversations", body={
@@ -166,7 +166,7 @@ class ConversationRepository:
                         {
                             "match_phrase_prefix": {
                                 "name": {
-                                    "query": prefix
+                                    "query": query
                                 }
                             }
                         }
