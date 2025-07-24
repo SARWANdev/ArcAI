@@ -1,51 +1,23 @@
 import pymongo
-from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
-from traits.trait_types import self
 
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
-from typing import List, Dict
+
 
 from model.user_profile.user import User
 
 
-class User:
-    def __init__(self, first_name, last_name, email, sub_id):
-        self.first_name = first_name
-        self.last_name = last_name
-        self.email = email
-        self.sub_id = sub_id
-        self.view_mode = True
-        self.active = True
-        self.created_at = get_utc_zulu_timestamp()
-        self.updated_at = self.created_at
-
-    def new_user(self):
-        if not self.sub_id:
-            raise ValueError("Google 'sub' ID is required")
-
-        user_data = {
-            "_id": self.sub_id,  # Google's unique 'sub'
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "email": self.email,
-            "view_mode": self.view_mode,  # Defaults to True
-            "active": self.active,  # Defaults to True
-            "created_at": self.created_at,  # ISO 8601 UTC
-            "updated_at": self.updated_at
-        }
-
-        with mongo_connection() as database_connection:
-            try:
-                result = database_connection.users.insert_one(user_data)
-                return str(result.inserted_id)
-            except pymongo.errors.DuplicateKeyError:
-                print(f"User {self.sub_id} already exists")
-                return str()
+class UserRepository:
 
     @staticmethod
     def save(user: User) -> str:
+        """
+        this method saves a user into the mongo database
+
+        :param user: is an instance of the class User
+        :return: the id of the user or empty string if the user was not saved
+        """
         with mongo_connection() as database_connection:
             try:
                 result = database_connection.users.insert_one( user.new_user_dict() )
@@ -57,6 +29,12 @@ class User:
 
     @staticmethod
     def get_user_by_id(user_id: str) -> dict:
+        """
+        this method returns the user from the mongo database
+
+        :param user_id: is the id of the user
+        :return: a dictionary of the user
+        """
         try:
             with mongo_connection() as db:
                 return db.users.find_one({"_id": user_id })
@@ -66,6 +44,13 @@ class User:
 
     @staticmethod
     def update_view_mode(user_id: str, view_mode: bool) -> bool:
+        """
+        this method updates the view mode of the user either hell mode or dark mode
+
+        :param user_id: is the id of the user
+        :param view_mode: true is hell mode and false is dark mode
+        :return: true if update was successful
+        """
         try:
             with mongo_connection() as db:
                 result = db.users.update_one({"_id": user_id},
@@ -75,9 +60,14 @@ class User:
             print(f"Error updating users view mode: {str(e)}")
             return False
 
-
     @staticmethod
     def deactivate_user(user_id: str):
+        """
+        this method deactivates a user from the mongo database
+
+        :param user_id: is the id of the user
+        :return: true if deactivation was successful
+        """
         try:
             with mongo_connection() as db:
                 result = db.users.update_one({"_id": user_id},
@@ -89,6 +79,12 @@ class User:
 
     @staticmethod
     def activate_user(user_id: str):
+        """
+        this method activates a user from the mongo database
+
+        :param user_id: is the id of the user
+        :return: true if activation was successful
+        """
         try:
             with mongo_connection() as db:
                 result = db.users.update_one({"_id": user_id},

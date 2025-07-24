@@ -1,6 +1,6 @@
 import os
 from authlib.integrations.flask_client import OAuth
-from database.repository.user_repository import User as UserRepository
+from database.repository.user_repository import UserRepository as UserRepository
 from flask import url_for, session, redirect, jsonify
 
 from model.user_profile.user import User

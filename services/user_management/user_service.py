@@ -3,7 +3,7 @@ import posixpath
 
 from dotenv import load_dotenv
 
-from database.repository.user_repository import User as UserRepository
+from database.repository.user_repository import UserRepository as UserRepository
 from model.user_profile.user import User as UserModel
 from model.user_profile.view_mode import ViewMode
 from database.repository.library_repository import Library as LibraryRepository, Library
