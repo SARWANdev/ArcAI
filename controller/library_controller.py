@@ -23,9 +23,6 @@ class LibraryController:
     def get_project(self, project_id):
         pass
 
-    def search_documents(self, query, filters=None):
-        pass
-
     def create_project(self):
         try:
             data = request.get_json()
@@ -77,6 +74,8 @@ class LibraryController:
                 }
                 for model in project_model_list
             ]
+
+            print(project_list)
 
             # Return both success message AND the project data
             return jsonify({
@@ -155,15 +154,21 @@ class LibraryController:
             user_id = data.get('user_id')
             project_id = ObjectId(data.get('project_id'))
             new_name = data.get('name')
-
+            
             if not all([user_id, project_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
 
             result = self.project_service.rename_project(project_id, new_name)
             if result:
-                return jsonify({"status": "success", "message": "Project renamed successfully"}), 200
+                return jsonify({
+                    "status": "success",
+                    "message": "Project renamed successfully"
+                    }), 200
             else:
-                return jsonify({"status": "error", "message": "Failed to rename the project"}), 500
+                return jsonify({
+                    "status": "error",
+                    "message": "Failed to rename the project"
+                    }), 500
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -176,6 +181,32 @@ class LibraryController:
     def get_item_metadata(self, item_id, item_type):
         pass
 
+    def search_documents(self):
+        try:
+            # Get parameters from query string
+            user_id = request.args.get("user_id")
+            query = request.args.get("query")
+            print(user_id, query)
+
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            print("searching")
+            searches = self.document_service.search_documents(user_id, query)
+            documents = []
+            for document in searches:
+                dictionary = {"Title" : document.name, "DocumentId" : document.document_id}
+                documents.append(dictionary)
+            print(documents)
+
+            return jsonify({
+                "status": "success",
+                "results": documents,
+                "message": "Search retrieved successfully",
+            }), 200
+        except Exception as e:
+            return jsonify({"status": "error", "message":str(e)}),500
+
     # To register all the library-routes
     def register_library_routes(self, app):
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
@@ -183,4 +214,5 @@ class LibraryController:
         self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
         self.library.add_url_rule("/library/delete-project", view_func=self.delete_project, methods=["DELETE"])
         self.library.add_url_rule("/library/rename-project", view_func=self.rename_project, methods=["PATCH"])
+        self.library.add_url_rule("/library/search", view_func=self.search_documents)
         app.register_blueprint(self.library)

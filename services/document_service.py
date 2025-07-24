@@ -248,8 +248,8 @@ class DocumentService:
         ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
 
         if ref_count == 0:
-
-            delete_remote_directory( remote_path )
+            remote_dir_path = os.path.dirname(remote_path)
+            delete_remote_directory( remote_dir_path )
             self.pdf_master_repository.delete_pdf_master( pdf_master_id )
 
 
@@ -470,7 +470,7 @@ class DocumentService:
 
         if not hits:
             return []
-        
+
         document_ids = [doc['id'] for doc in hits]
         document_list = []
         for id in document_ids:
@@ -479,9 +479,6 @@ class DocumentService:
         return document_list
 
 
-
-        return results
-    
     def get_document_vector_store(self, document_id):
         pass
 
@@ -495,3 +492,9 @@ class DocumentService:
 
         return new_name
 
+    def rename_document(self, document_id, new_name):
+        success = self.document_repository.set_document_name(document_id, new_name)
+        if success:
+            print(f"Successfully updated name: {new_name}")
+        else:
+            print(f"Failed to update name: {new_name}")

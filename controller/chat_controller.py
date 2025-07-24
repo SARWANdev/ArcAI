@@ -143,18 +143,6 @@ class ChatController:
     def get_conversation(self, chat_id):
         pass
 
-    def rename_chat(self, chat_id, new_title):
-        """
-        Renames an existing chat session.
-        """
-        return self.conversation_service.rename_chat(chat_id, new_title)
-
-    def delete_chat(self, chat_id):
-        """
-        Deletes a chat session and its messages.
-        """
-        return self.conversation_service.delete_chat(chat_id)
-
     def delete_all_chats(self, user_id):
         """
         Deletes all chat sessions for a user.
@@ -165,7 +153,7 @@ class ChatController:
         try:
             # Get paramaeters from query string
             user_id = request.args.get("user_id")
-            sort_by = request.args.get("sort_by", "LastUpdated")
+            sort_by = request.args.get("sort_by", "CreatedAt")
             order = request.args.get("order", "desc")
             print(user_id, sort_by, order)
 
@@ -174,8 +162,8 @@ class ChatController:
                 sort_by = "name"
             elif sort_by == "CreatedAt":
                 sort_by = "created"
-            elif sort_by == "LastUpdated":
-                sort_by = "updated"
+
+
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
@@ -184,10 +172,9 @@ class ChatController:
 
             conversation_list = [
                 {
-                    "Title": model.conversation_name,
+                    "Title": model.name,
                     "CreatedAt": model.created_at,
-                    "LastUpdated": model.updated_at,
-                    "ConversationId": str(model.id)
+                    "ConversationId": str(model.conversation_id)
                 }
                 for model in conversation_model_list
             ]
@@ -195,24 +182,133 @@ class ChatController:
                 "status": "success",
                 "message": "History retrieved successfully",
                 "data": {
-                    "projects": conversation_list,
+                    "conversations": conversation_list,
                     "sort_by": sort_by,
                     "order": order
                 }
             }), 200
         
         except Exception as e:
-            print(f"Error in get_user_projects: {str(e)}")
+            print(f"Error in get_user_conversation: {str(e)}")
             return jsonify({
                 "status": "error",
                 "message": "Failed to retrieve projects",
                 "error": str(e)
             }), 500
 
+    def get_conversation_from_conversation_id(self):
+        try:
+            # Extract query parameters
+            data = request.get_json()
+            user_id = data.get("user_id")
+            conversation_id = data.get("conversation_id")
 
+            print(user_id, conversation_id)
+
+            if not user_id or not conversation_id:
+                return jsonify({"error": "Missing user_id or conversation_id"}), 400
+
+            conversation = self.conversation_service.get_conversation(conversation_id)
+            conversation_id = conversation.conversation_id
+            conversation_messages = conversation.get_messages()
+
+            return jsonify({
+                "status": "success",
+                "data": {
+                    "conversation_id": str(conversation_id),
+                    "list_of_messages": conversation_messages
+                }
+            }), 200
+
+
+        except Exception as e:
+            print(f"Error in get_conversation_from_conversation_id: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
+    def delete_chat(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            conversation_id = data.get("conversation_id")
+            print(user_id, conversation_id)
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.conversation_service.delete_chat(conversation_id)
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "Conversation deleted successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in delete_chat: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to delete the chat",
+                "error": str(e)
+            }), 500
+
+    def rename_chat(self):
+        try:
+            data = request.get_json()
+            user_id = data.get('user_id')
+            conversation_id = data.get('conversation_id')
+            new_name = data.get('name')
+            print(user_id, conversation_id, new_name)
+
+            if not all([user_id, conversation_id, new_name]):
+                return jsonify({'error': 'Missing required fields'}), 400
+            print("renaming")
+            result = self.conversation_service.rename_chat(conversation_id, new_name)
+            print("renamed")
+            if result:
+                return jsonify({
+                    "status": "success",
+                    "message": "Conversation renamed successfully"
+                }), 200
+            else:
+                return jsonify({
+                    "status": "error",
+                    "message": "Failed to rename the conversation"
+                }), 500
+        except Exception as e:
+            return jsonify({
+                "status": "error", "message": str(e)
+            }), 500
+
+    def delete_all(self):
+        try:
+            # Get parameters from query string
+            data = request.get_json()
+            user_id = data.get("user_id")
+            print(user_id)
+            if not user_id:
+                return jsonify({"error": "user_id is required"}), 400
+
+            self.conversation_service.delete_all_chats(user_id)
+            # Return both success message
+            return jsonify({
+                "status": "success",
+                "message": "All conversations deleted successfully",
+            }), 200
+
+        except Exception as e:
+            print(f"Error in delete_all: {str(e)}")
+            return jsonify({
+                "status": "error",
+                "message": "Failed to delete all conversations",
+                "error": str(e)
+            }), 500
 
     def register_chat_routes(self, app):
         app.add_url_rule("/chat", view_func=self.query, methods=["POST"])
         app.add_url_rule("/chat/follow-up", view_func=self.follow_up, methods=["POST"])
+        app.add_url_rule("/chat/history", view_func = self.get_user_conversations)
         app.add_url_rule("/chat/conversation/document", view_func=self.get_conversation_for_document, methods=["POST"])
+        app.add_url_rule("/chat/conversation", view_func=self.get_conversation_from_conversation_id, methods=["POST"])
+        app.add_url_rule("/chat/delete", view_func=self.delete_chat, methods=["DELETE"])
+        app.add_url_rule("/chat/rename", view_func=self.rename_chat, methods=['PATCH'])
+        app.add_url_rule("/chat/delete-all", view_func=self.delete_all, methods=['DELETE'])
         app.register_blueprint(self.chat)

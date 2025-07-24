@@ -225,3 +225,14 @@ class ConversationService:
         :rtype: list
         """
         return self.conversation_repository.search_conversation(user_id, search)
+    def search_conversations(self, user_id, search):
+        hits = ConversationRepository.search_conversation(user_id, search)
+        if not hits:
+            return []
+
+        conversation_ids = [chat['id'] for chat in hits]
+        conversation_list = []
+        for id in conversation_ids:
+            conversation_data = self.conversation_repository.get_conversation_by_id(id)
+            conversation_list.append(ConversationModel.from_dict(conversation_data))
+        return conversation_list

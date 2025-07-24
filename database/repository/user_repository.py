@@ -71,13 +71,13 @@ class User:
                 result = db.users.update_one({"_id": user_id},
                                              {"$set": {"view_mode": view_mode, "updated_at": get_utc_zulu_timestamp()}})
                 return result.modified_count > 0
-
         except Exception as e:
             print(f"Error updating users view mode: {str(e)}")
             return False
 
+
     @staticmethod
-    def delete_user_contents(user_id: str):
+    def deactivate_user(user_id: str):
         try:
             with mongo_connection() as db:
                 result = db.users.update_one({"_id": user_id},

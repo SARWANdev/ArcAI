@@ -18,7 +18,7 @@ class Document:
         self.created_at = created_at
         self.updated_at = updated_at
 
-    
+
 
     def new_document_dict(self):
         document_dic = {
