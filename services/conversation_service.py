@@ -34,6 +34,7 @@ class ConversationService:
         :type project_ids: list or None
         :param name: Name of the conversation. Defaults to None.
         :type name: str or None
+        
         :return: The created conversation model instance.
         :rtype: ConversationModel
         """
@@ -58,6 +59,7 @@ class ConversationService:
         :type user_id: Any
         :param document_id: The document ID to associate with the conversation.
         :type document_id: Any
+
         :return: The created conversation model instance, or None if the document is not found.
         :rtype: ConversationModel or None
         """
@@ -95,6 +97,7 @@ class ConversationService:
         :type sort_by: str
         :param order: Sort order, either 'asc' or 'desc'. Defaults to 'asc'.
         :type order: str
+
         :return: Sorted list of conversation models.
         :rtype: list of ConversationModel
         """
@@ -120,6 +123,7 @@ class ConversationService:
 
         :param user_id: The ID of the user whose conversation history to retrieve.
         :type user_id: Any
+
         :return: List of conversation models for the user.
         :rtype: list of ConversationModel
         """
@@ -134,6 +138,7 @@ class ConversationService:
 
         :param conversation_id: The ID of the conversation to retrieve.
         :type conversation_id: Any
+
         :return: The conversation model if found, else None.
         :rtype: ConversationModel or None
         """
@@ -148,6 +153,7 @@ class ConversationService:
 
         :param document_id: The document ID to search for.
         :type document_id: Any
+
         :return: The conversation model if found, else None.
         :rtype: ConversationModel or None
         """
@@ -165,8 +171,6 @@ class ConversationService:
         :type conversation_id: Any
         :param messages: The new list of messages to set.
         :type messages: list
-        :return: None
-        :rtype: None
         """
         self.conversation_repository.update_messages(conversation_id=conversation_id, messages=messages)
 
@@ -178,8 +182,6 @@ class ConversationService:
         :type conversation_id: Any
         :param new_name: The new name for the conversation.
         :type new_name: str
-        :return: None
-        :rtype: None
         """
         return self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
 
@@ -191,8 +193,6 @@ class ConversationService:
         :type conversation_id: Any
         :param new_name: The new name for the conversation.
         :type new_name: str
-        :return: None
-        :rtype: None
         """
         return self.update_name(conversation_id, new_name)
 
@@ -202,8 +202,6 @@ class ConversationService:
 
         :param conversation_id: The ID of the conversation to delete.
         :type conversation_id: Any
-        :return: None
-        :rtype: None
         """
         self.conversation_repository.delete_conversation(conversation_id)
 
@@ -213,19 +211,15 @@ class ConversationService:
 
         :param user_id: The ID of the user whose history is cleared.
         :type user_id: Any
-        :return: None
-        :rtype: None
         """
         self.conversation_repository.clear_history(user_id)
 
-    def delete_all_converstations(self, user_id: Any) -> None:
+    def delete_all_conversations(self, user_id: Any) -> None:
         """
         Delete all conversations for a user.
 
         :param user_id: The ID of the user whose conversations to delete.
         :type user_id: Any
-        :return: None
-        :rtype: None
         """
         self.conversation_repository.delete_all_conversations(user_id)
 
@@ -237,6 +231,7 @@ class ConversationService:
         :type user_id: Any
         :param query: The query to filter conversations.
         :type query: str
+
         :return: List of conversations matching the query, excluding those with a document ID.
         :rtype: list
         """
