@@ -12,9 +12,7 @@ class LibraryController:
         self.library_service = LibraryService()
         self.project_service = ProjectService()
         self.document_service = DocumentService()
-        # To create routes for library related method's endpoints
         self.library = Blueprint('library', __name__)
-        # To register these routes in the flask application
         self.register_library_routes(app)
 
     def get_embeddings(self, item_ids=None):
@@ -47,7 +45,6 @@ class LibraryController:
             user_id = request.args.get("user_id")
             sort_by = request.args.get("sort_by", "LastUpdated")  # default to 'title'
             order = request.args.get("order", "desc")  # default to 'asc'
-            print(user_id, sort_by, order)
 
             # Map frontend field names to database columns
             if sort_by == "Title":
@@ -70,12 +67,9 @@ class LibraryController:
                     "CreatedAt": model.created_at,
                     "LastUpdated": model.updated_at,
                     "ProjectId" : str(model.id)
-                    # Add other fields if needed
                 }
                 for model in project_model_list
             ]
-
-            print(project_list)
 
             # Return both success message AND the project data
             return jsonify({
@@ -172,15 +166,6 @@ class LibraryController:
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
 
-    def sort_projects(self, sort_by, sort_order):
-        pass
-
-    def filter_projects(self, filters):
-        pass
-
-    def get_item_metadata(self, item_id, item_type):
-        pass
-
     def search_documents(self):
         try:
             # Get parameters from query string
@@ -195,7 +180,6 @@ class LibraryController:
             for document in searches:
                 dictionary = {"Title" : document.name, "DocumentId" : document.document_id}
                 documents.append(dictionary)
-            print(documents)
 
             return jsonify({
                 "status": "success",

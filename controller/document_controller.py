@@ -80,8 +80,6 @@ class DocumentController:
             file = request.files["file"]
             user_sub = request.form.get("user_sub")
             project_id = request.form.get("project_id")
-            print(user_sub)
-            print(project_id)
 
             if not file or file.filename.strip() == "":
                 return jsonify({"error": "No selected file"}), 400
@@ -365,7 +363,6 @@ class DocumentController:
         try:
             user_id = request.args.get("user_id")
             document_id = request.args.get("document_id")
-            print(user_id, document_id)
 
             if not user_id or not document_id:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
@@ -392,7 +389,6 @@ class DocumentController:
             user_id = data.get("userid")
             document_id = data.get("document_id")
             bibtex = data.get("bibtex")
-            print(user_id, document_id, bibtex)
 
             if not user_id or not document_id:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
@@ -414,8 +410,6 @@ class DocumentController:
         try:
             user_id = request.args.get("userid")  # Get from query string
             document_id = request.args.get("document_id")
-            print(user_id, document_id)
-            print(user_id, document_id)
 
             if not user_id or not document_id:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
