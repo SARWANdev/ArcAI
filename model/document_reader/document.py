@@ -3,6 +3,9 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 
 class Document:
+    """
+    Represents a user document.
+    """
     def __init__(self, name, project_id, pdf_master_id: Optional[str] = None, note: Optional[str] = None,
                  tag_name: Optional[str] = None, tag_color: Optional[str] = None, read: Optional[bool] = None,
                  favorite: Optional[bool] = None, created_at = None, updated_at = None, document_id: Optional[str] = None):

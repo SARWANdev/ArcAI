@@ -1,6 +1,10 @@
 from enum import Enum
 
 class Color(Enum):
+    """
+    Enum class representing various colors with their corresponding hexadecimal values.
+    Each color is represented by a name and a hex code.
+    """
     BLACK = "#3F3B3B"
     GRAY = "#B0ABAA"
     PINK = "#E097BF"

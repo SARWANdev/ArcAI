@@ -5,17 +5,6 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 class Project():
     """
     Represents a user project.
-
-    :param project_id: The unique identifier for the project.
-    :type project_id: str or None
-    :param project_name: The name of the project.
-    :type project_name: str or None
-    :param user_id: The ID of the user who owns the project.
-    :type user_id: str or None
-    :param created_at: The creation timestamp of the project.
-    :type created_at: str or None
-    :param updated_at: The last updated timestamp of the project.
-    :type updated_at: str or None
     """
     def __init__(self, project_id=None, project_name=None, user_id=None, created_at=None, updated_at=None):
         """
