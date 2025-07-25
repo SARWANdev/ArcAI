@@ -12,3 +12,4 @@ services/tests/embeddings.py
 upload_method_santiago.py
 database/utils/mongo_configuration.py
 .vscode/settings.json
+.env
