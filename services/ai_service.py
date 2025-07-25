@@ -14,47 +14,7 @@ class AIService:
     AIService provides an interface for interacting with language models and embedding models via HTTP APIs.
     It supports generating text, handling chat conversations, summarizing content, and managing vector stores
     for similarity search. The service is configurable for different model names and base URLs.
-    Attributes:
-        __DEFAULT_BASE_URL (str): Default URL for the API endpoint.
-        __DEFAULT_EMBEDDING_MODEL_NAME (str): Default embedding model name.
-        __DEFAULT_LLM_NAME (str): Default language model name.
-        __GENERATE_PATH (str): API path for text generation.
-        __CHAT_PATH (str): API path for chat interactions.
-    Methods:
-        __init__(base_url: str | None = None, llm_name: str | None = None, embedding_model_name: str | None = None):
-            Initializes the AIService with optional custom base URL, LLM name, and embedding model name.
-        set_ollama_url(ollama_url: str):
-            Sets the Ollama API URL.
-        set_llm_name(llm_name: str):
-            Sets the language model name.
-        set_embedding_model_name(embedding_model_name: str):
-            Sets the embedding model name.
-        generate(prompt: str, user_id=None) -> Response | None:
-            Sends a prompt to the language model and returns the response.
-        send_chat_message(question: str, conversation: Conversation):
-            Sends a chat message with context retrieved from similarity search.
-        send_system_message(system_message: str, conversation: Conversation):
-            Sends a system message to the chat API.
-        output_generate_response(response, output_function: Callable):
-            Streams and outputs the response from the generate endpoint.
-        output_chat_response(response, output_function: Callable):
-            Streams and outputs the response from the chat endpoint.
-        summarize(vector_store: FAISS):
-            Summarizes the most relevant parts of the text in the vector store.
-        get_chat_history(user_id):
-            Retrieves all chat sessions for a user. (Not implemented)
-        get_chat(conversation_id):
-            Retrieves a specific chat conversation. (Not implemented)
-        rename_chat(conversation_id, new_title):
-            Renames a chat session. (Not implemented)
-        delete_chat(conversation_id):
-            Deletes a chat session. (Not implemented)
-        delete_all_conversations(user_id):
-            Deletes all chat sessions for a user. (Not implemented)
-        get_vector_store(text_chunks: list[str], embedding_path: str | None = None) -> FAISS:
-            Creates a FAISS vector store from text chunks using the embedding model.
-        __perform_similarity_search(query: str, vector_store: FAISS, top_k: int) -> str:
-            Performs a similarity search in the vector store and returns the most relevant context.
+    
     """
     
     __DEFAULT_BASE_URL = os.getenv("OLLAMA_DEFAULT_BASE_URL", "http://127.0.0.1:11435") #TODO:Change this to the server one on the server
@@ -68,6 +28,16 @@ class AIService:
 
 
     def __init__(self, base_url:str|None = None, llm_name:str|None = None, embedding_model_name:str|None = None):
+        """
+        Initializes the AIService with optional custom base URL, LLM name, and embedding model name.
+        
+        :param base_url: Optional custom base URL for the API.
+        :type base_url: str|None, default None
+        :param llm_name: Optional name for the language model to use.
+        :type llm_name: str|None, default None
+        :param embedding_model_name: Optional name for the embedding model.
+        :type embedding_model_name: str|None, default None
+        """
         self.conversation_repository = ConversationRepository
         self.__llm_name = llm_name if llm_name else self.__DEFAULT_LLM_NAME
         self.__embedding_model_name = embedding_model_name if embedding_model_name else self.__DEFAULT_EMBEDDING_MODEL_NAME
@@ -75,22 +45,44 @@ class AIService:
         self.embeddings = OllamaEmbeddings(base_url=self.__DEFAULT_BASE_URL, model=self.__DEFAULT_EMBEDDING_MODEL_NAME, show_progress=True)
 
     def set_ollama_url(self, ollama_url:str):
+        """
+        Sets the Ollama API URL.
+        
+        :param ollama_url: The URL to the Ollama API.
+        :type ollama_url: str
+        """
         self.__ollama_api_url = ollama_url
 
     def set_llm_name(self, llm_name:str):
+        """
+        Sets the name for the language model.
+        
+        :param llm_name: The name of the language model to use.
+        :type llm_name: str
+        """
         self.__llm_name = llm_name
 
     def set_embedding_model_name(self, embedding_model_name:str):
+        """
+        Sets the name for the embedding model.
+        
+        :param embedding_model_name: The name of the embedding model to use.
+        """
         self.__embedding_model_name = embedding_model_name
 
     def generate(self, prompt: str,  user_id= None) -> Response|None:
         """
         Sends a prompt to the language model API and returns the response.
-        Args:
-            prompt (str): The input prompt to generate a response for.
-            user_id (Optional[Any], optional): The user identifier. Defaults to None.
-        Returns:
-            Response | None: The HTTP response object if the request is successful, otherwise None.
+        
+        
+        :param prompt: The input prompt to generate a response for.
+        :type prompt: str
+        :param user_id: The user identifier (optional).
+
+        :returns: The HTTP response object if the request is successful, otherwise None.
+        
+        :raises: Exception: In case of errors during the request.
+
         Notes:
             - Prints error messages for non-200 HTTP responses and exceptions.
             - TODO: Implement specific error messages for each possible error.
@@ -111,12 +103,15 @@ class AIService:
 
     def send_chat_message(self, question: str, conversation: Conversation):
         """
-        Sends a chat message to the AI chat service using the provided question and conversation context.
-        Args:
-            question (str): The user's question or message to send to the chat service.
-            conversation (Conversation): The current conversation object, used to retrieve context, older messages and format the message.
-        Returns:
-            requests.Response: The HTTP response object from the chat service API.
+         Sends a chat message to the AI chat service with context from the current conversation.
+        
+        :param question: The user's question to send.
+        :type question: str
+        :param conversation: The current conversation object that provides context.
+        :type conversation: Conversation
+        
+        :returns: The HTTP response object from the chat service API.
+
         Notes:
             - Performs a similarity search to retrieve relevant context from the conversation's vector store.
             - Formats the payload with the model name and the latest user message, including context.
@@ -138,12 +133,13 @@ class AIService:
         """
         Sends a system message to the chat endpoint for a given conversation.
 
-        Args:
-            system_message (str): The system message content to be sent.
-            conversation (Conversation): The conversation object to which the system message is related.
+        
+        :param system_message: The system message content to be sent.
+        :type system_message: str
+        :param conversation: The conversation object to which the system message is related.
+        :type conversation: Conversation
 
-        Returns:
-            None
+        :returns: The HTTP response object from the chat service API.
 
         Note:
             This method sends a POST request to the chat endpoint with the specified system message.
@@ -159,15 +155,22 @@ class AIService:
             
     def output_streaming_response(self, response, output_function: Callable, mode: str = "chat"):
         """
-        Processes a streaming response (either generate or chat), incrementally building the response text and invoking an output function with partial results.
+        Processes a streaming response (either generate or chat), 
+        incrementally building the response text and invoking an output function with partial results.
 
         Args:
-            response: The response object, expected to be an instance of `Response` that supports the `iter_lines()` method yielding JSON strings.
-            output_function (Callable): A function that takes a string argument, called with the progressively built response text plus a cursor ("▌") during streaming, and with the final response text after completion.
-            mode (str): Either "generate" or "chat". Determines how to extract the content from each chunk.
+        :param response: The response object, expected to be an instance of `Response` 
+            that supports the `iter_lines()` method yielding JSON strings.
+        :param output_function: A function that takes a string argument, 
+            called with the progressively built response text plus a cursor ("▌") during streaming, 
+            and with the final response text after completion.
+        :type output_function: Callable
+        :parma mode: Either "generate" or "chat". Determines how to extract the content from each chunk.
+        :type mode: str
 
-        Returns:
-            str: The complete response text assembled from all streamed chunks.
+        :returns: The complete response text assembled from all streamed chunks.
+        :rtype: str
+
         """
         response_text = ""
         if isinstance(response, Response):
@@ -188,13 +191,12 @@ class AIService:
 
     def summarize(self, vector_store:FAISS):
         """
-        Generates an objective summary of the most relevant parts of the text stored in the given FAISS vector store.
-
-        Args:
-            vector_store (FAISS): The FAISS vector store containing text data to be summarized.
-
-        Returns:
-            str: An objective summary of the most relevant text chunks, limited to 50 words.
+        Generates an objective summary of the most relevant parts of the text in the provided vector store.
+        
+        :param vector_store: The FAISS vector store containing the text to summarize.
+        :type vector_store: FAISS
+        
+        :returns: A concise summary of the most relevant content.
         """
         similarity_search_prompt = "Most relevant parts of this text"
         relevant_chunks = self.__perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=5)
@@ -206,12 +208,13 @@ class AIService:
         """
         Creates a FAISS vector store from a list of text chunks using Ollama embeddings.
 
-        Args:
-            text_chunks (list[str]): A list of text strings to be embedded and stored in the vector store.
-            embedding_path (str | None, optional): Path to save the vector store locally. If None, the vector store is not saved.
+        :param text_chunks: A list of text strings to be embedded and stored in the vector store.
+        :type text_chunks: list[str]
+        :param embedding_path: Path to save the vector store locally. If None, the vector store is not saved.
+        :type embbeding_path :str | None, optional
 
-        Returns:
-            FAISS: The created FAISS vector store containing the embedded text chunks.
+        :returns: The created FAISS vector store containing the embedded text chunks.
+        :rtype: FAISS
         """
         vector_store = FAISS.from_texts(text_chunks, embedding=self.embeddings)
         if embedding_path:
@@ -219,21 +222,7 @@ class AIService:
         return vector_store
 
 
-    def __perform_similarity_search(self, query:str, vector_store:FAISS, top_k: int)->str:
-        """
-        Performs a similarity search on the provided FAISS vector store using the given query and returns the concatenated content of the top matching documents.
 
-        Args:
-            query (str): The query string to search for similar documents.
-            vector_store (FAISS): The FAISS vector store instance to search within.
-            top_k (int): The number of top similar documents to retrieve.
-
-        Returns:
-            str: The concatenated page content of the top matching documents, separated by double newlines.
-        """
-        relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
-        context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
-        return context
     
     
     def load_vector_store_from_path(self, embedding_path:str):
@@ -246,14 +235,13 @@ class AIService:
         """
         Merges multiple FAISS vector stores into a single consolidated vector store.
         
-        Args:
-            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
+        :param vector_stores: A list of FAISS vector stores to be merged.
+        :type vector_stores: list[FAISS]
             
-        Returns:
-            FAISS: A single merged FAISS vector store containing all documents from the input stores.
-            
-        Raises:
-            ValueError: If the input list is empty or contains non-FAISS objects.
+        :returns: A single merged FAISS vector store containing all documents from the input stores.
+        :rtype: list[FAISS]
+
+        :raises: ValueError: If the input list is empty or contains non-FAISS objects.
         """
         if not vector_stores:
             raise ValueError("Cannot merge empty list of vector stores")
@@ -279,17 +267,28 @@ class AIService:
         Merges multiple FAISS vector stores and saves the result to a specified path.
         
         Args:
-            vector_stores (list[FAISS]): A list of FAISS vector stores to be merged.
-            save_path (str): Path where the merged vector store will be saved.
+        :param vector_stores: A list of FAISS vector stores to be merged.
+        :type vector_stores: list[FAISS]
+        :param save_path: Path where the merged vector store will be saved.
+        :type save_path: str
             
-        Returns:
-            FAISS: The merged vector store.
+        :returns: The merged vector store.
+        :rtype: FAISS
         """
         merged_store = self.merge_vector_stores(vector_stores)
         merged_store.save_local(save_path)
         return merged_store
     
     def generate_conversation_name(self, conversation:Conversation)->str:
+        """
+        Generate a conversation based on its messages and a given prompt.
+
+        :param conversation: The conversation to be named.
+        :type conversation: Conversation
+
+        :returns: The generated name.
+        :rtype: str 
+        """
         from database.repository.document_repository import DocumentDataBase
         messages = str(conversation.get_messages())
         document_ids = conversation.document_ids
@@ -307,6 +306,24 @@ class AIService:
         response = self.generate(prompt=prompt)
         name = self.output_streaming_response(response=response, output_function=len, mode="generate")
         return name
+    
+    def __perform_similarity_search(self, query:str, vector_store:FAISS, top_k: int)->str:
+        """
+        Performs a similarity search within the given vector store to find relevant content.
+        
+        :param query: The query to search for in the vector store.
+        :type query: str
+        :param vector_store: The vector store to perform the search in.
+        :type vector_store: FAISS
+        :param top_k: Number of top results to retrieve.
+        :type top_k: int
+        
+        :returns: The concatenated content of the top matching documents.
+        :rtype: str
+        """
+        relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
+        context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
+        return context
     
 
 
