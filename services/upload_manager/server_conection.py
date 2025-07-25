@@ -1,5 +1,4 @@
 import io
-import tempfile
 
 import paramiko
 from scp import SCPClient
@@ -26,7 +25,6 @@ def ssh_connection():
     )
     return ssh
 
-#test case if the instance in mongo is deleted but not in the server it creates problems
 def upload_document(local_path: str, relative_path: str, pdf_hash: str):
     # relative path is user_id/project_id
 
@@ -41,14 +39,7 @@ def upload_document(local_path: str, relative_path: str, pdf_hash: str):
         remote_file_path = posixpath.join(remote_dir_path, hashed_filename)
 
         # Setup SSH
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
+        ssh = ssh_connection()
 
         # 1. Create remote directory
         ssh.exec_command(f'mkdir -p "{remote_dir_path}"')
@@ -79,10 +70,10 @@ def download_document(remote_file_path: str, parent_local_folder: str, document_
     Downloads a file from the remote server into a designated local subfolder,
     and renames the file to match the local_folder_name (keeping the original extension).
 
-    Args:
-        remote_file_path (str): Full path to the file on the remote server.
-        parent_local_folder (str): Parent directory where a subfolder will be created.
-        document_name (str): Name of the subfolder to be created to store the file.
+
+    :remote_file_path (str): Full path to the file on the remote server.
+    :parent_local_folder (str): Parent directory where a subfolder will be created.
+    :document_name (str): Name of the subfolder to be created to store the file.
     """
     try:
         # Get the file extension from the remote path
@@ -99,14 +90,7 @@ def download_document(remote_file_path: str, parent_local_folder: str, document_
         local_file_path = os.path.join(full_local_folder_path, renamed_file_name)
 
         # Setup SSH connection
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
+        ssh = ssh_connection()
 
         # Download the file
         with SCPClient(ssh.get_transport()) as scp:
@@ -125,24 +109,12 @@ def delete_remote_directory(file_path: str):
     """
     Deletes a directory and its contents on a remote server via SSH.
 
-    Args:
-        file_path (str): Full path to the directory on the remote server.
-
-    Returns:
-        bool: True if deletion was successful, False otherwise.
+    :param file_path: To be deleted
+    :return: True if directory was successfully deleted
     """
     try:
         # Setup SSH connection
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
-        #get
-        #remote_directory_path = os.path.dirname(file_path)
+        ssh = ssh_connection()
         remote_directory_path = file_path
         # Build the command to delete the directory recursively
         command = f"rm -rf '{remote_directory_path}'"
@@ -168,23 +140,13 @@ def delete_remote_directory_if_empty(file_path: str) -> bool:
     """
     Deletes a directory on a remote server via SSH only if it is empty.
 
-    Args:
-        file_path (str): Full path to a file inside the directory on the remote server.
-
-    Returns:
-        bool: True if the directory was empty and deleted, False otherwise.
+    :param file_path: Path to directory to be deleted.
+    :return: True if the directory was successfully deleted.
     """
+    ssh = None
     try:
         # Setup SSH connection
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
-
+        ssh = ssh_connection()
         remote_directory_path = os.path.dirname(file_path)
 
         # Check if directory is empty
@@ -214,53 +176,43 @@ def delete_remote_directory_if_empty(file_path: str) -> bool:
     except Exception as e:
         print(f"❌ SSH error: {e}")
         return False
+    finally:
+        if ssh: ssh.close()
 
 def retrieve_document_content(remote_file_path: str) -> bytes | None:
     """
     Retrieves a file from the remote server and returns its binary content.
 
-    Args:
-        remote_file_path (str): Full path to the file on the remote server.
-
-    Returns:
-        bytes | None: The file content in bytes if successful, otherwise None.
+    :param remote_file_path: path to the file on the remote server.
+    :return: Bytes of the content of the file.
     """
+    ssh = sftp = None
     try:
         # Setup SSH connection
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(
-            hostname=ssh_host,
-            port=ssh_port,
-            username=ssh_user,
-            password=ssh_password
-        )
-
-        # Open an SFTP session
+        ssh = ssh_connection()
         sftp = ssh.open_sftp()
+
         with sftp.file(remote_file_path, mode='rb') as remote_file:
             file_content = remote_file.read()
-
-        ssh.close()
 
         return file_content
 
     except Exception as e:
         print(f"❌ Error retrieving file content: {e}")
         return None
+    finally:
+        if ssh: ssh.close()
+        if sftp: sftp.close()
 
 def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     """
     Saves the provided file content to the remote server at the specified path.
 
-    Args:
-        remote_file_path (str): Full path to the file on the remote server.
-        file_content (bytes): The content to write to the file.
-
-    Returns:
-        bool: True if the operation succeeded, False otherwise.
+    :param remote_file_path: Target address to store the file content
+    :param file_content: bytes of the file content
+    :return: True if file was successfully saved.
     """
-    ssh = None
+    ssh = sftp = None
     try:
 
         # Open an SFTP session
@@ -268,8 +220,6 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
         sftp = ssh.open_sftp()
         with sftp.file(remote_file_path, mode='wb') as remote_file:
             remote_file.write(file_content)
-
-        ssh.close()
 
         print(f"✅ File successfully saved to: {remote_file_path}")
         return True
@@ -279,11 +229,19 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
         return False
     finally:
         if ssh: ssh.close()
+        if sftp: sftp.close()
 
 
 def save_embeddings(remote_faiss_path: str, index_buffer: io.BytesIO, meta_buffer: io.BytesIO) -> tuple[str, str] | None:
-    ssh = sftp = None
+    """
+    Saves FAISS index and metadata embeddings to remote SFTP server.
 
+    :param remote_faiss_path: Target remote directory path for embeddings
+    :param index_buffer: Bytes buffer containing FAISS index data
+    :param meta_buffer: Bytes buffer containing metadata
+    :return: Tuple of (remote_faiss_path, remote_pkl_path) if successful, None otherwise
+    """
+    ssh = sftp = None
     try:
         ssh = ssh_connection()
         sftp = ssh.open_sftp()
@@ -322,17 +280,7 @@ def save_embeddings(remote_faiss_path: str, index_buffer: io.BytesIO, meta_buffe
         if sftp: sftp.close()
 
 
-def download_project(remote_paths: []):  #TODO (santiago) method to download file, .bib and note
-    ssh = sftp = None
-    try:
-        ssh = ssh_connection()
-        sftp = ssh.open_sftp()
 
-
-
-    except Exception as e:
-        print(f"Error uploading the embeddings: {e}")
-        return None
 
 
 
