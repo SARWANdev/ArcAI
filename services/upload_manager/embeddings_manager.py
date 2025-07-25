@@ -5,6 +5,7 @@ import posixpath
 import tempfile
 import faiss
 from langchain_community.vectorstores import FAISS
+import platform
 
 from database.repository.document_repository import DocumentDataBase
 from services.ai_service import AIService
@@ -12,8 +13,9 @@ from services.upload_manager.server_conection import ssh_connection
 
 
 class EmbeddingsManager:
+    operating_system = platform.system() #Linux or Windows
     @staticmethod
-    def serialize_vector_store(vector_store: FAISS):
+    def serialize_vector_store(vector_store: FAISS): ##doesn't work if user on linux??
         """
         Serializes the FAISS index and metadata to in-memory byte streams.
 
@@ -51,7 +53,12 @@ class EmbeddingsManager:
             for file in ["index.faiss", "index.pkl"]:
                 remote_file = posixpath.join(remote_index_path, file)
                 print("remote_file:  ", remote_file)
+                
                 local_file = os.path.join(temp_dir, file)
+                # Example usage, replace with actual logic if needed
+                if EmbeddingsManager.operating_system == "Linux":
+                    local_file = posixpath.join(temp_dir, file)
+                
                 print("local_file:  ", local_file)
                 sftp.get(remote_file, local_file)
 
@@ -69,3 +76,4 @@ class EmbeddingsManager:
         path = DocumentDataBase.get_path( document_id )
         path = os.path.dirname(path)
         return EmbeddingsManager.load_remote_faiss_index(path)
+    

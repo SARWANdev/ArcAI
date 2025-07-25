@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
-from typing import Optional, Dict
+from typing import Dict
 from database.repository.pdf_master_repository import PdfMasterDataBase
 
 from database.utils.db_setup import es
@@ -11,9 +11,21 @@ from model.document_reader.document import Document
 
 
 class DocumentDataBase:
+    """
+    A database handler for document operations.
+    Provides CRUD, search, and metadata management
+    for documents across MongoDB and Elasticsearch.
+    Maintains sync between both databases.
+    Static methods only - no instance needed.
+    """
 
     @staticmethod
     def save(document: Document) -> str:
+        """
+        Saves a document to MongoDB and returns its ID.
+        :param document: Instance of Document class.
+        :return: The document ID.
+        """
         with mongo_connection() as db:
             result = db.documents.insert_one(document.new_document_dict())
             doc_id = result.inserted_id
@@ -21,6 +33,12 @@ class DocumentDataBase:
 
     @staticmethod
     def save_elastic(doc_id, text):
+        """
+        Indexes document in Elasticsearch with metadata and search suggestions.
+        :param doc_id: ID of document.
+        :param text: Text chunks to save
+        :return: void
+        """
         doc_id = str(doc_id)
         name = DocumentDataBase.get_name(doc_id)
         author = DocumentDataBase.get_authors(doc_id)
@@ -34,32 +52,62 @@ class DocumentDataBase:
 
     @staticmethod
     def get_path( document_id ):
-        with mongo_connection() as db:
-            pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-            return PdfMasterDataBase.get_path( pdf_master_id )
+        """
+        Returns file path for the given document ID.
+        :param document_id: ID of document.
+        :return: Path to file.
+        """
+        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
+        return PdfMasterDataBase.get_path( pdf_master_id )
 
     @staticmethod
     def get_year( document_id ):
+        """
+        Returns publication year for the given document ID.
+        :param document_id: ID of document.
+        :return: Year of publication.
+        """
         pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
         return PdfMasterDataBase.get_year( pdf_master_id )
 
     @staticmethod
     def get_authors(document_id):
+        """
+        Returns authors list for the given document ID.
+        :param document_id: ID of document.
+        :return: String of authors.
+        """
         pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_authors( pdf_master_id )
 
     @staticmethod
     def get_source( document_id ):
+        """
+        Returns source/publication for the given document ID.
+        :param document_id: ID of a document.
+        :return: String of a source.
+        """
         pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
         return PdfMasterDataBase.get_source( pdf_master_id )
 
     @staticmethod
     def get_name(document_id):
+        """
+        Returns document name for the given ID.
+        :param document_id: ID of a document.
+        :return: String of document name.
+        """
         with mongo_connection() as db:
             return db.documents.find_one({"_id": ObjectId(document_id)}, {"name": 1}).get("name")
 
     @staticmethod
     def set_pdf_master_id(document_id, pdf_master_id):
+        """
+        Links document to its PDF master record in MongoDB.
+        :param document_id: ID of a document.
+        :param pdf_master_id: ID of the PDF master record.
+        :return:
+        """
         try:
             with mongo_connection() as db:
                 db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"pdf_master_id": pdf_master_id}})
@@ -68,6 +116,11 @@ class DocumentDataBase:
 
     @staticmethod
     def get_pdf_master_id(document_id):
+        """
+        Return all documents belonging to a specific project.
+        :param document_id: ID of a document.
+        :return: ID of a documents belonging to a specific master.
+        """
         with mongo_connection() as db:
             pdf_master_id = db.documents.find_one({"_id": ObjectId(document_id)}, {"pdf_master_id": 1}).get("pdf_master_id")
             return pdf_master_id
@@ -80,11 +133,22 @@ class DocumentDataBase:
 
     @staticmethod
     def get_by_document_id(document_id) -> dict:
+        """
+        Returns complete document data for the given ID.
+        :param document_id: ID of a document.
+        :return: Dict of document data.
+        """
         with mongo_connection() as db:
             return db.documents.find_one({"_id": ObjectId(document_id)})
 
     @staticmethod
     def update_document_name(document_id, name) -> bool:
+        """
+        Updates document name in both MongoDB and Elasticsearch.
+        :param document_id: ID of a document.
+        :param name: new name to be updated.
+        :return: True if the name was updated.
+        """
         try:
             with mongo_connection() as db:
                 #Update in Mongo
@@ -101,6 +165,11 @@ class DocumentDataBase:
 
     @staticmethod
     def delete_document(document_id) -> bool:
+        """
+        Deletes document from both MongoDB and Elasticsearch.
+        :param document_id: ID of a document.
+        :return: True if deleted.
+        """
         try:
             with mongo_connection() as db:
                 #Deletion in Mongo
@@ -114,12 +183,22 @@ class DocumentDataBase:
 
     @staticmethod
     def get_note(document_id):
+        """
+        Returns note associated with the document.
+        :param document_id: ID of a document.
+        :return: String of note.
+        """
         with mongo_connection() as db:
             note = db.documents.find_one({"_id": ObjectId(document_id)}, {"note": 1}).get("note")
             return note
 
     @staticmethod
     def get_bibtex_by_document_id(document_id) -> str:
+        """
+        Returns BibTeX reference for the document.
+        :param document_id: ID of a document.
+        :return: String of BibTeX reference.
+        """
         try:
             with mongo_connection() as db:
                 return db.documents.find_one({"_id": ObjectId(document_id)})["bibtex"]
@@ -129,6 +208,12 @@ class DocumentDataBase:
 
     @staticmethod
     def search_documents(user_id, query):
+        """
+        Searches documents by name/author for given user with prefix matching.
+        :param user_id: ID of user.
+        :param query: Search query.
+        :return: List of documents.
+        """
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
             "size": 5, 
@@ -167,6 +252,12 @@ class DocumentDataBase:
 
     @staticmethod
     def search_contents(user_id, query):
+        """
+        Searches document contents with fuzzy matching for given user.
+        :param user_id: ID of user.
+        :param query: Query to search.
+        :return: List of hit documents.
+        """
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
             "size": 5,
@@ -203,5 +294,10 @@ class DocumentDataBase:
     
     @staticmethod
     def get_user_id(document_id):
+        """
+        Returns owner user ID for the given document.
+        :param document_id: ID of a document.
+        :return: ID of owner user.
+        """
         pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
         return PdfMasterDataBase.get_user_id( pdf_master_id )
