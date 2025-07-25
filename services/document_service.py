@@ -204,6 +204,16 @@ class DocumentService:
         pdf_master_id = self.pdf_master_repository.save(new_pdf_master_instance)
         return pdf_master_id
 
+    def get_first_author(self, document_id):
+        """
+        Retrieves the first author from the document
+
+        :param document_id: The ID of the document to retrieve the first author from.
+        :return: String or None
+        """
+        return self.pdf_master_repository.get_first_author(document_id)
+
+
 
     def __embeddings_storage(self, document_path, pdf_master_id):
         """
