@@ -204,7 +204,7 @@ class Conversation:
         for project_id in project_ids:
             documents = DocumentService().get_project_documents(project_id=project_id)
             for document in documents or []:
-                document_ids.append(document.document_id)
+                document_ids.append(str(document.document_id))
         return document_ids
 
     def get_vector_store(self):
