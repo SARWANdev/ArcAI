@@ -90,7 +90,7 @@ class EmbeddingsManager:
         :returns: The FAISS vector store associated with the document, or None if not found.
         :rtype: FAISS | None
         """
-        path = DocumentDataBase.get_path( document_id )
+        path = DocumentDataBase.get_path(document_id)
         path = os.path.dirname(path)
         return EmbeddingsManager.load_remote_faiss_index(path)
     

@@ -40,7 +40,9 @@ class DocumentDataBase:
     def save_elastic(doc_id, text):
         """
         Indexes document in Elasticsearch with metadata and search suggestions.
+
         :param doc_id: ID of document.
+
         :param text: Text chunks to save
         """
         doc_id = str(doc_id)
@@ -55,44 +57,52 @@ class DocumentDataBase:
         })
 
     @staticmethod
-    def get_path( document_id ):
+    def get_path(document_id):
         """
         Returns file path for the given document ID.
+
         :param document_id: ID of document.
+
         :return: Path to file.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-        return PdfMasterDataBase.get_path( pdf_master_id )
+        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        return PdfMasterDataBase.get_path(pdf_master_id)
 
     @staticmethod
-    def get_year( document_id ):
+    def get_year(document_id):
         """
         Returns publication year for the given document ID.
+
         :param document_id: ID of document.
+
         :return: Year of publication.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-        return PdfMasterDataBase.get_year( pdf_master_id )
+        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        return PdfMasterDataBase.get_year(pdf_master_id)
 
     @staticmethod
     def get_authors(document_id):
         """
         Returns authors list for the given document ID.
+
         :param document_id: ID of document.
+
         :return: String of authors.
         """
         pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_authors( pdf_master_id )
+        return PdfMasterDataBase.get_authors(pdf_master_id)
 
     @staticmethod
     def get_source(document_id):
         """
         Returns source/publication for the given document ID.
+
         :param document_id: ID of a document.
+
         :return: String of a source.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-        return PdfMasterDataBase.get_source( pdf_master_id )
+        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        return PdfMasterDataBase.get_source(pdf_master_id)
 
     @staticmethod
     def get_name(document_id):
@@ -112,6 +122,7 @@ class DocumentDataBase:
         Links document to its PDF master record in MongoDB.
 
         :param document_id: ID of a document.
+
         :param pdf_master_id: ID of the PDF master record.
         """
         try:
@@ -124,7 +135,9 @@ class DocumentDataBase:
     def get_pdf_master_id(document_id):
         """
         Return all documents belonging to a specific project.
+        
         :param document_id: ID of a document.
+
         :return: ID of a documents belonging to a specific master.
         """
         with mongo_connection() as db:
@@ -141,7 +154,9 @@ class DocumentDataBase:
     def get_by_document_id(document_id) -> dict:
         """
         Returns complete document data for the given ID.
+
         :param document_id: ID of a document.
+
         :return: Dict of document data.
         """
         with mongo_connection() as db:
@@ -151,8 +166,10 @@ class DocumentDataBase:
     def update_document_name(document_id, name) -> bool:
         """
         Updates document name in both MongoDB and Elasticsearch.
+        
         :param document_id: ID of a document.
         :param name: new name to be updated.
+
         :return: True if the name was updated.
         """
         try:
@@ -173,7 +190,9 @@ class DocumentDataBase:
     def delete_document(document_id) -> bool:
         """
         Deletes document from both MongoDB and Elasticsearch.
+
         :param document_id: ID of a document.
+
         :return: True if deleted.
         """
         try:
@@ -191,7 +210,9 @@ class DocumentDataBase:
     def get_note(document_id):
         """
         Returns note associated with the document.
+
         :param document_id: ID of a document.
+
         :return: String of note.
         """
         with mongo_connection() as db:
@@ -202,7 +223,9 @@ class DocumentDataBase:
     def get_bibtex_by_document_id(document_id) -> str:
         """
         Returns BibTeX reference for the document.
+
         :param document_id: ID of a document.
+
         :return: String of BibTeX reference.
         """
         try:
@@ -216,9 +239,14 @@ class DocumentDataBase:
     def search_documents(user_id, query):
         """
         Searches documents by name/author for given user with prefix matching.
+
         :param user_id: ID of user.
+        :type user_id: str
         :param query: Search query.
+        :type query: str
+
         :return: List of documents.
+        :rtype: list[dics]
         """
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
@@ -260,9 +288,14 @@ class DocumentDataBase:
     def search_contents(user_id, query):
         """
         Searches document contents with fuzzy matching for given user.
+
         :param user_id: ID of user.
-        :param query: Query to search.
+        :type user_id: str
+        :param query: Search query.
+        :type query: str
+
         :return: List of hit documents.
+        :rtype: list[dict]
         """
         es.indices.refresh(index="documents")
         result = es.search(index="documents", body={
@@ -302,8 +335,10 @@ class DocumentDataBase:
     def get_user_id(document_id):
         """
         Returns owner user ID for the given document.
+
         :param document_id: ID of a document.
+
         :return: ID of owner user.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-        return PdfMasterDataBase.get_user_id( pdf_master_id )
+        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        return PdfMasterDataBase.get_user_id(pdf_master_id)

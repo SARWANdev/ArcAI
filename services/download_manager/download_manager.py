@@ -43,12 +43,12 @@ def get_document_bibtex(document_id):
 
 
 def download_file(document_id):
-    pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-    file_hash = PdfMasterDataBase.get_pdf_hash( pdf_master_id )
+    pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+    file_hash = PdfMasterDataBase.get_pdf_hash(pdf_master_id)
     file_name = str(file_hash) + ".pdf"
-    remote_path = DocumentDataBase.get_path( document_id )
-    note_content = get_document_note( document_id )
-    bib_content = get_document_bibtex( document_id )
+    remote_path = DocumentDataBase.get_path(document_id)
+    note_content = get_document_note(document_id)
+    bib_content = get_document_bibtex(document_id)
 
     ssh = ssh_connection()
     sftp = ssh.open_sftp()
