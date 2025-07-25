@@ -7,7 +7,7 @@ class Document:
                  tag_name: Optional[str] = None, tag_color: Optional[str] = None, read: Optional[bool] = None,
                  favorite: Optional[bool] = None, created_at = None, updated_at = None, document_id: Optional[str] = None):
         self.document_id = document_id
-        self.name = name #self.__name_assigner() crate a method that assign a better name according to the pattern Last name from the author,
+        self.name = name 
         self.project_id = project_id
         self.pdf_master_id = pdf_master_id
         self.note = note
@@ -17,8 +17,6 @@ class Document:
         self.favorite = favorite
         self.created_at = created_at
         self.updated_at = updated_at
-
-
 
     def new_document_dict(self):
         document_dic = {

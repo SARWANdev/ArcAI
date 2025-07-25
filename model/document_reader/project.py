@@ -63,6 +63,7 @@ class Project():
 
         :param data: Dictionary from MongoDB representing a project.
         :type data: dict
+        
         :return: Project instance
         :rtype: Project
         """

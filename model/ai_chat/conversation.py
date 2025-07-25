@@ -1,4 +1,3 @@
-from langchain_community.vectorstores import FAISS
 from typing import Dict, Any
 
 
@@ -109,6 +108,7 @@ class Conversation:
 
         :param data: Dictionary containing conversation data.
         :type data: dict
+
         :return: Conversation object.
         :rtype: Conversation
         """
@@ -143,6 +143,7 @@ class Conversation:
         :type message: str
         :param context: The context to be included for the AI.
         :type context: str
+
         :return: Formatted message string for the AI.
         :rtype: str
         """
@@ -170,6 +171,7 @@ class Conversation:
 
         :param context: The context to be included for the AI.
         :type context: str
+
         :return: List of formatted messages including the formatted last user message.
         :rtype: list[dict]
         """
@@ -196,6 +198,7 @@ class Conversation:
 
         :param project_ids: List of project IDs.
         :type project_ids: list[str]
+
         :return: List of document IDs.
         :rtype: list[str]
         """
@@ -222,18 +225,11 @@ class Conversation:
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
         return AIService().merge_vector_stores(document_embeddings)
 
-    def __get_unique_document_ids(self, document_ids, project_ids):
-        """
-        get all unique ids from doc and proj ids
-        :return: unique doc_ids
-        :rtype: List
-        """
-        all_ids = document_ids + self.get_document_ids_from_project_ids(project_ids=project_ids)
-        return list(set(all_ids))  # Convert to set to remove duplicates, then back to list
-
     def get_document_titles(self):
+        """
+        whats this?
+        """
         from services.document_service import DocumentService
-        from model.document_reader.document import Document
         document_titles = []
         service = DocumentService()
         if self.document_ids:
@@ -241,3 +237,13 @@ class Conversation:
                 doc = service.get_document(document_id=doc_id)
                 document_titles.append(doc.name) if doc else None
         return str(document_titles)
+    
+    def __get_unique_document_ids(self, document_ids, project_ids):
+        """
+        Gets all unique ids from document and project ids.
+
+        :return: unique doc_ids
+        :rtype: List[]
+        """
+        all_ids = document_ids + self.get_document_ids_from_project_ids(project_ids=project_ids)
+        return list(set(all_ids))  # Convert to set to remove duplicates, then back to list
