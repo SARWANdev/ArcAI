@@ -1,9 +1,7 @@
 import io
 import os
-import pickle
 import posixpath
 import tempfile
-import faiss
 from langchain_community.vectorstores import FAISS
 import platform
 
@@ -19,8 +17,11 @@ class EmbeddingsManager:
         """
         Serializes the FAISS index and metadata to in-memory byte streams.
 
-        Returns:
-            Tuple[BytesIO, BytesIO]: (faiss_index_buffer, metadata_buffer)
+        :param vector_store: The FAISS vector store to serialize.
+        :type vector_store: FAISS
+        
+        :returns: A tuple containing two in-memory byte buffers: (faiss_index_buffer, metadata_buffer).
+        :rtype: tuple[io.BytesIO, io.BytesIO]
         """
         # --- Serialize FAISS index to temp file ---
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -42,7 +43,15 @@ class EmbeddingsManager:
 
     @staticmethod
     def load_remote_faiss_index(remote_index_path: str) -> FAISS | None: #ACHTUNG: this is the path of the actual document
+        """
+        Loads a FAISS index from a remote server by downloading the index.faiss and index.pkl files.
 
+        :param remote_index_path: The remote directory path containing the index.faiss and index.pkl files.
+        :type remote_index_path: str
+        
+        :returns: A FAISS vector store loaded from the downloaded files, or None if the process fails.
+        :rtype: FAISS | None
+        """
         # Step 1: Create a temporary directory
         with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -72,6 +81,15 @@ class EmbeddingsManager:
 
     @staticmethod
     def get_embeddings(document_id):
+        """
+        Retrieves the FAISS embeddings for a document from the database.
+
+        :param document_id: The ID of the document to retrieve embeddings for.
+        :type document_id: str
+        
+        :returns: The FAISS vector store associated with the document, or None if not found.
+        :rtype: FAISS | None
+        """
         path = DocumentDataBase.get_path( document_id )
         path = os.path.dirname(path)
         return EmbeddingsManager.load_remote_faiss_index(path)

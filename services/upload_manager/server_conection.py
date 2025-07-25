@@ -15,6 +15,12 @@ ssh_user = os.getenv("SSH_USER")
 ssh_password = os.getenv("SSH_PASSWORD")
 
 def ssh_connection():
+    """
+    Establishes an SSH connection to the remote server.
+
+    :returns: An SSH client connected to the server.
+    :rtype: paramiko.SSHClient
+    """
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(
@@ -27,6 +33,19 @@ def ssh_connection():
 
 def upload_document(local_path: str, relative_path: str, pdf_hash: str):
     # relative path is user_id/project_id
+    """
+    Uploads a document to the remote server. It checks if the file already exists before uploading.
+    
+    :param local_path: The local path to the document to upload.
+    :type local_path: str
+    :param relative_path: The relative path on the server where the file will be stored.
+    :type relative_path: str
+    :param pdf_hash: The hash of the PDF, used to create the unique filename.
+    :type pdf_hash: str
+    
+    :returns: The remote file path if upload is successful, otherwise None.
+    :rtype: str | None
+    """
 
     try:
         if not os.path.exists(local_path):
@@ -68,12 +87,17 @@ def upload_document(local_path: str, relative_path: str, pdf_hash: str):
 def download_document(remote_file_path: str, parent_local_folder: str, document_name: str):
     """
     Downloads a file from the remote server into a designated local subfolder,
-    and renames the file to match the local_folder_name (keeping the original extension).
+    and renames it to match the local_folder_name (keeping the original extension).
 
+    :param remote_file_path: The full path to the file on the remote server.
+    :type remote_file_path: str
+    :param parent_local_folder: The local parent folder to store the downloaded file.
+    :type parent_local_folder: str
+    :param document_name: The name of the folder where the document will be saved.
+    :type document_name: str
 
-    :remote_file_path (str): Full path to the file on the remote server.
-    :parent_local_folder (str): Parent directory where a subfolder will be created.
-    :document_name (str): Name of the subfolder to be created to store the file.
+    :returns: The local file path if download is successful, otherwise None.
+    :rtype: str | None
     """
     try:
         # Get the file extension from the remote path
@@ -107,10 +131,13 @@ def download_document(remote_file_path: str, parent_local_folder: str, document_
 
 def delete_remote_directory(file_path: str):
     """
-    Deletes a directory and its contents on a remote server via SSH.
+    Deletes a directory and its contents on the remote server via SSH.
 
-    :param file_path: To be deleted
-    :return: True if directory was successfully deleted
+    :param file_path: Path of the directory to delete.
+    :type file_path: str
+
+    :returns: True if the directory was successfully deleted, otherwise False.
+    :rtype: bool
     """
     try:
         # Setup SSH connection
@@ -138,10 +165,13 @@ def delete_remote_directory(file_path: str):
 
 def delete_remote_directory_if_empty(file_path: str) -> bool:
     """
-    Deletes a directory on a remote server via SSH only if it is empty.
+    Deletes a directory on the remote server only if it is empty.
 
     :param file_path: Path to directory to be deleted.
-    :return: True if the directory was successfully deleted.
+    :type file_path: str
+
+    :returns: True if the directory was successfully deleted, otherwise False.
+    :rtype: bool
     """
     ssh = None
     try:
@@ -183,8 +213,11 @@ def retrieve_document_content(remote_file_path: str) -> bytes | None:
     """
     Retrieves a file from the remote server and returns its binary content.
 
-    :param remote_file_path: path to the file on the remote server.
-    :return: Bytes of the content of the file.
+    :param remote_file_path: Path to the file on the remote server.
+    :type remote_file_path: str
+
+    :returns: The binary content of the file if successful, otherwise None.
+    :rtype: bytes | None
     """
     ssh = sftp = None
     try:
@@ -208,9 +241,12 @@ def save_document_content(remote_file_path: str, file_content: bytes) -> bool:
     """
     Saves the provided file content to the remote server at the specified path.
 
-    :param remote_file_path: Target address to store the file content
-    :param file_content: bytes of the file content
-    :return: True if file was successfully saved.
+    :param remote_file_path: The target address to store the file content.
+    :type remote_file_path: str
+    :param file_content: The bytes of the file content.
+    :type file_content: bytes
+    :returns: True if the file was successfully saved, otherwise False.
+    :rtype: bool
     """
     ssh = sftp = None
     try:
@@ -236,10 +272,15 @@ def save_embeddings(remote_faiss_path: str, index_buffer: io.BytesIO, meta_buffe
     """
     Saves FAISS index and metadata embeddings to remote SFTP server.
 
-    :param remote_faiss_path: Target remote directory path for embeddings
-    :param index_buffer: Bytes buffer containing FAISS index data
-    :param meta_buffer: Bytes buffer containing metadata
-    :return: Tuple of (remote_faiss_path, remote_pkl_path) if successful, None otherwise
+    :param remote_faiss_path: Target remote directory path for embeddings.
+    :type remote_faiss_path: str
+    :param index_buffer: Bytes buffer containing FAISS index data.
+    :type index_buffer: io.BytesIO
+    :param meta_buffer: Bytes buffer containing metadata.
+    :type meta_buffer: io.BytesIO
+    
+    :returns: Tuple containing the paths to the saved FAISS index and metadata, or None if failed.
+    :rtype: tuple[str, str] | None
     """
     ssh = sftp = None
     try:
