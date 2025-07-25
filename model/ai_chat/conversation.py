@@ -201,10 +201,11 @@ class Conversation:
         """
         from services.document_service import DocumentService
         document_ids = []
-        for project_id in project_ids:
-            documents = DocumentService().get_project_documents(project_id=project_id)
-            for document in documents or []:
-                document_ids.append(str(document.document_id))
+        if project_ids:
+            for project_id in project_ids:
+                documents = DocumentService().get_project_documents(project_id=project_id)
+                for document in documents or []:
+                    document_ids.append(str(document.document_id))
         return document_ids
 
     def get_vector_store(self):
@@ -235,7 +236,8 @@ class Conversation:
         from model.document_reader.document import Document
         document_titles = []
         service = DocumentService()
-        for doc_id in self.document_ids:
-            doc = service.get_document(document_id=doc_id)
-            document_titles.append(doc.name) if doc else None
+        if self.document_ids:
+            for doc_id in self.document_ids:
+                doc = service.get_document(document_id=doc_id)
+                document_titles.append(doc.name) if doc else None
         return str(document_titles)
