@@ -12,7 +12,19 @@ from services.upload_manager.server_conection import retrieve_document_content, 
 
 
 class DocumentController:
+    """
+    Controller class for handling HTTP requests related to document operations.
+
+    Provides methods for uploading, downloading, deleting, and updating documents, 
+    as well as handling document metadata like tags, favorites, and notes.
+    """
     def __init__(self, app: Flask):
+        """
+        Initializes the DocumentController with the given Flask app and sets up routes.
+
+        :param app: The Flask app to register the document routes.
+        :type app: Flask
+        """
         self.document_service = DocumentService()
         self.document = Blueprint('document', __name__)
         self.notebook_service = NotebookService()
@@ -21,6 +33,12 @@ class DocumentController:
         self.register_document_routes(app)
 
     def add_document_tag(self):
+        """
+        Adds a tag to a document.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -47,6 +65,12 @@ class DocumentController:
             }), 500
 
     def remove_document_tag(self):
+        """
+        Removes a tag from a document.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             # Get parameters from query string
             data = request.get_json()
@@ -72,6 +96,12 @@ class DocumentController:
             }), 500
 
     def upload_document(self):
+        """
+        Uploads a document to the server.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             # Validate file part
             if "file" not in request.files:
@@ -100,6 +130,12 @@ class DocumentController:
             }), 500
 
     def get_document(self):
+        """
+        Uploads a document to the server.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             document_id = request.args.get("document_id")
 
@@ -125,6 +161,12 @@ class DocumentController:
             }), 500
 
     def delete_document(self):
+        """
+        Deletes a document from the server.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             # Get parameters from query string
             data = request.get_json()
@@ -150,6 +192,12 @@ class DocumentController:
             }), 500
 
     def save_document(self):
+        """
+        Deletes a document from the server.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             uploaded_file = request.files['file']
             file_bytes = uploaded_file.read()
@@ -161,6 +209,12 @@ class DocumentController:
             return jsonify({"status": "error", "message": str(e)}), 500
 
     def make_document_favourite(self):
+        """
+        Marks a document as favorite.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -184,6 +238,12 @@ class DocumentController:
             }), 500
 
     def delete_favourite(self):
+        """
+        Removes a document from the favorites.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             # Get parameters from query string
             data = request.get_json()
@@ -209,6 +269,12 @@ class DocumentController:
             }), 500
 
     def mark_document_read(self):
+        """
+        Marks a document as read.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -233,6 +299,12 @@ class DocumentController:
             }), 500
 
     def delete_document_read(self):
+        """
+        Marks a document as unread.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -257,6 +329,12 @@ class DocumentController:
             }), 500
 
     def get_document_note(self):
+        """
+        Retrieves the note for a document.
+
+        :returns: JSON response with the note content.
+        :rtype: Response
+        """
         try:
             user_id = request.args.get("user_id")
             document_id = request.args.get("document_id")
@@ -278,6 +356,12 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def save_document_note(self):
+        """
+        Saves the note for a document.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -293,6 +377,12 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def duplicate_document(self):
+        """
+        Duplicates a document to a new project.
+
+        :returns: JSON response with success or error status.
+        :rtype: Response
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -308,6 +398,12 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def download_document(self):
+        """
+        Downloads a document as a ZIP file.
+
+        :returns: JSON response with the ZIP file or error status.
+        :rtype: Response
+        """
         try:
             # Extract query parameters
             user_id = request.args.get("user_id")
@@ -338,6 +434,11 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def move_document(self):
+        """
+        Moves a document to another project.
+
+        :returns: JSON response to confirm a documents move
+        """
         try:
             data = request.get_json()
             user_id = data.get("user_id")
@@ -360,6 +461,12 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def get_document_bibtex(self):
+        """
+        Gets a documents BibTex.
+
+        :returns: Response with documents BibTex.
+        :rtype: Response
+        """
         try:
             user_id = request.args.get("user_id")
             document_id = request.args.get("document_id")
@@ -384,6 +491,11 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def set_document_bibtex(self):
+        """
+        Sets a documets BibTex.
+
+        :response: JSON message with actions response. 
+        """
         try:
             data = request.json  # get JSON body
             user_id = data.get("userid")
@@ -407,6 +519,11 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def get_document_bibtex_string(self):
+        """
+        Gets a documents BibTex as str.
+
+        :response: JSON message with actions response.
+        """
         try:
             user_id = request.args.get("userid")  # Get from query string
             document_id = request.args.get("document_id")
@@ -427,6 +544,11 @@ class DocumentController:
             return jsonify({"error": "Internal server error"}), 500
 
     def register_document_routes(self, app):
+        """
+        Registers all project-related API routes to the given Flask app.
+
+        :param app: Flask application instance.
+        """
         app.add_url_rule("/document/upload", view_func=self.upload_document, methods=["POST"])
         app.add_url_rule("/document/delete", view_func=self.delete_document, methods=["DELETE"])
         app.add_url_rule("/document/get-document", view_func=self.get_document)
