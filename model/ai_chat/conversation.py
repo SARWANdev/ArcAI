@@ -34,6 +34,7 @@ class Conversation:
         self.user_id = user_id
         self.document_id = document_id
         self.document_ids = self.__get_unique_document_ids(document_ids, project_ids)
+        print("Document ids = ", str(self.document_ids))
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
