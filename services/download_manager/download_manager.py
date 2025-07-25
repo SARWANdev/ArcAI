@@ -8,8 +8,16 @@ from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 
-#Chimnay method for front end
 def download_project(project_id):
+    """
+    Downloads all documents in a project as a ZIP file containing the PDFs, BibTeX files, and notes.
+
+    :param project_id: The ID of the project to download documents for.
+    :
+
+    :returns: The ZIP file containing the project documents, as in-memory bytes.
+    :rtype: bytes
+    """
     document_ids = DocumentService().get_document_ids_from_project_id(project_id=project_id)
     doc_ids_str = []
     for doc_id in document_ids:
@@ -17,8 +25,15 @@ def download_project(project_id):
     zip_bytes = download_multiple_documents(doc_ids_str, project_id)
     return zip_bytes
 
-#Chimnay method for front-end
 def download_project_bibtex(project_id):
+    """
+    Downloads all BibTeX entries for documents in a project as a ZIP file.
+
+    :param project_id: The ID of the project to download BibTeX files for.
+
+    :returns: The ZIP file containing the BibTeX files, as in-memory bytes.
+    :rtype: bytes
+    """
     document_ids = DocumentService().get_document_ids_from_project_id(project_id=project_id)
     doc_ids_str = []
     for doc_id in document_ids:
@@ -27,15 +42,42 @@ def download_project_bibtex(project_id):
     return download_multiple_bibtex(doc_ids_str)
 
 def get_project_note(project_id):
+    """
+    Retrieves the project note for the specified project.
+
+    :param project_id: The ID of the project to get the note for.
+    :type project_id: str
+
+    :returns: The project note encoded in UTF-8.
+    :rtype: bytes
+    """
     project_note = ProjectDataBase.get_note(project_id).encode("utf8")
     return project_note
 
 def get_document_note(document_id):
+    """
+    Retrieves the note for the specified document.
+
+    :param document_id: The ID of the document to get the note for.
+    :type document_id: str
+
+    :returns: The document note encoded in UTF-8.
+    :rtype: bytes
+    """
     note = DocumentDataBase.get_note(document_id)
     note = note.encode("utf8")
     return note
 
 def get_document_bibtex(document_id):
+    """
+    Retrieves the BibTeX entry for the specified document.
+
+    :param document_id: The ID of the document to get the BibTeX entry for.
+    :type document_id: str
+
+    :returns: The BibTeX entry encoded in UTF-8.
+    :rtype: bytes
+    """
     pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
     bibtex = PdfMasterDataBase.get_bibtex(pdf_master_id)
     bibtex = bibtex.encode("utf8")
@@ -121,20 +163,4 @@ def download_multiple_documents(document_ids, project_id):
     sftp.close()
     ssh.close()
     return zip_bytes
-
-#download_file =  download_file("687f88042fe107c0c717f9ab")
-#with open('chimney.zip', 'wb') as f:
-#    print("hola")
-#    f.write(download_file)
-
-#list_of_docs = ["687ced1834f028bf0cce3bd8", "687d0f1662a4b5b2b039972a", "687d0f4f5be32d07a2b5960c"]
-#list_of_docs = ["687f88042fe107c0c717f9ab"]
-#multiple_docs = download_multiple_documents(list_of_docs)
-# Optionally, save to disk for testing
-#with open('double.zip', 'wb') as f:
-#    print("hola")
-#    f.write(multiple_docs)
-
-
-
 
