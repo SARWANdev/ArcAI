@@ -6,7 +6,7 @@ from model.document_reader.pdf_master import PdfMaster
 from services.bibtex_service import BibTeX_Service
 
 
-class PdfMasterDataBase:
+class PdfMasterRepository:
     """
     Repository class for managing PDF master entries in MongoDB.
 

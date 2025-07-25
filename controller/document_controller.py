@@ -5,7 +5,7 @@ from services.notebook_service import NotebookService
 from database.repository.document_repository import DocumentRepository
 from services.ai_service import AIService
 from flask import Blueprint,Flask, jsonify, request, send_file, Response
-from database.repository.pdf_master_repository import PdfMasterDataBase
+from database.repository.pdf_master_repository import PdfMasterRepository
 from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
@@ -394,7 +394,7 @@ class DocumentController:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
 
             pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-            PdfMasterDataBase.set_bibtex(pdf_master_id, bibtex)
+            PdfMasterRepository.set_bibtex(pdf_master_id, bibtex)
 
             if not bibtex:
                 return jsonify({"error": "BibTeX not found"}), 404
@@ -415,7 +415,7 @@ class DocumentController:
                 return jsonify({"error": "Missing user_id or document_id"}), 400
 
             pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-            bibtex_string = PdfMasterDataBase.get_bibtex(pdf_master_id)
+            bibtex_string = PdfMasterRepository.get_bibtex(pdf_master_id)
 
 
             return jsonify({"message": "Bibtex retrieved successfully",

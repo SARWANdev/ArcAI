@@ -1,7 +1,7 @@
 from bson import ObjectId
 
 from database.repository.document_repository import DocumentRepository
-from database.repository.pdf_master_repository import PdfMasterDataBase
+from database.repository.pdf_master_repository import PdfMasterRepository
 from database.utils.mongo_connector import mongo_connection
 
 class DocumentPropertiesRepository:
@@ -192,5 +192,5 @@ class DocumentPropertiesRepository:
         :rtype: bool
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_first_author(pdf_master_id)
+        return PdfMasterRepository.get_first_author(pdf_master_id)
 

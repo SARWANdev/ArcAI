@@ -2,7 +2,7 @@ import os
 import tempfile
 from database.repository.document_repository import DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
-from database.repository.pdf_master_repository import PdfMasterDataBase
+from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import Project as ProjectRepository
@@ -47,7 +47,7 @@ class DocumentService:
         self.document_repository = DocumentRepository 
         self.document_properties_repo = DocumentPropertiesRepository
         self.conversation_repository = ConversationRepository
-        self.pdf_master_repository = PdfMasterDataBase
+        self.pdf_master_repository = PdfMasterRepository
         self.notebook_service = NotebookService()
         self.ai_service = AIService()
 

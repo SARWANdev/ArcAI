@@ -3,7 +3,7 @@ from bson import ObjectId
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import Dict
-from database.repository.pdf_master_repository import PdfMasterDataBase
+from database.repository.pdf_master_repository import PdfMasterRepository
 
 from database.utils.db_setup import es
 
@@ -66,7 +66,7 @@ class DocumentRepository:
         :return: Path to file.
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_path(pdf_master_id)
+        return PdfMasterRepository.get_path(pdf_master_id)
 
     @staticmethod
     def get_year(document_id):
@@ -78,7 +78,7 @@ class DocumentRepository:
         :return: Year of publication.
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_year(pdf_master_id)
+        return PdfMasterRepository.get_year(pdf_master_id)
 
     @staticmethod
     def get_authors(document_id):
@@ -90,7 +90,7 @@ class DocumentRepository:
         :return: String of authors.
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_authors(pdf_master_id)
+        return PdfMasterRepository.get_authors(pdf_master_id)
 
     @staticmethod
     def get_source(document_id):
@@ -102,7 +102,7 @@ class DocumentRepository:
         :return: String of a source.
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_source(pdf_master_id)
+        return PdfMasterRepository.get_source(pdf_master_id)
 
     @staticmethod
     def get_name(document_id):
@@ -341,4 +341,4 @@ class DocumentRepository:
         :return: ID of owner user.
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-        return PdfMasterDataBase.get_user_id(pdf_master_id)
+        return PdfMasterRepository.get_user_id(pdf_master_id)
