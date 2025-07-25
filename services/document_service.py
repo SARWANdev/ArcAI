@@ -75,7 +75,7 @@ class DocumentService:
         :param document_id: The ID of the document to retrieve
         :return: DocumentModel instance or None if not found
         """
-        # Gets a document from the database
+        # Retrieve document data from the database
         document_data = self.document_repository.get_by_document_id(document_id)
         if not document_data:
             return None
@@ -133,7 +133,7 @@ class DocumentService:
 
     def add_tag(self, document_id, tag_name, tag_color):
         """
-        this method adds a tag to the document
+        Adds a tag to the specified document.
 
         :param document_id: Unique identifier of the target document
         :param tag_name: Name of the tag to be added
@@ -182,7 +182,6 @@ class DocumentService:
 
     def __create_pdf_master(self, document_path, user_id, project_id, pdf_hash, original_name) -> str:
         """
-
         Creates and stores a master PDF record in the system with metadata extraction.
 
         :param document_path: Remote filesystem path where the PDF is temporarily stored
@@ -206,7 +205,7 @@ class DocumentService:
 
     def get_first_author(self, document_id):
         """
-        Retrieves the first author from the document
+        Retrieves the first author from the document.
 
         :param document_id: The ID of the document to retrieve the first author from.
         :return: String or None
@@ -217,15 +216,14 @@ class DocumentService:
 
     def __embeddings_storage(self, document_path, pdf_master_id):
         """
-        This method get the text chunks , generate the embeddings , serialized the embeddings and
-        and update th path from the embedding.
+        Generate and store embeddings for the document.
 
         :param document_path: Path to the document file to process
         :param pdf_master_id: ID of the associated PDF master record
         :return:
         """
         text_chunks = self.__get_text_chunks(document=document_path)
-        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)  #
+        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)
         serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
         path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
         paths = save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
@@ -237,7 +235,7 @@ class DocumentService:
     def __upload_document(self, document_path: str, user_id: str, project_id: str, original_name: str):
         """
         Handles document deduplication via hash checks, creates necessary database records,
-        generates embeddings, and indexes the text content. Processing includes:
+        generates embeddings, and indexes the text content.
 
         :param document_path: Local filesystem path to the PDF document
         :param user_id: Owner of the document
@@ -319,34 +317,35 @@ class DocumentService:
 
     def delete_document(self, document_id):
         """
-        this method deletes the document from the database and the server
+        Delete the document from the database and server. Also cleans up associated data if needed.
 
         :param document_id: ID of the document to delete
         :return: True if the document was deleted, False otherwise
         """
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-        document_data = self.document_repository.delete_document( document_id )
+        document_data = self.document_repository.delete_document(document_id)
 
         if not document_data:
-            print("Document with id {} was not found".format( document_id) )
+            print(f"Document with id {document_id} was not found")
             return False
 
-        remote_path = self.pdf_master_repository.get_path( pdf_master_id )
-        self.document_repository.delete_document( document_id )
-        self.pdf_master_repository.decrement_ref_count( pdf_master_id )
+        remote_path = self.pdf_master_repository.get_path(pdf_master_id)
+        self.document_repository.delete_document(document_id)
+        self.pdf_master_repository.decrement_ref_count(pdf_master_id)
         self.conversation_repository.delete_conversation_for_document(str(document_id))
-        ref_count = self.pdf_master_repository.get_ref_count( pdf_master_id )
+        ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
 
         if ref_count == 0:
             remote_dir_path = os.path.dirname(remote_path)
-            delete_remote_directory( remote_dir_path )
-            self.pdf_master_repository.delete_pdf_master( pdf_master_id )
+            delete_remote_directory(remote_dir_path)
+            self.pdf_master_repository.delete_pdf_master(pdf_master_id)
 
         return True
 
     def mark_as_read(self, document_id):
         """
-        this method marks the document as read
+        Marks the document as read.
+
         :param document_id: ID of the document to mark as read
         :return: True if the document was marked as read, else False
         """
@@ -354,7 +353,8 @@ class DocumentService:
 
     def mark_as_unread(self, document_id):
         """
-        this method marks the document as unread
+        Marks the document as unread.
+
         :param document_id: ID of the document to mark as unread
         :return: True if the document was marked as unread, else False
         """
@@ -362,7 +362,8 @@ class DocumentService:
     
     def add_to_favorites(self, document_id):
         """
-        this method adds the document to favorite
+        Adds the document to favorites.
+
         :param document_id: ID of the document to add
         :return: True if the document was added, else False
         """
@@ -370,7 +371,8 @@ class DocumentService:
 
     def remove_from_favorites(self, document_id):
         """
-        this method removes the document from favorite
+        Removes the document from favorites.
+
         :param document_id: ID of the document to remove
         :return: True if the document was removed, else False
         """
@@ -381,7 +383,7 @@ class DocumentService:
 
     def remove_tag(self, document_id):
         """
-        Removes tag association from a document and cleans up unused tags.
+        Remove tag association from a document and clean up unused tags.
 
         :param document_id: ID of the document to remove tag from
         :return: bool - True if tag was successfully removed, False otherwise
@@ -489,7 +491,6 @@ class DocumentService:
         Retrieves documents filtered by project and optional criteria (read/favorite/tag),
         then sorts them by specified field (title/author/year/source/created_at) in given order.
 
-
         project_id: ID of project to filter documents
         sort_field: Field to sort by (title/author/year/source/created_at)
         order: Sort order ("asc" or "desc")
@@ -527,18 +528,19 @@ class DocumentService:
 
     def duplicate_document(self, document_id, project_id):
         """
-        Duplicates a document by creating a new copy in the specified project.
+        Duplicate a document by creating a new copy in the specified project.
+
         :param project_id: ID of the document to duplicate
         :param document_id: ID of the target project for the duplicated document
         :return: None
         """
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-        pdf_name = self.document_repository.get_name( document_id )
-        self.__create_document(document_name = pdf_name, project_id = project_id, pdf_master_id = pdf_master_id)
+        pdf_name = self.document_repository.get_name(document_id)
+        self.__create_document(document_name=pdf_name, project_id=project_id, pdf_master_id=pdf_master_id)
 
     def move_document(self, document_id, new_project_id):
         """
-        this method moves a document from one project to another
+        Moves a document from one project to another
 
         :param document_id: The id of the document to move
         :param new_project_id: the id of the new project
