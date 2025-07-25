@@ -3,19 +3,58 @@ from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
 
 class TagRegistryRepository:
+    """
+    Repository class for interacting with the 'tag_registry' collection in MongoDB.
+    This class provides methods to ensure indexes, retrieve, and create or verify tags.
+    """
 
     @staticmethod
     def ensure_indexes():
+        """
+        Ensures that indexes are created for the 'tag_registry' collection.
+
+        This method creates a unique index on the 'name' field to avoid duplicate tag names.
+
+        :returns: None
+        :rtype: None
+        """
         with mongo_connection() as db:
             db.tag_registry.create_index([("name", ASCENDING)], unique=True)
 
     @staticmethod
     def get_tag(tag_name: str):
+        """
+        Retrieves a tag from the 'tag_registry' collection by its name.
+
+        :param tag_name: The name of the tag to retrieve.
+        :type tag_name: str
+
+        :returns: The tag document if found, otherwise None.
+        :rtype: dict | None
+        """
         with mongo_connection() as db:
             return db.tag_registry.find_one({"name": tag_name})
 
     @staticmethod
     def create_or_verify_tag(tag_name: str, tag_color: str):
+        """
+        Creates a new tag or verifies an existing one in the 'tag_registry' collection.
+
+        This method checks if the tag already exists in the collection:
+        - If the tag exists with the same color, it returns the existing tag.
+        - If the tag exists with a different color, it raises a `ValueError`.
+        - If the tag does not exist, it creates the tag and returns the newly created tag.
+
+        :param tag_name: The name of the tag to create or verify.
+        :type tag_name: str
+        :param tag_color: The color associated with the tag.
+        :type tag_color: str
+
+        :returns: The tag document if it already exists or has been created.
+        :rtype: dict
+        
+        :raises ValueError: If the tag already exists with a different color.
+        """
         with mongo_connection() as db:
             existing = db.tag_registry.find_one({"name": tag_name})
             if existing:

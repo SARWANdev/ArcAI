@@ -12,7 +12,9 @@ class DocumentPropertiesRepository:
         Marks a document as favorite in the database.
 
         :param document_id: The ID of the document to mark as favorite.
+
         :return: True if the update was successful, False otherwise.
+        :rtype: bool
         """
         try:
             with mongo_connection() as db:
@@ -27,8 +29,11 @@ class DocumentPropertiesRepository:
     def mark_as_not_favorite(document_id) -> bool:
         """
         Marks a document as not favorite in the database.
+
         :param document_id:  The ID of the document to mark as not favorite.
-        :return: True if the update was successful, False otherwise.
+
+        :return: True if the update was successful, False otherwise.        
+        :rtype: bool
         """
         try:
             with mongo_connection() as db:
@@ -42,7 +47,9 @@ class DocumentPropertiesRepository:
     def mark_as_read(document_id):
         """
         Marks a document as read in the database.
+
         :param document_id: The ID of the document to mark as read.
+
         :return: The ID of the document was marked as read.
         """
         try:
@@ -59,7 +66,10 @@ class DocumentPropertiesRepository:
         Marks a document as not read in the database.
 
         :param document_id: The ID of the document to mark as not read.
+
         :return: True if the update was successful, False otherwise.
+        :rtype: bool
+
         """
         try:
             with mongo_connection() as db:
