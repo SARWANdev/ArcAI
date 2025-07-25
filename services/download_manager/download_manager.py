@@ -13,7 +13,7 @@ def download_project(project_id):
     Downloads all documents in a project as a ZIP file containing the PDFs, BibTeX files, and notes.
 
     :param project_id: The ID of the project to download documents for.
-    :
+    :type project_id: str
 
     :returns: The ZIP file containing the project documents, as in-memory bytes.
     :rtype: bytes
@@ -30,6 +30,7 @@ def download_project_bibtex(project_id):
     Downloads all BibTeX entries for documents in a project as a ZIP file.
 
     :param project_id: The ID of the project to download BibTeX files for.
+    :type project_id: str
 
     :returns: The ZIP file containing the BibTeX files, as in-memory bytes.
     :rtype: bytes
@@ -85,6 +86,15 @@ def get_document_bibtex(document_id):
 
 
 def download_file(document_id):
+    """
+    Downloads a single document as a ZIP file containing the PDF, BibTeX, and note files.
+
+    :param document_id: The ID of the document to download.
+    :type document_id: str
+
+    :returns: The ZIP file containing the document, as in-memory bytes.
+    :rtype: bytes
+    """
     pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
     file_hash = PdfMasterDataBase.get_pdf_hash(pdf_master_id)
     file_name = str(file_hash) + ".pdf"
@@ -113,6 +123,15 @@ def download_file(document_id):
 
 
 def download_multiple_bibtex(doc_ids_str):
+    """
+    Downloads the BibTeX entries for multiple documents as a ZIP file.
+
+    :param doc_ids_str: A list of document IDs to download the BibTeX entries for.
+    :type doc_ids_str: list[str]
+
+    :returns: The ZIP file containing the BibTeX entries, as in-memory bytes.
+    :rtype: bytes
+    """
     ssh = ssh_connection()
     sftp = ssh.open_sftp()
     zip_buffer = io.BytesIO()
@@ -133,8 +152,16 @@ def download_multiple_bibtex(doc_ids_str):
 
 def download_multiple_documents(document_ids, project_id):
     """
-    Downloads multiple documents, each in their own folder inside a ZIP.
+    Downloads multiple documents, each in their own folder inside a ZIP file.
     Returns the ZIP file as in-memory bytes.
+
+    :param document_ids: A list of document IDs to download.
+    :type document_ids: list[str]
+    :param project_id: The project ID to associate with the documents.
+    :type project_id: str
+
+    :returns: The ZIP file containing the documents, as in-memory bytes.
+    :rtype: bytes
     """
     ssh = ssh_connection()
     sftp = ssh.open_sftp()

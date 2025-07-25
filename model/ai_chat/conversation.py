@@ -216,7 +216,6 @@ class Conversation:
         Retrieve the merged vector store for all documents in the conversation.
 
         :return: Merged vector store object for the conversation's documents.
-        :rtype: Any
         """
         from services.upload_manager.embeddings_manager import EmbeddingsManager
         from services.ai_service import AIService
@@ -227,7 +226,7 @@ class Conversation:
 
     def get_document_titles(self):
         """
-        whats this?
+        Gets all titles of the documents related to a conversation.
         """
         from services.document_service import DocumentService
         document_titles = []
