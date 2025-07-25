@@ -41,14 +41,18 @@ class ChatController:
             document_ids = data.get("document_ids")
             project_ids = data.get("project_ids")
 
+
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
-            new_conversation = self.conversation_service.create_conversation(user_id=user_id, document_ids=document_ids,
-                                                                             project_ids=project_ids)
+            new_conversation = self.conversation_service.create_conversation(
+                user_id=user_id, 
+                document_ids=document_ids,
+                project_ids=project_ids)
             new_conversation.add_user_message(user_prompt)
 
-            self.conversation_service.update_name(new_conversation.conversation_id,
-                                                  self.ai_service.generate_conversation_name(new_conversation))
+            self.conversation_service.update_name(
+                new_conversation.conversation_id,
+                self.ai_service.generate_conversation_name(new_conversation))
             if not new_conversation.name:
                 new_conversation.set_name(self.ai_service.generate_conversation_name(new_conversation))
 
@@ -270,7 +274,7 @@ class ChatController:
                 "status": "error", "message": str(e)
             }), 500
 
-    def delete_all(self):
+    def clear_history(self):
         try:
             # Get parameters from query string
             data = request.get_json()
@@ -279,7 +283,7 @@ class ChatController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            self.conversation_service.delete_all_converstations(user_id)
+            self.conversation_service.clear_history(user_id)
             # Return both success message
             return jsonify({
                 "status": "success",
@@ -330,6 +334,6 @@ class ChatController:
         app.add_url_rule("/chat/conversation", view_func=self.get_conversation_from_conversation_id, methods=["POST"])
         app.add_url_rule("/chat/delete", view_func=self.delete_chat, methods=["DELETE"])
         app.add_url_rule("/chat/rename", view_func=self.rename_chat, methods=['PATCH'])
-        app.add_url_rule("/chat/delete-all", view_func=self.delete_all, methods=['DELETE'])
+        app.add_url_rule("/chat/delete-all", view_func=self.clear_history, methods=['DELETE'])
         app.add_url_rule("/chat/search", view_func=self.search_chats)
         app.register_blueprint(self.chat)
