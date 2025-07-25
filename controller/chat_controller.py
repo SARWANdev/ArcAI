@@ -20,16 +20,6 @@ class ChatController:
         self.conversation_repository = ConversationRepository
         self.conversation_service = ConversationService()
         self.new_conversation = None
-        # 1st step : Getting text chunks using get_text_chunks
-        # 2nd step : Get_vector_store in ai_service and use it on the text chunks
-        # 3rd step : Initialise conversation instance and give it embedding as an argument and generate a random id
-        # 4th step : Get question from the user in frontend and send it to backend#
-        # 5th step : Conversation Model has method to add user message
-        # 6th step : Use send_chat_message and add the user question and conversation instance, which will give response Object
-        # 7th step : Use ai_service.output_streaming_response method to stream the response
-        # 8th step : The string output wil be added to Conversation model (add_ai_message)
-
-        # 1st step
         self.register_chat_routes(app)
 
     def query(self):
@@ -62,8 +52,6 @@ class ChatController:
             new_conversation.add_ai_message(string_response)
             self.conversation_service.update_messages(new_conversation.conversation_id, new_conversation.get_messages())
             list_of_messages = new_conversation.get_messages()
-            print(new_conversation.conversation_id)
-            print(new_conversation.name)
             return jsonify({
                 "success": True,
                 "data": {"conversation_id": str(new_conversation.conversation_id),
@@ -73,9 +61,6 @@ class ChatController:
         except Exception as e:
             print(e)
             return jsonify({"error": str(e)}), 500
-
-    def summarize(self, document_id):
-        pass
 
     def follow_up(self):
         try:
@@ -99,7 +84,7 @@ class ChatController:
                 self.conversation_service.update_messages(old_conversation.conversation_id, old_conversation.get_messages())
 
                 list_of_messages = old_conversation.get_messages()
-                print(list_of_messages)
+
                 return jsonify({
                     "success": True,
                     "data": {"conversation_id": str(old_conversation.conversation_id),
@@ -139,12 +124,6 @@ class ChatController:
             print(f"Error in get_conversation: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
-    def get_chat_history(self, user_id):
-        pass
-
-    def get_conversation(self, chat_id):
-        pass
-
     def delete_all_conversations(self, user_id):
         """
         Deletes all chat sessions for a user.
@@ -153,11 +132,10 @@ class ChatController:
     
     def get_user_conversations(self):
         try:
-            # Get paramaeters from query string
+            # Get parameters from query string
             user_id = request.args.get("user_id")
             sort_by = request.args.get("sort_by", "CreatedAt")
             order = request.args.get("order", "desc")
-            print(user_id, sort_by, order)
 
             # Map frontend field names to database columns
             if sort_by == "Title":
@@ -205,7 +183,6 @@ class ChatController:
             user_id = data.get("user_id")
             conversation_id = data.get("conversation_id")
 
-            print(user_id, conversation_id)
 
             if not user_id or not conversation_id:
                 return jsonify({"error": "Missing user_id or conversation_id"}), 400
@@ -233,7 +210,6 @@ class ChatController:
             data = request.get_json()
             user_id = data.get("user_id")
             conversation_id = data.get("conversation_id")
-            print(user_id, conversation_id)
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
@@ -258,13 +234,10 @@ class ChatController:
             user_id = data.get('user_id')
             conversation_id = data.get('conversation_id')
             new_name = data.get('name')
-            print(user_id, conversation_id, new_name)
 
             if not all([user_id, conversation_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
-            print("renaming")
             self.conversation_service.rename_chat(conversation_id, new_name)
-            print("renamed")
             return jsonify({
                 "status": "success",
                 "message": "Conversation renamed successfully"
@@ -279,7 +252,6 @@ class ChatController:
             # Get parameters from query string
             data = request.get_json()
             user_id = data.get("user_id")
-            print(user_id)
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
@@ -303,13 +275,9 @@ class ChatController:
             # Get parameters from query string
             user_id = request.args.get("user_id")
             query = request.args.get("query")
-            print("searching chats")
-            print(user_id, query)
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
-
-            print("searching")
 
             searches = self.conversation_service.search_conversations(user_id, query)
 
