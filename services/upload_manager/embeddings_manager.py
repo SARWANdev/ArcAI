@@ -56,8 +56,7 @@ class EmbeddingsManager:
                 
                 local_file = os.path.join(temp_dir, file)
                 # Example usage, replace with actual logic if needed
-                if EmbeddingsManager.operating_system == "Linux":
-                    local_file = posixpath.join(temp_dir, file)
+
                 
                 print("local_file:  ", local_file)
                 sftp.get(remote_file, local_file)

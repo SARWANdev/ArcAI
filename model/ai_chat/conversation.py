@@ -33,16 +33,12 @@ class Conversation:
         self.messages = messages or []
         self.user_id = user_id
         self.document_id = document_id
-        self.document_ids = document_ids
+        self.document_ids = self.__get_unique_document_ids(document_ids, project_ids)
+        print("Document ids = ", str(self.document_ids))
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
-        # If project_ids are provided, get their document_ids and add them
-        if project_ids:
-            project_document_ids = self.get_document_ids_from_project_ids(project_ids)
-            self.document_ids.extend(project_document_ids)
-        # delete duplicates document ids
-        self.remove_duplicate_document_ids()
+        
 
     def set_name(self, name):
         """
@@ -151,10 +147,20 @@ class Conversation:
         :rtype: str
         """
         formatted_message = f"""1. You are ArcAI a helpful AI Assistant for analyzing scientific papers.  \
-                    2. Your job is to reply to User Message. = {message}\n                    3. IF NECESSARY look at the attached Context = {context}\n                    3. Keep answers concise but friendly.  \
-                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and paste the unedited part from the context with Source: \
-                    5. But again your main job is to answer the Message and only look at context if necessary\n                    6. Here's the message again: {message}\n                    """
-        print(formatted_message)
+                    2. Your job is to reply to User Message. = {message}\n 
+                    3. IF NECESSARY look at the attached Context = {context}\n   
+                    3. Keep answers concise but friendly.\n
+                    4. IF you give a factual answer which is NOT a greeting or small talk Print 2 newlines after the answer and paste the unedited part from the context with Source: \n
+                    5. But again your main job is to answer the Message and only look at context if necessary\n 
+                    6. Here's the message again: {message}\n
+                    7. No need to look at the context if you need a greeting
+                    8. If asked about how you work you can answer based on this informatio
+                    9. You are a RAG Agent on a document reader. Every user has a library, with projects all of which contain documents.
+                    10. Users can ask questions about 1 document, in which case a similarity search will be performed on the documents.
+                    11. If they ask a question about multiple documents the vector stores will be merged and a simsearch will be performed on the merged vs. so it wont be apparent off of the context what the documents are but use, 12 to seperate them.
+                    12. List of Document Titles = {self.get_document_titles()}
+                    13. Just so you remember here's the message again. {message}
+                    """
                 
         return formatted_message
 
@@ -195,10 +201,11 @@ class Conversation:
         """
         from services.document_service import DocumentService
         document_ids = []
-        for project_id in project_ids:
-            documents = DocumentService().get_project_documents(project_id=project_id)
-            for document in documents or []:
-                document_ids.append(document.document_id)
+        if project_ids:
+            for project_id in project_ids:
+                documents = DocumentService().get_project_documents(project_id=project_id)
+                for document in documents or []:
+                    document_ids.append(str(document.document_id))
         return document_ids
 
     def get_vector_store(self):
@@ -215,9 +222,22 @@ class Conversation:
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
         return AIService().merge_vector_stores(document_embeddings)
 
-    def remove_duplicate_document_ids(self):
+    def __get_unique_document_ids(self, document_ids, project_ids):
         """
-        Remove duplicate document IDs from the conversation's document_ids list.
+        get all unique ids from doc and proj ids
+        :return: unique doc_ids
+        :rtype: List
         """
+        all_ids = document_ids + self.get_document_ids_from_project_ids(project_ids=project_ids)
+        return list(set(all_ids))  # Convert to set to remove duplicates, then back to list
+
+    def get_document_titles(self):
+        from services.document_service import DocumentService
+        from model.document_reader.document import Document
+        document_titles = []
+        service = DocumentService()
         if self.document_ids:
-            self.document_ids = list(dict.fromkeys(self.document_ids))
+            for doc_id in self.document_ids:
+                doc = service.get_document(document_id=doc_id)
+                document_titles.append(doc.name) if doc else None
+        return str(document_titles)
