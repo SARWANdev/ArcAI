@@ -230,7 +230,7 @@ class Conversation:
         unique_ids = []
         all_ids = document_ids + self.get_document_ids_from_project_ids(project_ids=project_ids)
         for id in all_ids:
-            if not all_ids in unique_ids:
+            if all_ids not in unique_ids:
                 unique_ids.append(id)       
 
         return unique_ids
