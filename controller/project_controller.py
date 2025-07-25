@@ -120,8 +120,9 @@ class ProjectController:
                     "Note" : document.note,
                     "Year": self.document_repository.get_year(str(document.document_id)),
                     "Source": self.document_repository.get_source(str(document.document_id)),
-                    "Authors": self.document_repository.get_authors(str(document.document_id)),
+                    "Authors": self.document_service.get_first_author(str(document.document_id)),
                 }
+                print(self.document_service.get_first_author(str(document.document_id)))
                 document_list.append(document_object)
 
             return jsonify({
@@ -231,26 +232,6 @@ class ProjectController:
             print(f"Error in save_project_note: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
-    def rename_document(self):
-        try:
-            data = request.get_json()
-            user_id = data.get('user_id')
-            document_id = ObjectId(data.get('document_id'))
-            new_name = data.get('name')
-            print(user_id, document_id, new_name)
-            if not all([user_id, document_id, new_name]):
-                return jsonify({'error': 'Missing required fields'}), 400
-            print("renaming document")
-            self.document_service.rename_document(document_id, new_name)
-            print("document renamed")
-            return jsonify({
-                "status": "success",
-                "message": "Document renamed successfully"
-            }), 200
-        except Exception as e:
-            return jsonify({
-                "status": "error", "message": str(e)
-            }), 500
 
     def register_project_routes(self, app):
         app.add_url_rule("/project/get-documents", view_func=self.get_project_documents)

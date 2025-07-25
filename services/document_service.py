@@ -211,7 +211,7 @@ class DocumentService:
         :param document_id: The ID of the document to retrieve the first author from.
         :return: String or None
         """
-        return self.pdf_master_repository.get_first_author(document_id)
+        return self.document_properties_repo.get_first_author(document_id)
 
 
 
