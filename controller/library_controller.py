@@ -7,8 +7,19 @@ from services.project_service import ProjectService
 from services.document_service import DocumentService
 from flask import Blueprint, Flask, jsonify, request, send_file
 
+
 class LibraryController:
-    def __init__(self, app : Flask):
+    """
+    Controller for managing user libraries, including creating, retrieving,
+    deleting, renaming projects and searching or downloading documents.
+    """
+
+    def __init__(self, app: Flask):
+        """
+        Initializes the LibraryController with service instances and registers routes.
+
+        :param app: Flask app instance to which the routes will be registered.
+        """
         self.library_service = LibraryService()
         self.project_service = ProjectService()
         self.document_service = DocumentService()
@@ -16,12 +27,31 @@ class LibraryController:
         self.register_library_routes(app)
 
     def get_embeddings(self, item_ids=None):
+        """
+        Placeholder method for getting embeddings.
+
+        :param item_ids: Optional list of item IDs for which embeddings are to be fetched.
+        """
         pass
 
     def get_project(self, project_id):
+        """
+        Placeholder method for getting a specific project.
+
+        :param project_id: ID of the project to retrieve.
+        """
         pass
 
     def create_project(self):
+        """
+        Creates a new project for the user based on provided JSON data.
+
+        Expected JSON body:
+        - user_id: ID of the user
+        - name: Name of the new project
+
+        :return: JSON response indicating success or failure.
+        """
         try:
             data = request.get_json()
 
@@ -31,7 +61,6 @@ class LibraryController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            # Call your service layer
             self.project_service.create_project(user_id, name)
 
             return jsonify({"success": "A project has been created"}), 200
@@ -40,13 +69,21 @@ class LibraryController:
             return jsonify({"error": str(e)}), 500
 
     def get_user_projects(self):
-        try:
-            # Get parameters from query string
-            user_id = request.args.get("user_id")
-            sort_by = request.args.get("sort_by", "LastUpdated")  # default to 'title'
-            order = request.args.get("order", "desc")  # default to 'asc'
+        """
+        Retrieves a list of projects for a given user, optionally sorted.
 
-            # Map frontend field names to database columns
+        Query parameters:
+        - user_id: ID of the user (required)
+        - sort_by: Field to sort by ('Title', 'CreatedAt', or 'LastUpdated')
+        - order: Sorting order ('asc' or 'desc')
+
+        :return: JSON response containing the list of projects or error.
+        """
+        try:
+            user_id = request.args.get("user_id")
+            sort_by = request.args.get("sort_by", "LastUpdated")
+            order = request.args.get("order", "desc")
+
             if sort_by == "Title":
                 sort_by = "name"
             elif sort_by == "CreatedAt":
@@ -57,21 +94,18 @@ class LibraryController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            # Get sorted projects from service layer
             project_model_list = self.library_service.sort_library(user_id, sort_by, order)
 
-            # Convert models to dictionaries for frontend
             project_list = [
                 {
                     "Title": model.project_name,
                     "CreatedAt": model.created_at,
                     "LastUpdated": model.updated_at,
-                    "ProjectId" : str(model.id)
+                    "ProjectId": str(model.id)
                 }
                 for model in project_model_list
             ]
 
-            # Return both success message AND the project data
             return jsonify({
                 "status": "success",
                 "message": "Projects retrieved successfully",
@@ -91,6 +125,15 @@ class LibraryController:
             }), 500
 
     def download_project(self):
+        """
+        Downloads a project as a ZIP file.
+
+        Query parameters:
+        - user_id: ID of the user
+        - project_id: ID of the project to download
+
+        :return: ZIP file response if successful, else error response.
+        """
         try:
             user_id = request.args.get("user_id")
             project_id = request.args.get("project_id")
@@ -107,19 +150,25 @@ class LibraryController:
             return send_file(
                 zip_stream,
                 mimetype="application/zip",
-                download_name=f"project_{project_id}.zip",  # Filename when downloading
-                as_attachment=True  # Forces download
+                download_name=f"project_{project_id}.zip",
+                as_attachment=True
             )
 
         except Exception as e:
-            # Log the error for debugging
             print(f"Error in download_project: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
-
     def delete_project(self):
+        """
+        Deletes a project specified by project ID.
+
+        Expected JSON body:
+        - user_id: ID of the user
+        - project_id: ID of the project to delete
+
+        :return: JSON response indicating success or failure.
+        """
         try:
-            # Get parameters from query string
             data = request.get_json()
             user_id = data.get("user_id")
             project_id = data.get("project_id")
@@ -128,7 +177,7 @@ class LibraryController:
                 return jsonify({"error": "user_id is required"}), 400
 
             self.project_service.delete_project(project_id)
-            # Return both success message
+
             return jsonify({
                 "status": "success",
                 "message": "Projects deleted successfully",
@@ -143,12 +192,22 @@ class LibraryController:
             }), 500
 
     def rename_project(self):
+        """
+        Renames a project to a new name.
+
+        Expected JSON body:
+        - user_id: ID of the user
+        - project_id: ID of the project to rename
+        - name: New name for the project
+
+        :return: JSON response indicating success or failure.
+        """
         try:
             data = request.get_json()
             user_id = data.get('user_id')
             project_id = ObjectId(data.get('project_id'))
             new_name = data.get('name')
-            
+
             if not all([user_id, project_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
 
@@ -157,18 +216,26 @@ class LibraryController:
                 return jsonify({
                     "status": "success",
                     "message": "Project renamed successfully"
-                    }), 200
+                }), 200
             else:
                 return jsonify({
                     "status": "error",
                     "message": "Failed to rename the project"
-                    }), 500
+                }), 500
         except Exception as e:
             return jsonify({"status": "error", "message": str(e)}), 500
 
     def search_documents(self):
+        """
+        Searches for documents matching the given query for a user.
+
+        Query parameters:
+        - user_id: ID of the user
+        - query: Search string to look for in documents
+
+        :return: JSON response with search results or error.
+        """
         try:
-            # Get parameters from query string
             user_id = request.args.get("user_id")
             query = request.args.get("query")
 
@@ -178,7 +245,7 @@ class LibraryController:
             searches = self.document_service.search_documents(user_id, query)
             documents = []
             for document in searches:
-                dictionary = {"Title" : document.name, "DocumentId" : document.document_id}
+                dictionary = {"Title": document.name, "DocumentId": document.document_id}
                 documents.append(dictionary)
 
             return jsonify({
@@ -187,11 +254,14 @@ class LibraryController:
                 "message": "Search retrieved successfully",
             }), 200
         except Exception as e:
-            return jsonify({"status": "error", "message":str(e)}),500
+            return jsonify({"status": "error", "message": str(e)}), 500
 
-
-    # To register all the library-routes
     def register_library_routes(self, app):
+        """
+        Registers all library-related API routes to the given Flask app.
+
+        :param app: Flask application instance.
+        """
         self.library.add_url_rule("/library/create-project", view_func=self.create_project, methods=["POST"])
         self.library.add_url_rule("/library/download", view_func=self.download_project)
         self.library.add_url_rule("/library/get-projects", view_func=self.get_user_projects)
