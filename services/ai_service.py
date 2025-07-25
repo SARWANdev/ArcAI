@@ -80,6 +80,7 @@ class AIService:
         :param user_id: The user identifier (optional).
 
         :returns: The HTTP response object if the request is successful, otherwise None.
+        :rtype: Response|None
         
         :raises: Exception: In case of errors during the request.
 
@@ -117,7 +118,6 @@ class AIService:
             - Formats the payload with the model name and the latest user message, including context.
             - Sends the request as a streaming POST to the chat service endpoint.
         """
-        # TODO: Replace Messages with id after database exists
         vector_store = conversation.get_vector_store()
         chat_url = f"{self.__base_url}{self.__CHAT_PATH}"
         context = self.__perform_similarity_search(query=question, vector_store=vector_store, top_k=5)

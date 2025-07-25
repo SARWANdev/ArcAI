@@ -8,14 +8,13 @@ def get_pdf_sha256(pdf_path: str) -> str:
     Calculates the SHA-256 hash of a PDF file.
 
     Parameters:
-        pdf_path (str): The file path to the PDF.
+    :param pdf_path: The file path to the PDF.
+    :type pdf_path: str
+    
+    :returns: The SHA-256 hexadecimal hash of the file.
+    :rtype: str
 
-    Returns:
-        str: The SHA-256 hexadecimal hash of the file.
-
-    Raises:
-        FileNotFoundError: If the PDF file does not exist.
-        IOError: If there is an error reading the file.
+    :raises:FileNotFoundError: If the PDF file does not exist; IOError: If there is an error reading the file.
     """
     path = Path(pdf_path)
 
@@ -33,9 +32,17 @@ def get_pdf_sha256(pdf_path: str) -> str:
 
     return hash_sha256.hexdigest()
 
-def document_name_generator(pdf_path: str) -> str:
-    #TODO developt this method that generates a name with the first 3 words of the titel , firs autor last name and date of publishin if possible
-    return ""
 
 def relative_path_generator(user_id: str, project_id: str) -> str:
+    """
+    Creates a relative path for a given user and project id.
+
+    :param user_id: A user ID.
+    :type user_id: str
+    :param project_ id: A user's project ID.
+    :param project_id: str
+
+    :returns: The generated relative path with the user and project id.
+    :rtype: str
+    """
     return f"{user_id}/{project_id}"
