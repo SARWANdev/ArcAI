@@ -93,9 +93,6 @@ class Document:
             document_id=str(data.get("_id"))
         )
 
-    #TODO: Make sure that the read and favorite functions are to a certain convention, 
-    # either setters and getters or just functions
-    
     def mark_read(self):
         """
         Marks the document as read.

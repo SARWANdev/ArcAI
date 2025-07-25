@@ -289,12 +289,12 @@ class AIService:
         :returns: The generated name.
         :rtype: str 
         """
-        from database.repository.document_repository import DocumentDataBase
+        from database.repository.document_repository import DocumentRepository
         messages = str(conversation.get_messages())
         document_ids = conversation.document_ids
         merged_bibtex = ""
         for document_id in document_ids:
-            bibtex = DocumentDataBase.get_bibtex_by_document_id(document_id=document_id)
+            bibtex = DocumentRepository.get_bibtex_by_document_id(document_id=document_id)
             merged_bibtex+=bibtex
             
         prompt = f"""1. Make a Title for a Conversation with the following human messages:{messages} Make sure that the generated title is influenced by the given messages.

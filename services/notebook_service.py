@@ -1,5 +1,5 @@
 from database.repository.notebook_repository import Notebook as NotebookRepository
-from database.repository.document_repository import DocumentDataBase as DocumentRepository
+from database.repository.document_repository import DocumentRepository
 from database.repository.project_repository import Project as ProjectRepository
 import io 
 

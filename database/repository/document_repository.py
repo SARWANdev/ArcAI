@@ -10,7 +10,7 @@ from database.utils.db_setup import es
 from model.document_reader.document import Document
 
 
-class DocumentDataBase:
+class DocumentRepository:
     """
     A database handler for document operations.
     Provides CRUD, search, and metadata management
@@ -46,10 +46,10 @@ class DocumentDataBase:
         :param text: Text chunks to save
         """
         doc_id = str(doc_id)
-        name = DocumentDataBase.get_name(doc_id)
-        author = DocumentDataBase.get_authors(doc_id)
+        name = DocumentRepository.get_name(doc_id)
+        author = DocumentRepository.get_authors(doc_id)
         es.index(index="documents", id=doc_id, body={
-            "user_id": DocumentDataBase.get_user_id(doc_id),
+            "user_id": DocumentRepository.get_user_id(doc_id),
             "name": name,
             "author": author,
             "text": text, 
@@ -65,7 +65,7 @@ class DocumentDataBase:
 
         :return: Path to file.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_path(pdf_master_id)
 
     @staticmethod
@@ -77,7 +77,7 @@ class DocumentDataBase:
 
         :return: Year of publication.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_year(pdf_master_id)
 
     @staticmethod
@@ -89,7 +89,7 @@ class DocumentDataBase:
 
         :return: String of authors.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_authors(pdf_master_id)
 
     @staticmethod
@@ -101,7 +101,7 @@ class DocumentDataBase:
 
         :return: String of a source.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_source(pdf_master_id)
 
     @staticmethod
@@ -340,5 +340,5 @@ class DocumentDataBase:
 
         :return: ID of owner user.
         """
-        pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+        pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_user_id(pdf_master_id)

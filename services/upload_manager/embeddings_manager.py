@@ -5,7 +5,7 @@ import tempfile
 from langchain_community.vectorstores import FAISS
 import platform
 
-from database.repository.document_repository import DocumentDataBase
+from database.repository.document_repository import DocumentRepository
 from services.ai_service import AIService
 from services.upload_manager.server_conection import ssh_connection
 
@@ -90,7 +90,7 @@ class EmbeddingsManager:
         :returns: The FAISS vector store associated with the document, or None if not found.
         :rtype: FAISS | None
         """
-        path = DocumentDataBase.get_path(document_id)
+        path = DocumentRepository.get_path(document_id)
         path = os.path.dirname(path)
         return EmbeddingsManager.load_remote_faiss_index(path)
     

@@ -1,5 +1,5 @@
 from database.repository.project_repository import Project as ProjectRepository
-from database.repository.document_repository import DocumentDataBase as DocumentRepository
+from database.repository.document_repository import DocumentRepository
 from model.document_reader.project import Project as ProjectModel
 from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel

@@ -2,7 +2,7 @@ import io
 import zipfile
 
 from database.repository.document_properties_repository import DocumentPropertiesRepository
-from database.repository.document_repository import DocumentDataBase
+from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
@@ -65,7 +65,7 @@ def get_document_note(document_id):
     :returns: The document note encoded in UTF-8.
     :rtype: bytes
     """
-    note = DocumentDataBase.get_note(document_id)
+    note = DocumentRepository.get_note(document_id)
     note = note.encode("utf8")
     return note
 
@@ -79,7 +79,7 @@ def get_document_bibtex(document_id):
     :returns: The BibTeX entry encoded in UTF-8.
     :rtype: bytes
     """
-    pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+    pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
     bibtex = PdfMasterDataBase.get_bibtex(pdf_master_id)
     bibtex = bibtex.encode("utf8")
     return bibtex
@@ -95,10 +95,10 @@ def download_file(document_id):
     :returns: The ZIP file containing the document, as in-memory bytes.
     :rtype: bytes
     """
-    pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
+    pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
     file_hash = PdfMasterDataBase.get_pdf_hash(pdf_master_id)
     file_name = str(file_hash) + ".pdf"
-    remote_path = DocumentDataBase.get_path(document_id)
+    remote_path = DocumentRepository.get_path(document_id)
     note_content = get_document_note(document_id)
     bib_content = get_document_bibtex(document_id)
 
@@ -139,7 +139,7 @@ def download_multiple_bibtex(doc_ids_str):
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zipf:
 
         for document_id in doc_ids_str:
-            doc_name = DocumentDataBase.get_name(document_id)
+            doc_name = DocumentRepository.get_name(document_id)
             bib_content = get_document_bibtex(document_id)
             zipf.writestr(f"{doc_name}_bibtex.bib", bib_content)
 
@@ -172,11 +172,11 @@ def download_multiple_documents(document_ids, project_id):
         for doc_id in document_ids:
             doc_id = str(doc_id)
             # Fetch document data
-            pdf_master_id = DocumentDataBase.get_pdf_master_id(doc_id)
+            pdf_master_id = DocumentRepository.get_pdf_master_id(doc_id)
             file_hash = PdfMasterDataBase.get_pdf_hash(pdf_master_id)
-            doc_name = DocumentDataBase.get_name(doc_id)
+            doc_name = DocumentRepository.get_name(doc_id)
             file_name = f"{file_hash}.pdf"
-            remote_path = DocumentDataBase.get_path(doc_id)
+            remote_path = DocumentRepository.get_path(doc_id)
             note_content = get_document_note(doc_id)  # Already bytes
             bib_content = get_document_bibtex(doc_id)  # Already bytes
             # Create a folder for this document in the ZIP

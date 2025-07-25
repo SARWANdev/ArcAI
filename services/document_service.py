@@ -1,6 +1,6 @@
 import os
 import tempfile
-from database.repository.document_repository import DocumentDataBase as DocumentRepository
+from database.repository.document_repository import DocumentRepository
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from database.repository.pdf_master_repository import PdfMasterDataBase
 from database.repository.tag_registry_repository import TagRegistryRepository

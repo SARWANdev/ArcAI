@@ -2,7 +2,7 @@ from io import BytesIO
 from services.document_service import DocumentService
 from services.download_manager.download_manager import download_file, get_document_bibtex
 from services.notebook_service import NotebookService
-from database.repository.document_repository import DocumentDataBase
+from database.repository.document_repository import DocumentRepository
 from services.ai_service import AIService
 from flask import Blueprint,Flask, jsonify, request, send_file, Response
 from database.repository.pdf_master_repository import PdfMasterDataBase
@@ -16,7 +16,7 @@ class DocumentController:
         self.document_service = DocumentService()
         self.document = Blueprint('document', __name__)
         self.notebook_service = NotebookService()
-        self.document_repository = DocumentDataBase
+        self.document_repository = DocumentRepository
         self.ai_service = AIService()
         self.register_document_routes(app)
 

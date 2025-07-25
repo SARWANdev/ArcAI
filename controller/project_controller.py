@@ -1,4 +1,4 @@
-from database.repository.document_repository import DocumentDataBase as DocumentRepository
+from database.repository.document_repository import DocumentRepository
 from services.notebook_service import NotebookService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
