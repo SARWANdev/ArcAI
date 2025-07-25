@@ -33,16 +33,11 @@ class Conversation:
         self.messages = messages or []
         self.user_id = user_id
         self.document_id = document_id
-        self.document_ids = document_ids
+        self.document_ids = self.__get_unique_document_ids(document_ids, project_ids)
         self.conversation_id = conversation_id
         self.created_at = created_at or None
         self.updated_at = updated_at or None
-        # If project_ids are provided, get their document_ids and add them
-        if project_ids:
-            project_document_ids = self.get_document_ids_from_project_ids(project_ids)
-            self.document_ids.extend(project_document_ids)
-        # delete duplicates document ids
-        self.remove_duplicate_document_ids()
+        
 
     def set_name(self, name):
         """
@@ -225,12 +220,19 @@ class Conversation:
             document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
         return AIService().merge_vector_stores(document_embeddings)
 
-    def remove_duplicate_document_ids(self):
+    def __get_unique_document_ids(self, document_ids, project_ids):
         """
-        Remove duplicate document IDs from the conversation's document_ids list.
+        get all unique ids from doc and proj ids
+        :return: unique doc_ids
+        :rtype: List
         """
-        if self.document_ids:
-            self.document_ids = list(dict.fromkeys(self.document_ids))
+        unique_ids = []
+        all_ids = document_ids + self.get_document_ids_from_project_ids(project_ids=project_ids)
+        for id in all_ids:
+            if not all_ids in unique_ids:
+                unique_ids.append(id)       
+
+        return unique_ids
 
     def get_document_titles(self):
         from services.document_service import DocumentService
