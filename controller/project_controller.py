@@ -15,39 +15,15 @@ class ProjectController:
         self.project = Blueprint('project', __name__)
         self.register_project_routes(app)
 
-    def get_user_projects(self, user_id):
-        pass
-
-    def update_project(self, project_id, name=None, description=None, note=None):
-        pass
-
-    def get_document(self, document_id):
-        pass
-
-    def duplicate_document(self, project_id, document_id):
-        pass
-
-    def delete_document(self, document_id):
-        pass
-
-    def upload_document(self, project_id, file_path, name=None):
-        pass
-
-    def download_document(self, document_id):
-        pass
-
     def rename_document(self):
         try:
             data = request.get_json()
             user_id = data.get('user_id')
             document_id = ObjectId(data.get('document_id'))
             new_name = data.get('name')
-            print(user_id, document_id, new_name)
             if not all([user_id, document_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
-            print("renaming document")
             result = self.document_service.rename_document(document_id, new_name)
-            print("document renamed")
             if result:
                 return jsonify({
                     "status": "success", 
@@ -122,7 +98,6 @@ class ProjectController:
                     "Source": self.document_repository.get_source(str(document.document_id)),
                     "Authors": self.document_service.get_first_author(str(document.document_id)),
                 }
-                print(self.document_service.get_first_author(str(document.document_id)))
                 document_list.append(document_object)
 
             return jsonify({
@@ -138,43 +113,6 @@ class ProjectController:
                 "message": "Failed to retrieve documents",
                 "error": str(e)
             }), 500
-
-    def get_project_embeddings(self, project_id, document_ids=None):
-        pass
-
-    def move_documents(self, item_id, destination_id):
-        pass
-
-    def sort_project_documents(self, project_id, sort_by, sort_order):
-        pass
-
-    def filter_project_documents(self, project_id, filters):
-        pass
-
-    def search_project_documents(self, project_id, query):
-        pass
-
-    def mark_as_read(self, document_id):
-        pass
-
-    def mark_as_unread(self, document_id):
-        pass
-
-    def add_to_favorites(self, document_id):
-        pass
-
-    def remove_from_favorites(self, document_id):
-        pass
-
-    def add_tag(self, document_id, tag):
-        pass
-
-    def remove_tag(self, document_id):
-        pass
-
-    def get_document_bibtex(self, document_id):
-        pass
-
 
     def get_project_tags(self):
         try:
