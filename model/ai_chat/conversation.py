@@ -227,13 +227,8 @@ class Conversation:
         :return: unique doc_ids
         :rtype: List
         """
-        unique_ids = []
         all_ids = document_ids + self.get_document_ids_from_project_ids(project_ids=project_ids)
-        for id in all_ids:
-            if all_ids not in unique_ids:
-                unique_ids.append(id)       
-
-        return unique_ids
+        return list(set(all_ids))  # Convert to set to remove duplicates, then back to list
 
     def get_document_titles(self):
         from services.document_service import DocumentService
