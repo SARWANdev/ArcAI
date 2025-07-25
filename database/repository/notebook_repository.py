@@ -14,9 +14,10 @@ class Notebook:
         """
         Retrieve the notebook content for a given project.
 
-        :param project_id: Project identifier
+        :param project_id: Project identifier.
         :type project_id: str
-        :return: Notebook content as a string
+
+        :return: Notebook content as a string.
         :rtype: str
         """
         with mongo_connection() as db:
@@ -27,11 +28,12 @@ class Notebook:
         """
         Update the notebook content for a project.
 
-        :param project_id: Project identifier
+        :param project_id: Project identifier.
         :type project_id: str
-        :param note: New notebook content
+        :param note: New notebook content.
         :type note: str
-        :return: True if update was successful, else False
+
+        :return: True if update was successful, else False.
         :rtype: bool
         """
         try:
@@ -47,9 +49,10 @@ class Notebook:
         """
         Retrieve the notebook content for a given document.
 
-        :param document_id: Document identifier
+        :param document_id: Document identifier.
         :type document_id: str
-        :return: Notebook content as a string
+
+        :return: Notebook content as a string.
         :rtype: str
         """
         with mongo_connection() as db:
@@ -60,11 +63,12 @@ class Notebook:
         """
         Update the notebook content for a document.
 
-        :param document_id: Document identifier
+        :param document_id: Document identifier.
         :type document_id: str
-        :param note: New notebook content
+        :param note: New notebook content.
         :type note: str
-        :return: True if update was successful, else False
+
+        :return: True if update was successful, else False.
         :rtype: bool
         """
         try:

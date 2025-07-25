@@ -12,7 +12,8 @@ class Library:
         Retrieve the library (projects) for a specific user from the database.
 
         :param user_id: The unique identifier of the user whose library is to be retrieved.
-        :type user_id: str or ObjectId
+        :type user_id: str or ObjectId.
+
         :return: A list of projects belonging to the user.
         :rtype: list
         """

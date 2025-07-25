@@ -23,6 +23,7 @@ class Project:
 
         :param project: Project instance to be saved.
         :type project: Project
+
         :return: The ID of the inserted project as a string, or an empty string if duplicate.
         :rtype: str
         """
@@ -42,6 +43,7 @@ class Project:
 
         :param project_id: The ID of the project.
         :type project_id: str or ObjectId
+
         :return: The note as a string, or an empty string if not found or error occurs.
         :rtype: str
         """
@@ -60,8 +62,10 @@ class Project:
 
         :param project_id: The ID of the project.
         :type project_id: str or ObjectId
+
         :return: The project document as a dictionary.
         :rtype: dict
+
         :raises Exception: If a database error occurs.
         """
         try:
@@ -81,8 +85,10 @@ class Project:
 
         :param project_name: The name of the project.
         :type project_name: str
+
         :return: The project document as a dictionary.
         :rtype: dict
+
         :raises Exception: If a database error occurs.
         """
         try:
@@ -101,6 +107,7 @@ class Project:
         :type project_id: str or ObjectId
         :param new_name: The new name for the project.
         :type new_name: str
+
         :return: True if the project name was updated, False otherwise.
         :rtype: bool
         """
@@ -120,6 +127,7 @@ class Project:
 
         :param project_id: The ID of the project to delete.
         :type project_id: str or ObjectId
+
         :return: True if the project was deleted, False otherwise.
         :rtype: bool
         """
@@ -141,6 +149,7 @@ class Project:
 
         :param project_id: The ID of the project.
         :type project_id: str or ObjectId
+        
         :return: The user ID as a string, or an empty string if not found or error occurs.
         :rtype: str
         """

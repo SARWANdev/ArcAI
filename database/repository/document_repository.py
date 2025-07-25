@@ -23,8 +23,13 @@ class DocumentDataBase:
     def save(document: Document) -> str:
         """
         Saves a document to MongoDB and returns its ID.
+
         :param document: Instance of Document class.
+        :type document: Document
+
         :return: The document ID.
+        :rtype: str
+
         """
         with mongo_connection() as db:
             result = db.documents.insert_one(document.new_document_dict())
@@ -37,7 +42,6 @@ class DocumentDataBase:
         Indexes document in Elasticsearch with metadata and search suggestions.
         :param doc_id: ID of document.
         :param text: Text chunks to save
-        :return: void
         """
         doc_id = str(doc_id)
         name = DocumentDataBase.get_name(doc_id)
@@ -81,7 +85,7 @@ class DocumentDataBase:
         return PdfMasterDataBase.get_authors( pdf_master_id )
 
     @staticmethod
-    def get_source( document_id ):
+    def get_source(document_id):
         """
         Returns source/publication for the given document ID.
         :param document_id: ID of a document.
@@ -94,7 +98,9 @@ class DocumentDataBase:
     def get_name(document_id):
         """
         Returns document name for the given ID.
+
         :param document_id: ID of a document.
+
         :return: String of document name.
         """
         with mongo_connection() as db:
@@ -104,9 +110,9 @@ class DocumentDataBase:
     def set_pdf_master_id(document_id, pdf_master_id):
         """
         Links document to its PDF master record in MongoDB.
+
         :param document_id: ID of a document.
         :param pdf_master_id: ID of the PDF master record.
-        :return:
         """
         try:
             with mongo_connection() as db:

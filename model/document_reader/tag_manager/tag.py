@@ -3,7 +3,6 @@ from typing import Dict, Any
 class Tag:
     """
     A class representing a tag with a name and color.
-
     """
     def __init__(self, tag_name, tag_color):
         """

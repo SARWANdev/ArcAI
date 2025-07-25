@@ -2,6 +2,9 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 
 
 class PdfMaster:
+    """
+    A class representing a document PDF Master.
+    """
     def __init__(self, path: str, pdf_hash, user_id, remote_pkl_path = None, remote_faiss_path = None, journal = None, authors = None,
                  first_author = None, year = None, source = None, bibtex = None):
         """

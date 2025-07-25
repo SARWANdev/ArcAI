@@ -1,9 +1,7 @@
 import pymongo
-from pymongo.errors import DuplicateKeyError
 
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
-
 
 from model.user_profile.user import User
 
