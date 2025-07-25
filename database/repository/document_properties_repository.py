@@ -69,7 +69,6 @@ class DocumentPropertiesRepository:
 
         :return: True if the update was successful, False otherwise.
         :rtype: bool
-
         """
         try:
             with mongo_connection() as db:
@@ -85,7 +84,8 @@ class DocumentPropertiesRepository:
         Updates a journal document in the database.
 
         :param document_id: The ID of the document to update.
-        :param journal_name:
+        :param journal_name: 
+
         :return:
         """
         try:
@@ -97,17 +97,18 @@ class DocumentPropertiesRepository:
             return False
 
     @staticmethod
-    def update_first_author(document_id, first_author_name) -> bool:
-        try:
-            with mongo_connection() as db:
-                result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"first_author": first_author_name}})
-                return result.modified_count > 0
-        except Exception as e:
-            print(f"First author name could not be update: {e}")
-            return False
-
-    @staticmethod
     def update_tag(document_id, tag_name) -> bool:
+        """
+        Updates the tag name for a document in the database.
+
+        :param document_id: The ID of the document to update.
+        :type document_id: str
+        :param tag_name: The new tag name to set for the document.
+        :type tag_name: str
+
+        :returns: True if the update was successful, False otherwise.
+        :rtype: bool
+        """
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"tag_name": tag_name}})
@@ -118,6 +119,17 @@ class DocumentPropertiesRepository:
 
     @staticmethod
     def update_tag_color(document_id, tag_color) -> bool:
+        """
+        Updates the tag color for a document in the database.
+
+        :param document_id: The ID of the document to update.
+        :type document_id: str
+        :param tag_color: The new tag color to set for the document.
+        :type tag_color: str
+
+        :returns: True if the update was successful, False otherwise.
+        :rtype: bool
+        """
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"tag_color": tag_color}})
@@ -128,6 +140,17 @@ class DocumentPropertiesRepository:
 
     @staticmethod
     def set_new_project_id(document_id, new_project_id) -> bool:
+        """
+        Updates the project ID associated with a document.
+
+        :param document_id: The ID of the document to update.
+        :type document_id: str
+        :param new_project_id: The new project ID to assign to the document.
+        :type new_project_id: str
+
+        :returns: True if the update was successful, False otherwise.
+        :rtype: bool
+        """
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"project_id": new_project_id}})
@@ -138,6 +161,15 @@ class DocumentPropertiesRepository:
 
     @staticmethod
     def get_project_id(document_id):
+        """
+        Retrieves the project ID associated with a document.
+
+        :param document_id: The ID of the document.
+        :type document_id: str
+
+        :returns: The project ID if found, otherwise an empty string.
+        :rtype: str
+        """
         try:
             with mongo_connection() as db:
                 project_id = db.documents.find_one_or_404({"_id": ObjectId(document_id)}, {"project_id": 1}).get("project_id")
@@ -148,6 +180,17 @@ class DocumentPropertiesRepository:
 
     @staticmethod
     def get_first_author(document_id):
+        """
+        Updates the project ID associated with a document.
+
+        :param document_id: The ID of the document to update.
+        :type document_id: str
+        :param new_project_id: The new project ID to assign to the document.
+        :type new_project_id: str
+
+        :returns: True if the update was successful, False otherwise.
+        :rtype: bool
+        """
         pdf_master_id = DocumentDataBase.get_pdf_master_id(document_id)
         return PdfMasterDataBase.get_first_author(pdf_master_id)
 
