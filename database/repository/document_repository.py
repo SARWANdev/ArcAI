@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
-from typing import Optional, Dict
+from typing import Dict
 from database.repository.pdf_master_repository import PdfMasterDataBase
 
 from database.utils.db_setup import es
@@ -34,9 +34,8 @@ class DocumentDataBase:
 
     @staticmethod
     def get_path( document_id ):
-        with mongo_connection() as db:
-            pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
-            return PdfMasterDataBase.get_path( pdf_master_id )
+        pdf_master_id = DocumentDataBase.get_pdf_master_id( document_id )
+        return PdfMasterDataBase.get_path( pdf_master_id )
 
     @staticmethod
     def get_year( document_id ):
