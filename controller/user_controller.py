@@ -1,5 +1,3 @@
-from bson import ObjectId
-
 from services.user_management.user_service import UserService
 from services.user_management.authentication_service import AuthenticationService
 from flask import Blueprint, Flask, request, jsonify
