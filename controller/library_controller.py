@@ -26,22 +26,6 @@ class LibraryController:
         self.library = Blueprint('library', __name__)
         self.register_library_routes(app)
 
-    def get_embeddings(self, item_ids=None):
-        """
-        Placeholder method for getting embeddings.
-
-        :param item_ids: Optional list of item IDs for which embeddings are to be fetched.
-        """
-        pass
-
-    def get_project(self, project_id):
-        """
-        Placeholder method for getting a specific project.
-
-        :param project_id: ID of the project to retrieve.
-        """
-        pass
-
     def create_project(self):
         """
         Creates a new project for the user based on provided JSON data.
