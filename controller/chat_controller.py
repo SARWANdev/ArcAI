@@ -34,12 +34,8 @@ class ChatController:
             app (Flask): The Flask application instance to which routes will be registered.
         """
         self.ai_service = AIService()
-        self.chat = Blueprint('chat', __name__)
-        self.document_service = DocumentService()
-        self.ai_service = AIService()
-        self.conversation_repository = ConversationRepository
         self.conversation_service = ConversationService()
-        self.new_conversation = None
+        self.chat = Blueprint('chat', __name__)
         self.register_chat_routes(app)
 
     def query(self):
@@ -233,7 +229,7 @@ class ChatController:
                 "error": str(e)
             }), 500
 
-    def get_conversation_from_conversation_id(self):
+    def get_conversation(self):
         """
         Retrieves a conversation by conversation ID for a given user.
 
@@ -264,7 +260,7 @@ class ChatController:
             }), 200
 
         except Exception as e:
-            print(f"Error in get_conversation_from_conversation_id: {e}")
+            print(f"Error in get_conversation: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
     def delete_chat(self):
@@ -402,7 +398,7 @@ class ChatController:
         app.add_url_rule("/chat/follow-up", view_func=self.follow_up, methods=["POST"])
         app.add_url_rule("/chat/history", view_func=self.get_user_conversations)
         app.add_url_rule("/chat/conversation/document", view_func=self.get_conversation_for_document, methods=["POST"])
-        app.add_url_rule("/chat/conversation", view_func=self.get_conversation_from_conversation_id, methods=["POST"])
+        app.add_url_rule("/chat/conversation", view_func=self.get_conversation, methods=["POST"])
         app.add_url_rule("/chat/delete", view_func=self.delete_chat, methods=["DELETE"])
         app.add_url_rule("/chat/rename", view_func=self.rename_chat, methods=['PATCH'])
         app.add_url_rule("/chat/delete-all", view_func=self.clear_history, methods=['DELETE'])
