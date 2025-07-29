@@ -1,14 +1,8 @@
-from datetime import datetime, timezone
-from bson import ObjectId
 from services.ai_service import AIService
 from services.conversation_service import ConversationService
-from services.document_service import DocumentService
 from services.ai_service import AIService
-from model.ai_chat.conversation import Conversation
 from flask import Blueprint, Flask, jsonify, request
-from database.repository.conversation_repository import ConversationRepository
-from pathlib import Path
-import os
+
 
 
 class ChatController:
@@ -19,11 +13,8 @@ class ChatController:
 
     Attributes:
         ai_service (AIService): Service for AI-related operations including generating conversation names and sending chat messages.
-        chat (Blueprint): Flask Blueprint for chat routes.
-        document_service (DocumentService): Service handling document-related operations.
-        conversation_repository (ConversationRepository): Repository for database access to conversations.
         conversation_service (ConversationService): Service managing conversation logic.
-        new_conversation (Conversation): Holds a reference to a newly created conversation.
+        chat (Blueprint): Flask Blueprint for chat routes.
     """
 
     def __init__(self, app: Flask):
