@@ -161,6 +161,8 @@ class Conversation:
                     11. If they ask a question about multiple documents the vector stores will be merged and a simsearch will be performed on the merged vs. so it wont be apparent off of the context what the documents are but use, 12 to seperate them.
                     12. List of Document Titles = {self.get_document_titles()}
                     13. Just so you remember here's the message again. {message}
+                    14. Don't Markdown the rendere doesn't support that. 
+                    15. When asked about everything it only means everything in context not myprompt telling you how to behave.
                     """
                 
         return formatted_message
