@@ -80,17 +80,24 @@ class EmbeddingsManager:
             return faiss_index
 
     @staticmethod
-    def get_embeddings(document_id):
+    def get_embeddings(document_ids:list[str]):
         """
         Retrieves the FAISS embeddings for a document from the database.
 
-        :param document_id: The ID of the document to retrieve embeddings for.
-        :type document_id: str
+        :param document_ids: The IDs of the document to retrieve embeddings for.
+        :type document_ids: list(str)
         
-        :returns: The FAISS vector store associated with the document, or None if not found.
-        :rtype: FAISS | None
+        :returns: The FAISS vector stores associated with the documents, or [] if not found.
+        :rtype: list[FAISS] | []
         """
-        path = DocumentRepository.get_path(document_id)
-        path = os.path.dirname(path)
-        return EmbeddingsManager.load_remote_faiss_index(path)
+        paths = []
+        for document_id in document_ids:
+            path = DocumentRepository.get_path(document_id)
+            path = os.path.dirname(path)
+            paths.append(path)
+        paths = list(set(paths))
+        embeddings = []
+        for path in paths:
+            embeddings.append(EmbeddingsManager.load_remote_faiss_index(path))    
+        return embeddings
     

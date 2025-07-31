@@ -219,9 +219,8 @@ class Conversation:
         """
         from services.upload_manager.embeddings_manager import EmbeddingsManager
         from services.ai_service import AIService
-        document_embeddings = []
-        for document_id in self.document_ids or []:
-            document_embeddings.append(EmbeddingsManager.get_embeddings(document_id=document_id))
+        document_embeddings = EmbeddingsManager.get_embeddings(document_ids=self.document_ids)
+        
         return AIService().merge_vector_stores(document_embeddings)
 
     def get_document_titles(self):
