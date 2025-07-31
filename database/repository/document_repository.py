@@ -229,8 +229,8 @@ class DocumentRepository:
         :return: String of BibTeX reference.
         """
         try:
-            with mongo_connection() as db:
-                return db.documents.find_one({"_id": ObjectId(document_id)})["bibtex"]
+            pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
+            return PdfMasterRepository.get_bibtex(pdf_master_id)
         except Exception as e:
             print(f"Bibtex could not be retrieved: {e}")
             return str()
