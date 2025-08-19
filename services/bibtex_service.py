@@ -294,4 +294,16 @@ class BibTeX_Service:
             and len(self.__bibtex_library.entries) > 0
             and self.formatted_bibtex_string is not None
         )
+    
+    def get_title(self):
+        """
+        Get the title of the paper.
+
+        :return: The title of the paper if available, None otherwise.
+        :rtype: str or None
+        """
+        if self.__bibtex_library is None or not self.__bibtex_library.entries or not self._has_valid_data():
+            return None
+        return self.__bibtex_library.entries[0].get('title', None)
+
 
