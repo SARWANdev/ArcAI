@@ -33,7 +33,7 @@ class Project:
                 project_id = str(result.inserted_id)
                 return project_id
             except pymongo.errors.DuplicateKeyError:
-                print(f"Project {project.get_name()} already exists")
+                print(f"Project {Project.get_project_name(project_id)} already exists")
                 return ""
     
     @staticmethod
@@ -158,6 +158,15 @@ class Project:
                 return db.projects.find_one({"_id": ObjectId(project_id)},{"user_id": 1}).get("user_id")
         except Exception as e:
             print(f"Error getting user id from project {e}")
+            return str()
+
+    @staticmethod
+    def get_project_name(project_id) -> str:
+        try:
+            with mongo_connection() as db:
+                return db.projects.find_one({"_id": ObjectId(project_id)}, {"project_name": 1}).get("project_name")
+        except Exception as e:
+            print(f"Error getting project name from project {e}")
             return str()
 
 

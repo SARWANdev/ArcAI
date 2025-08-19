@@ -6,6 +6,8 @@ from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
+from utils.utils import format_filename
+
 
 def download_project(project_id):
     """
@@ -96,7 +98,9 @@ def download_file(document_id):
     """
     pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
     file_hash = PdfMasterRepository.get_pdf_hash(pdf_master_id)
-    file_name = str(file_hash) + ".pdf"
+    document_name = format_filename( DocumentRepository.get_name(document_id) )
+    #file_name = str(file_hash) + ".pdf"
+    file_name = str(document_name) + ".pdf"
     remote_path = DocumentRepository.get_path(document_id)
     note_content = get_document_note(document_id)
     bib_content = get_document_bibtex(document_id)
@@ -173,13 +177,13 @@ def download_multiple_documents(document_ids, project_id):
             # Fetch document data
             pdf_master_id = DocumentRepository.get_pdf_master_id(doc_id)
             file_hash = PdfMasterRepository.get_pdf_hash(pdf_master_id)
-            doc_name = DocumentRepository.get_name(doc_id)
-            file_name = f"{file_hash}.pdf"
+            doc_name =  format_filename(DocumentRepository.get_name(doc_id))
+            file_name = f"{doc_name}.pdf"
             remote_path = DocumentRepository.get_path(doc_id)
             note_content = get_document_note(doc_id)  # Already bytes
             bib_content = get_document_bibtex(doc_id)  # Already bytes
             # Create a folder for this document in the ZIP
-            folder_name = f"document_{doc_name}/"
+            folder_name = f"{doc_name}/"
             # Add files to the folder
             zipf.writestr(f"{folder_name}note.txt", note_content)
             zipf.writestr(f"{folder_name}bibtex.bib", bib_content)
