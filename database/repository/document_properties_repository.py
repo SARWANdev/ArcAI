@@ -173,7 +173,7 @@ class DocumentPropertiesRepository:
         """
         try:
             with mongo_connection() as db:
-                project_id = db.documents.find_one_or_404({"_id": ObjectId(document_id)}, {"project_id": 1}).get("project_id")
+                project_id = db.documents.find_one({"_id": ObjectId(document_id)}, {"project_id": 1}).get("project_id")
                 return project_id
         except Exception as e:
             print(f"Project id could not be found: {e}")
@@ -208,7 +208,3 @@ class DocumentPropertiesRepository:
             return "", ""
         project_name = Project.get_project_name(project_id)
         return project_id, project_name
-
-
-
-
