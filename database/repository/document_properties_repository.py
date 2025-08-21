@@ -196,7 +196,12 @@ class DocumentPropertiesRepository:
         return PdfMasterRepository.get_first_author(pdf_master_id)
 
     @staticmethod
-    def get_project_name_and_id(document_id: str) -> tuple[str, str]:
+    def get_project_id_and_name(document_id: str) -> tuple[str, str]:
+        """
+        Retrieves the project name and project id associated with a document.
+        :param document_id:  The ID of the document to update.
+        :return: A tuple wit the project name and the project ID.
+        """
 
         project_id = DocumentPropertiesRepository.get_project_id(document_id)
         if not project_id:
