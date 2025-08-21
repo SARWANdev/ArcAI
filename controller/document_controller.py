@@ -51,7 +51,6 @@ class DocumentController:
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
-
             self.document_service.add_tag(document_id, tag_name, selected_colour)
 
             return jsonify({
@@ -61,11 +60,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in making a tag for the document: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to make tag for the document",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def remove_document_tag(self):
         """
@@ -92,11 +87,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in deleting the tag for the document: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to delete the tag for the document",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def upload_document(self):
         """
@@ -126,11 +117,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error to get upload the document: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to upload the document in the server",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_document(self):
         """
@@ -157,11 +144,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error sending file: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to send the document file",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_document(self):
         """
@@ -188,11 +171,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in deleting the document: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to delete the document",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def save_document(self):
         """
@@ -209,7 +188,7 @@ class DocumentController:
             save_document_content(file_path, file_bytes)
             return jsonify({"status": "success", "message": "File saved"}), 200
         except Exception as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
+            return jsonify({"error": str(e)}), 500
 
     def make_document_favourite(self):
         """
@@ -234,11 +213,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in favouring the document: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to favourite the document",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_favourite(self):
         """
@@ -265,11 +240,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in unfavouring the document: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to un-favour the document",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def mark_document_read(self):
         """
@@ -295,11 +266,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in marking the document as read: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to mark document as read",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_document_read(self):
         """
@@ -325,11 +292,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in unmarking the document as read: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to unmark document as read",
-                "error":str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_document_note(self):
         """
@@ -356,7 +319,7 @@ class DocumentController:
         except Exception as e:
             # Log the error for debugging
             print(f"Error in get_document_note: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def save_document_note(self):
         """
@@ -377,7 +340,7 @@ class DocumentController:
             return jsonify({"message": "Note saved"}), 200
         except Exception as e:
             print(f"Error in save_document_note: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def duplicate_document(self):
         """
@@ -398,7 +361,7 @@ class DocumentController:
             return jsonify({"message": "Document duplicated"}), 200
         except Exception as e:
             print(f"Error in duplicate_document: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def download_document(self):
         """
@@ -434,7 +397,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in download_document: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def move_document(self):
         """
@@ -461,7 +424,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in move_document: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_document_bibtex(self):
         """
@@ -491,7 +454,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in get_document_bibtex: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def set_document_bibtex(self):
         """
@@ -519,7 +482,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in set_document_bibtex: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_document_bibtex_string(self):
         """
@@ -544,7 +507,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in get_document_bibtex_string: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_project_from_document(self):
         try:
@@ -561,7 +524,7 @@ class DocumentController:
 
         except Exception as e:
             print(f"Error in get_project_from_document: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def register_document_routes(self, app):
         """

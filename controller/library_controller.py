@@ -102,11 +102,7 @@ class LibraryController:
 
         except Exception as e:
             print(f"Error in get_user_projects: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to retrieve projects",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def download_project(self):
         """
@@ -140,7 +136,7 @@ class LibraryController:
 
         except Exception as e:
             print(f"Error in download_project: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_project(self):
         """
@@ -169,11 +165,7 @@ class LibraryController:
 
         except Exception as e:
             print(f"Error in delete_project: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to delete the projects",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def rename_project(self):
         """
@@ -207,7 +199,7 @@ class LibraryController:
                     "message": "Failed to rename the project"
                 }), 500
         except Exception as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
+            return jsonify({"error": str(e)}), 500
 
     def search_documents(self):
         """
@@ -238,7 +230,7 @@ class LibraryController:
                 "message": "Search retrieved successfully",
             }), 200
         except Exception as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
+            return jsonify({"error": str(e)}), 500
 
     def register_library_routes(self, app):
         """

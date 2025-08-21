@@ -51,9 +51,7 @@ class ProjectController:
                     "message": "Failed to rename the document"
                 }), 500
         except Exception as e:
-            return jsonify({
-                "status": "error", "message": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_project_documents(self):
         """
@@ -125,11 +123,7 @@ class ProjectController:
 
         except Exception as e:
             print(f"Error to get documents from the projects: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to retrieve documents",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_project_tags(self):
         """
@@ -153,7 +147,7 @@ class ProjectController:
 
         except Exception as e:
             print(f"Error in get_project_tags: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_project_note(self):
         """
@@ -179,7 +173,7 @@ class ProjectController:
 
         except Exception as e:
             print(f"Error in get_project_note: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def save_project_note(self):
         """
@@ -201,7 +195,7 @@ class ProjectController:
             return jsonify({"message": "Note saved"}), 200
         except Exception as e:
             print(f"Error in save_project_note: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def register_project_routes(self, app):
         """

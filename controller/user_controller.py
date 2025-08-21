@@ -80,7 +80,7 @@ class UserController:
 
         except Exception as e:
             print(f"Error in update_preferred_mode: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_account(self):
         """

@@ -67,6 +67,7 @@ class ChatController:
             new_conversation.add_ai_message(string_response)
             self.conversation_service.update_messages(new_conversation.conversation_id, new_conversation.get_messages())
             list_of_messages = new_conversation.get_messages()
+
             return jsonify({
                 "success": True,
                 "data": {"conversation_id": str(new_conversation.conversation_id),
@@ -150,8 +151,7 @@ class ChatController:
             }), 200
 
         except Exception as e:
-            print(f"Error in get_conversation: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_all_conversations(self, user_id):
         """
@@ -214,11 +214,7 @@ class ChatController:
 
         except Exception as e:
             print(f"Error in get_user_conversation: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to retrieve projects",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def get_conversation(self):
         """
@@ -252,7 +248,7 @@ class ChatController:
 
         except Exception as e:
             print(f"Error in get_conversation: {e}")
-            return jsonify({"error": "Internal server error"}), 500
+            return jsonify({"error": str(e)}), 500
 
     def delete_chat(self):
         """
@@ -280,11 +276,7 @@ class ChatController:
 
         except Exception as e:
             print(f"Error in delete_chat: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to delete the chat",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def rename_chat(self):
         """
@@ -309,9 +301,7 @@ class ChatController:
                 "message": "Conversation renamed successfully"
             }), 200
         except Exception as e:
-            return jsonify({
-                "status": "error", "message": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def clear_history(self):
         """
@@ -338,11 +328,7 @@ class ChatController:
 
         except Exception as e:
             print(f"Error in delete_all: {str(e)}")
-            return jsonify({
-                "status": "error",
-                "message": "Failed to delete all conversations",
-                "error": str(e)
-            }), 500
+            return jsonify({"error": str(e)}), 500
 
     def search_chats(self):
         """
@@ -376,7 +362,7 @@ class ChatController:
                 "message": "Search retrieved successfully",
             }), 200
         except Exception as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
+            return jsonify({"error": str(e)}), 500
 
     def register_chat_routes(self, app):
         """
