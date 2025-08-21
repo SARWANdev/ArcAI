@@ -2,6 +2,7 @@ from bson import ObjectId
 
 from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
+from database.repository.project_repository import Project
 from database.utils.mongo_connector import mongo_connection
 
 class DocumentPropertiesRepository:
@@ -193,4 +194,16 @@ class DocumentPropertiesRepository:
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterRepository.get_first_author(pdf_master_id)
+
+    @staticmethod
+    def get_project_name_and_id(document_id: str) -> tuple[str, str]:
+
+        project_id = DocumentPropertiesRepository.get_project_id(document_id)
+        if not project_id:
+            return "", ""
+        project_name = Project.get_project_name(project_id)
+        return project_id, project_name
+
+
+
 
