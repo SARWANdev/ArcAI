@@ -60,3 +60,7 @@
 
     # Async Support
     anyio==4.9.0
+
+    # Test
+    pytest==8.4.1
+    pytest-mock==3.14.1
