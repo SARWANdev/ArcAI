@@ -1,4 +1,6 @@
 from io import BytesIO
+
+from database.repository.document_properties_repository import DocumentPropertiesRepository
 from services.document_service import DocumentService
 from services.download_manager.download_manager import download_file, get_document_bibtex
 from services.notebook_service import NotebookService
@@ -29,6 +31,7 @@ class DocumentController:
         self.document = Blueprint('document', __name__)
         self.notebook_service = NotebookService()
         self.document_repository = DocumentRepository
+        self.document_properties_repository = DocumentPropertiesRepository
         self.ai_service = AIService()
         self.register_document_routes(app)
 
@@ -543,6 +546,23 @@ class DocumentController:
             print(f"Error in get_document_bibtex_string: {e}")
             return jsonify({"error": "Internal server error"}), 500
 
+    def get_project_from_document(self):
+        try:
+            user_id = request.args.get("user_id")  # fixed naming
+            document_id = request.args.get("document_id")
+            print(user_id, document_id)
+            if not user_id or not document_id:
+                return jsonify({"error": "Missing user_id or document_id"}), 400
+
+            project = self.document_properties_repository.get_project_id_and_name(document_id)
+            # Assume this returns {"projectId": "...", "projectName": "..."}
+            print(project)
+            return jsonify(project), 200
+
+        except Exception as e:
+            print(f"Error in get_project_from_document: {e}")
+            return jsonify({"error": "Internal server error"}), 500
+
     def register_document_routes(self, app):
         """
         Registers all project-related API routes to the given Flask app.
@@ -566,5 +586,6 @@ class DocumentController:
         app.add_url_rule("/document/download", view_func=self.download_document)
         app.add_url_rule("/document/bibtex", view_func=self.get_document_bibtex)
         app.add_url_rule("/document/bibtex/set", view_func=self.set_document_bibtex, methods=["POST"])
+        app.add_url_rule("/document/project", view_func=self.get_project_from_document)
         app.add_url_rule("/document/bibtex/string", view_func=self.get_document_bibtex_string)
         app.register_blueprint(self.document)

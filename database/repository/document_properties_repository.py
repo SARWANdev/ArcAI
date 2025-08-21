@@ -2,6 +2,7 @@ from bson import ObjectId
 
 from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
+from database.repository.project_repository import Project
 from database.utils.mongo_connector import mongo_connection
 
 class DocumentPropertiesRepository:
@@ -172,7 +173,7 @@ class DocumentPropertiesRepository:
         """
         try:
             with mongo_connection() as db:
-                project_id = db.documents.find_one_or_404({"_id": ObjectId(document_id)}, {"project_id": 1}).get("project_id")
+                project_id = db.documents.find_one({"_id": ObjectId(document_id)}, {"project_id": 1}).get("project_id")
                 return project_id
         except Exception as e:
             print(f"Project id could not be found: {e}")
@@ -194,3 +195,16 @@ class DocumentPropertiesRepository:
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterRepository.get_first_author(pdf_master_id)
 
+    @staticmethod
+    def get_project_id_and_name(document_id: str) -> tuple[str, str]:
+        """
+        Retrieves the project name and project id associated with a document.
+        :param document_id:  The ID of the document to update.
+        :return: A tuple wit the project name and the project ID.
+        """
+
+        project_id = DocumentPropertiesRepository.get_project_id(document_id)
+        if not project_id:
+            return "", ""
+        project_name = Project.get_project_name(project_id)
+        return project_id, project_name
