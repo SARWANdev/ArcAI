@@ -130,6 +130,8 @@ class AIService:
                 print(f"AIService send_chat_message error: {response.status_code}, {response.text}")
                 raise AIGenerationException("Failed to get chat response from language model.")
             return response
+        except requests.Timeout:
+            raise AIConnectionException("The request to the language model timed out.")
         except requests.RequestException as e:
             print(f"AIService network error in send_chat_message: {str(e)}")
             raise AIConnectionException("Network error while contacting chat service.")
