@@ -1,4 +1,4 @@
-from base_exceptions import ValidationException, BusinessLogicException, InfrastructureException
+from exceptions.base_exceptions import ValidationException, BusinessLogicException, InfrastructureException
 
 class InvalidConversationName(ValidationException):
     """Invalid conversatio name (Validation exception)"""
