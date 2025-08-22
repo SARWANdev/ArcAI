@@ -5,6 +5,7 @@ from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel
 from services.document_service import DocumentService
 from services.notebook_service import NotebookService
+from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName, ProjectNotFoundError
 
 
 class ProjectService:
@@ -33,6 +34,9 @@ class ProjectService:
         :return: The created ProjectModel instance with assigned ID.
         :rtype: ProjectModel
         """
+        # Validate project name before creation
+        self._validate_project_name(project_name, user_id)
+        
         project_model = ProjectModel(
             project_name=project_name,
             user_id=user_id,
@@ -108,6 +112,14 @@ class ProjectService:
         :return: True if updated, False otherwise.
         :rtype: bool
         """
+        # Get the current project to check if it exists and get user_id
+        current_project = self.get_project(project_id)
+        if not current_project:
+            raise ProjectNotFoundError(f"Project with ID {project_id} not found")
+        
+        # Validate the new project name
+        self._validate_project_name(project_name, current_project.user_id, exclude_project_id=project_id)
+        
         return self.project_repository.update_name(project_id, project_name)
 
     def sort_project_documents(self, project_id: str, sort_field: str, order: str) -> list[DocumentModel]:
@@ -150,3 +162,40 @@ class ProjectService:
             return documents  # fallback: return unsorted
         return documents
 
+    def _validate_project_name(self, project_name: str, user_id: str, exclude_project_id: str = None):
+        """
+        Validate project name according to business rules.
+        
+        :param project_name: The project name to validate.
+        :type project_name: str
+        :param user_id: The user ID to check for duplicates.
+        :type user_id: str
+        :param exclude_project_id: Project ID to exclude from duplicate check (for updates).
+        :type exclude_project_id: str, optional
+        :raises InvalidProjectName: If the project name is invalid.
+        :raises DuplicateProjectName: If a project with the same name already exists.
+        """
+        from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName
+        
+        # Check if project name is empty or too short
+        if not project_name or not project_name.strip():
+            raise InvalidProjectName("Project name cannot be empty")
+        
+        # Check if project name is too long
+        if len(project_name.strip()) > InvalidProjectName.MAX_NAME_LENGTH:
+            raise InvalidProjectName(f"Project name cannot exceed {InvalidProjectName.MAX_NAME_LENGTH} characters")
+        
+        # Check if project name is too short
+        if len(project_name.strip()) < InvalidProjectName.MIN_NAME_LENGTH:
+            raise InvalidProjectName(f"Project name must be at least {InvalidProjectName.MIN_NAME_LENGTH} character long")
+        
+        # Check for duplicate names within the same user's library
+        user_projects = self.get_user_projects(user_id)
+        if user_projects:
+            for project in user_projects:
+                # Skip the current project when updating (to allow keeping the same name)
+                if exclude_project_id and str(project.id) == exclude_project_id:
+                    continue
+                    
+                if project.project_name.lower() == project_name.lower():
+                    raise DuplicateProjectName(project_name)

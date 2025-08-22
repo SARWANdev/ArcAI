@@ -6,6 +6,7 @@ from services.library_service import LibraryService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
 from flask import Blueprint, Flask, jsonify, request, send_file
+from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName, ProjectNotFoundError
 
 
 class LibraryController:
@@ -45,12 +46,26 @@ class LibraryController:
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
 
-            self.project_service.create_project(user_id, name)
+            if not name:
+                return jsonify({"error": "Project name is required"}), 400
 
-            return jsonify({"success": "A project has been created"}), 200
+            project = self.project_service.create_project(user_id, name)
 
+            return jsonify({
+                "success": "Project created successfully",
+                "project": {
+                    "id": project.id,
+                    "name": project.project_name,
+                    "user_id": project.user_id
+                }
+            }), 201
+
+        except InvalidProjectName as e:
+            return jsonify({"error": str(e)}), 400
+        except DuplicateProjectName as e:
+            return jsonify({"error": str(e)}), 409
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": f"Failed to create project: {str(e)}"}), 500
 
     def get_user_projects(self):
         """
@@ -181,13 +196,17 @@ class LibraryController:
         try:
             data = request.get_json()
             user_id = data.get('user_id')
-            project_id = ObjectId(data.get('project_id'))
+            project_id = data.get('project_id')
             new_name = data.get('name')
 
             if not all([user_id, project_id, new_name]):
-                return jsonify({'error': 'Missing required fields'}), 400
+                return jsonify({'error': 'Missing required fields: user_id, project_id, or name'}), 400
+
+            if not new_name.strip():
+                return jsonify({'error': 'Project name cannot be empty'}), 400
 
             result = self.project_service.rename_project(project_id, new_name)
+            
             if result:
                 return jsonify({
                     "status": "success",
@@ -198,8 +217,15 @@ class LibraryController:
                     "status": "error",
                     "message": "Failed to rename the project"
                 }), 500
+
+        except InvalidProjectName as e:
+            return jsonify({"error": str(e)}), 400
+        except DuplicateProjectName as e:
+            return jsonify({"error": str(e)}), 409
+        except ProjectNotFoundError as e:
+            return jsonify({"error": str(e)}), 404
         except Exception as e:
-            return jsonify({"error": str(e)}), 500
+            return jsonify({"error": f"Failed to rename project: {str(e)}"}), 500
 
     def search_documents(self):
         """
