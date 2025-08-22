@@ -136,6 +136,7 @@ class AIService:
             print(f"AIService network error in send_chat_message: {str(e)}")
             raise AIConnectionException("Network error while contacting chat service.")
         except Exception as e:
+            print(e)
             print(f"AIService unexpected error in send_chat_message: {str(e)}")
             raise AIConnectionException("Unexpected error during chat message processing.")
         
