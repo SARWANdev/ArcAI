@@ -1,10 +1,9 @@
 # exceptions/base_exceptions.py
 class ArcAIException(Exception):
     """Base exception for all ArcAI application errors"""
-    def __init__(self, message: str, error_code: str = None, details: dict = None):
+    def __init__(self, message: str):
         super().__init__(message)
         self.message = message
-
 
 class ValidationException(ArcAIException):
     """Base class for validation-related errors"""
