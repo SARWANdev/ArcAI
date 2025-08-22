@@ -21,6 +21,7 @@ from services.upload_manager.hash_manager import get_pdf_sha256, relative_path_g
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.upload_manager.server_conection import upload_document, delete_remote_directory, save_embeddings
 from services.notebook_service import NotebookService
+from exceptions.ai_exceptions import AIEmbeddingException
 
 class DocumentService:
 
@@ -222,13 +223,18 @@ class DocumentService:
         :param pdf_master_id: ID of the associated PDF master record
         :return:
         """
-        text_chunks = self.__get_text_chunks(document=document_path)
-        embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)
-        serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
-        path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
-        paths = save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
-        self.pdf_master_repository.set_remote_faiss_path(pdf_master_id, paths[0])
-        self.pdf_master_repository.set_remote_pkl_path(pdf_master_id, paths[1])
+        try:
+            text_chunks = self.__get_text_chunks(document=document_path)
+            embeddings = self.ai_service.get_vector_store(text_chunks=text_chunks)
+            serialized_vector_store = EmbeddingsManager.serialize_vector_store(embeddings)
+            path_in_server = self.pdf_master_repository.get_path(pdf_master_id)
+            paths = save_embeddings(path_in_server, serialized_vector_store[0], serialized_vector_store[1])
+            self.pdf_master_repository.set_remote_faiss_path(pdf_master_id, paths[0])
+            self.pdf_master_repository.set_remote_pkl_path(pdf_master_id, paths[1])
+            return True
+        except Exception as e:
+            raise AIEmbeddingException("Rolling back changes.") from e
+
 
 
 
