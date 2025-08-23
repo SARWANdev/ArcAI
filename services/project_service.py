@@ -43,7 +43,9 @@ class ProjectService:
         )
         project_id = self.project_repository.save(project_model)
         project_model.id = project_id
-        self.notebook_service.update_project_notebook(project_id, "")
+        
+        # Don't call notebook service here - the note field is already set to "" in new_project_dict()
+        # The notebook will be created automatically with the project
         return project_model
 
     def get_project(self, project_id):

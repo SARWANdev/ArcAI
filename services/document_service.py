@@ -182,7 +182,9 @@ class DocumentService:
         user_id = ProjectRepository.get_user_id(project_id)
         ConversationService().create_document_conversation(user_id, document_id=new_document_id)
         self.pdf_master_repository.increment_ref_count(pdf_master_id)
-        self.notebook_service.update_document_notebook(new_document_id, "")
+        
+        # Don't call notebook service here - the note field is already set to "" in new_document_dict()
+        # The notebook will be created automatically with the document
 
         return new_document_id
     
