@@ -22,7 +22,6 @@ from services.upload_manager.hash_manager import get_pdf_sha256, relative_path_g
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.upload_manager.server_conection import upload_document, delete_remote_directory, save_embeddings
 from services.notebook_service import NotebookService
-from exceptions.ai_exceptions import AIEmbeddingException
 from validators.document_validator import DocumentValidator
 
 
@@ -240,7 +239,7 @@ class DocumentService:
             self.pdf_master_repository.set_remote_faiss_path(pdf_master_id, paths[0])
             self.pdf_master_repository.set_remote_pkl_path(pdf_master_id, paths[1])
             return True
-        except Exception as e:
+        except Exception:
             #raise AIEmbeddingException("Rolling back changes.") from e
             return False
 
@@ -270,7 +269,7 @@ class DocumentService:
             try:
                 pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
                 success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
-            except InvalidServerConnectionException as e:
+            except InvalidServerConnectionException:
                 server_success = False
 
         document_id = self.__create_document(original_name, project_id, pdf_master_id)

@@ -4,7 +4,6 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from model.document_reader.pdf_master import PdfMaster
 from services.bibtex_service import BibTeX_Service
-from exceptions.bibtex_exceptions import BibTeXParseException
 
 
 class PdfMasterRepository:

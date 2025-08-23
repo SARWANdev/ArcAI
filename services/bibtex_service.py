@@ -64,7 +64,7 @@ class BibTeX_Service:
                 parser=bibtexparser.bparser.BibTexParser()
             )
             self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
-        except Exception as e:
+        except Exception:
             self.__bibtex_library = None
             self.formatted_bibtex_string = None
             raise BibTeXParseException()
@@ -99,7 +99,7 @@ class BibTeX_Service:
             if self.__bibtex_library and self.__bibtex_library.entries:
                 self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
             return True
-        except Exception as e:
+        except Exception:
             raise BibTeXSaveException("Error saving BibTex")
 
     def get_bibtex_str(self, paper_name: str) -> Optional[str]:
@@ -128,7 +128,7 @@ class BibTeX_Service:
             response.raise_for_status()
             return response.text
         
-        except Exception as e:
+        except Exception:
             raise BibTeXNotFoundException()
 
     def save_to_file(self, custom_path: Optional[str] = None) -> bool:
@@ -152,7 +152,7 @@ class BibTeX_Service:
                 file.write(self.formatted_bibtex_string)
             print(f"BibTeX saved to: {file_path}")
             return True
-        except Exception as e:
+        except Exception:
             raise BibTeXSaveException()
 
     def get_file(self) -> Optional[str]:
@@ -209,7 +209,7 @@ class BibTeX_Service:
             author_string = bib_dict['author']
             authors = author_string.split(" and ")
             return [author.strip() for author in authors]
-        except Exception as e:
+        except Exception:
             return None
 
     def get_first_author(self) -> Optional[str]:
@@ -238,7 +238,7 @@ class BibTeX_Service:
                 if field in bib_dict and bib_dict[field]:
                     return bib_dict[field]
             return None
-        except Exception as e:
+        except Exception:
             return None
 
     def get_year(self) -> Optional[str]:

@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from services.library_service import LibraryService
 from model.document_reader.project import Project
 

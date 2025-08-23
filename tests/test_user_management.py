@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from services.user_management.user_service import UserService
-from model.user_profile.user import User as UserModel
 
 @pytest.fixture
 def user_service():

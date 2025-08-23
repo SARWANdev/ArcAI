@@ -175,7 +175,6 @@ class ProjectService:
         :raises InvalidProjectName: If the project name is invalid.
         :raises DuplicateProjectName: If a project with the same name already exists.
         """
-        from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName
         
         # Check if project name is empty or too short
         if not project_name or not project_name.strip():

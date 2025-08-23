@@ -1,7 +1,6 @@
 from io import BytesIO
 
 from database.repository.document_properties_repository import DocumentPropertiesRepository
-from exceptions.base_exceptions import ValidationException, BusinessLogicException, InfrastructureException
 from exceptions.document_exceptions import InvalidDocumentNamingException, InvalidServerConnectionException, \
     InvalidProjectIdException, InvalidUserIdException
 from services.document_service import DocumentService

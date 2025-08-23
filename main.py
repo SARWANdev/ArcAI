@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from dotenv import find_dotenv, load_dotenv
+from dotenv import load_dotenv
 from os import environ as env
 from flask_cors import CORS
 
@@ -13,7 +13,6 @@ from controller.document_controller import DocumentController
 
 from services.user_management.authentication_service import AuthenticationService
 
-from dotenv import load_dotenv
 
 load_dotenv()
 

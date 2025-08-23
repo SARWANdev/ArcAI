@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from contextlib import contextmanager
 from elasticsearch import Elasticsearch
 import os
 from dotenv import load_dotenv

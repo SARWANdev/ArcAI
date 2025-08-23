@@ -1,8 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from services.document_service import DocumentService
-from model.document_reader.document import Document as DocumentModel
-from model.document_reader.tag_manager.tag import Tag as TagModel
 
 @pytest.fixture
 def document_service():

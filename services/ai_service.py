@@ -96,9 +96,9 @@ class AIService:
                 # Raise sanitized error for the frontend or caller
                 raise AIGenerationException("Failed to generate response from language model.")
             return response
-        except requests.RequestException as e:
+        except requests.RequestException:
             raise AIConnectionException("Network error while contacting language model.")
-        except Exception as e:
+        except Exception:
             raise AIConnectionException("Unexpected error during language model generation.")
 
     def send_chat_message(self, question: str, conversation: Conversation):
@@ -130,7 +130,7 @@ class AIService:
                 print(f"AIService send_chat_message error: {response.status_code}, {response.text}")
                 raise AIGenerationException("Failed to get chat response from language model.")
             return response
-        except AIGenerationException as e:
+        except AIGenerationException:
             raise AIGenerationException("Couldn't perform Similarity Search, LLM maybe offline.")        
         except requests.Timeout:
             raise AIConnectionException("The request to the language model timed out.")
@@ -202,16 +202,12 @@ class AIService:
             if embedding_path:
                 try:
                     vector_store.save_local(embedding_path)
-                except Exception as e:
+                except Exception:
                     raise AIEmbeddingException("Failed to save generated embedding.")
             return vector_store
-        except Exception as e:
+        except Exception:
             raise AIEmbeddingException("Failed to embed document.")
         
-
-
-
-    
     
     def load_vector_store_from_path(self, embedding_path:str):
         try:
@@ -219,7 +215,7 @@ class AIService:
             folder_path=embedding_path, embeddings=self.embeddings, allow_dangerous_deserialization=True
             )
             return loaded_vector_store
-        except Exception as e:
+        except Exception:
             raise AIEmbeddingException("Failed to load embeddings.")
 
     
@@ -248,7 +244,7 @@ class AIService:
         for i in range(1, len(vector_stores)):
             try:
                 merged_vector_store.merge_from(vector_stores[i])
-            except Exception as e:
+            except Exception:
                 raise AIEmbeddingException("Error merging embeddings.")
                 continue
         
@@ -284,7 +280,7 @@ class AIService:
             response = self.generate(prompt=prompt)
             name = self.output_streaming_response(response=response, output_function=len, mode="generate")
             return name
-        except Exception as e:
+        except Exception:
             raise AIConnectionException("Connection Timed out.")
     
     

@@ -1,7 +1,6 @@
 from services.ai_service import AIService
 from services.conversation_service import ConversationService
 from exceptions.conversation_exceptions import ConversationNotFoundError, InvalidConversationName, DuplicateConversationName
-from services.ai_service import AIService
 from flask import Blueprint, Flask, jsonify, request
 
 
