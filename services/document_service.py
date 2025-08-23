@@ -64,11 +64,9 @@ class DocumentService:
         :param project_id: Target project ID
         :return: None
         """
-        print(1)
+
         DocumentValidator.validate_file(file)
-        print(2)
         DocumentValidator.validate_user_id(user_id)
-        print(3)
         DocumentValidator.validate_project_id(project_id)
 
         original_name = file.filename
@@ -243,7 +241,8 @@ class DocumentService:
             self.pdf_master_repository.set_remote_pkl_path(pdf_master_id, paths[1])
             return True
         except Exception as e:
-            raise AIEmbeddingException("Rolling back changes.") from e
+            #raise AIEmbeddingException("Rolling back changes.") from e
+            return False
 
 
 
@@ -261,7 +260,7 @@ class DocumentService:
 
         pdf_hash = get_pdf_sha256(document_path)
         existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash, user_id)
-        success_embeddings = True
+        success_embeddings = False
         server_success = True
 
         if existing_pdf_master:
@@ -271,16 +270,19 @@ class DocumentService:
             try:
                 pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
                 success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
+                print("I ma here")
             except InvalidServerConnectionException as e:
                 server_success = False
 
+        print(success_embeddings)
+        print(server_success)
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
         text = self.__get_pdf_text(document_path)
         DocumentRepository.save_elastic(document_id, text)
 
         if not success_embeddings or not server_success:
-            print(13)
             self.delete_document(document_id)
+            raise InvalidServerConnectionException("Either server or Ai failed")
 
 
 
