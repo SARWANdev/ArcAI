@@ -33,7 +33,7 @@ class Project:
                 project_id = str(result.inserted_id)
                 return project_id
             except pymongo.errors.DuplicateKeyError:
-                print(f"Project {Project.get_project_name(project_id)} already exists")
+                print(f"Project with name '{project.new_project_dict().get('project_name')}' already exists")
                 return ""
     
     @staticmethod

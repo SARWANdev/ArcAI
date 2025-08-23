@@ -17,11 +17,18 @@ class Notebook:
         :param project_id: Project identifier.
         :type project_id: str
 
-        :return: Notebook content as a string.
+        :return: Notebook content as a string, empty string if not found.
         :rtype: str
         """
-        with mongo_connection() as db:
-            return db.projects.find_one({"_id": ObjectId(project_id)})["note"]
+        try:
+            with mongo_connection() as db:
+                project = db.projects.find_one({"_id": ObjectId(project_id)})
+                if project is None:
+                    return ""
+                return project.get("note", "")
+        except Exception as e:
+            print(f"Error retrieving project notebook: {e}")
+            return ""
 
     @staticmethod
     def update_project_notebook(project_id, note) -> bool:
@@ -52,11 +59,18 @@ class Notebook:
         :param document_id: Document identifier.
         :type document_id: str
 
-        :return: Notebook content as a string.
+        :return: Notebook content as a string, empty string if not found.
         :rtype: str
         """
-        with mongo_connection() as db:
-            return db.documents.find_one({"_id": ObjectId(document_id)})["note"]
+        try:
+            with mongo_connection() as db:
+                document = db.documents.find_one({"_id": ObjectId(document_id)})
+                if document is None:
+                    return ""
+                return document.get("note", "")
+        except Exception as e:
+            print(f"Error retrieving document notebook: {e}")
+            return ""
 
     @staticmethod
     def update_document_notebook(document_id, note) -> bool:
