@@ -4,6 +4,8 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from typing import Dict
 from database.repository.pdf_master_repository import PdfMasterRepository
+from elastic_transport import ConnectionError, TransportError
+
 
 from database.utils.db_setup import es
 
@@ -46,15 +48,22 @@ class DocumentRepository:
         :param text: Text chunks to save
         """
         doc_id = str(doc_id)
-        name = DocumentRepository.get_name(doc_id)
-        author = DocumentRepository.get_authors(doc_id)
-        es.index(index="documents", id=doc_id, body={
-            "user_id": DocumentRepository.get_user_id(doc_id),
-            "name": name,
-            "author": author,
-            "text": text, 
-            "suggest": {"input": [name, author]}
-        })
+        try:
+            name = DocumentRepository.get_name(doc_id)
+            author = DocumentRepository.get_authors(doc_id)
+            es.index(index="documents", id=doc_id, body={
+                "user_id": DocumentRepository.get_user_id(doc_id),
+                "name": name,
+                "author": author,
+                "text": text, 
+                "suggest": {"input": [name, author]}
+            })
+            return True
+        
+        except (ConnectionError, TransportError) as e:
+            print(f"Error during indexing to Elasticsearch: {e}")
+            return False
+
 
     @staticmethod
     def get_path(document_id):

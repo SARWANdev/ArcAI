@@ -276,16 +276,11 @@ class DocumentService:
 
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
         text = self.__get_pdf_text(document_path)
-        DocumentRepository.save_elastic(document_id, text)
+        elastic_success = DocumentRepository.save_elastic(document_id, text)
 
-        if not success_embeddings or not server_success:
+        if not success_embeddings or not server_success or not elastic_success:
             print(13)
             self.delete_document(document_id)
-
-
-
-
-
 
     def __get_pdf_text(self, document) -> str:
         """
@@ -407,9 +402,6 @@ class DocumentService:
         :return: True if the document was removed, else False
         """
         return self.document_properties_repo.mark_as_not_favorite(document_id)
-
-
-
 
     def remove_tag(self, document_id):
         """
