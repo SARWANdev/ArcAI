@@ -246,6 +246,7 @@ class DocumentService:
 
 
 
+
     def __upload_document(self, document_path: str, user_id: str, project_id: str, original_name: str):
         """
         Handles document deduplication via hash checks, creates necessary database records,
@@ -269,20 +270,18 @@ class DocumentService:
             try:
                 pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
                 success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
-            except InvalidServerConnectionException:
+                print("pdf_master_id: " + pdf_master_id)
+            except InvalidServerConnectionException as e:
                 server_success = False
 
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
+        print("document_id: " + document_id)
         text = self.__get_pdf_text(document_path)
         elastic_success = DocumentRepository.save_elastic(document_id, text)
 
         if not success_embeddings or not server_success or not elastic_success:
-            print(13)
             self.delete_document(document_id)
             raise InvalidServerConnectionException("Either server or Ai failed")
-
-
-
 
 
 
@@ -351,8 +350,10 @@ class DocumentService:
         :param document_id: ID of the document to delete
         :return: True if the document was deleted, False otherwise
         """
+
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
         document_data = self.document_repository.delete_document(document_id)
+        self.document_repository.delete_elastic(document_id)
 
         if not document_data:
             print(f"Document with id {document_id} was not found")
@@ -360,6 +361,7 @@ class DocumentService:
 
         remote_path = self.pdf_master_repository.get_path(pdf_master_id)
         self.document_repository.delete_document(document_id)
+        self.document_repository.delete_elastic(document_id)
         self.pdf_master_repository.decrement_ref_count(pdf_master_id)
         self.conversation_repository.delete_conversation_for_document(str(document_id))
         ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
@@ -625,9 +627,4 @@ class DocumentService:
         :return: True if successful, False otherwise
         """
         success = self.document_repository.update_document_name(document_id, new_name)
-        if success:
-            print(f"Successfully updated name: {new_name}")
-        else:
-            print(f"Failed to update name: {new_name}")
-
         return success

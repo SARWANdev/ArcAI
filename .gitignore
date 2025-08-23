@@ -14,3 +14,4 @@ database/utils/mongo_configuration.py
 .vscode/settings.json
 .env
 pipipupu.py
+validators/conversation_validator.py

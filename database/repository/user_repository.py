@@ -102,3 +102,13 @@ class UserRepository:
         except Exception as e:
             print(f"Error getting view mode: {str(e)}")
             return False
+        
+    @staticmethod
+    def user_exists(user_id) -> bool:
+        try:
+            with mongo_connection as db:
+                result = db.users.find_one(str(user_id))
+                return result is not None
+        except Exception as e:
+            print(f"User could not be retrieved: {e}")
+            return False

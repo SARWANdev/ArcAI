@@ -1,6 +1,7 @@
 from database.repository.notebook_repository import Notebook as NotebookRepository
 from database.repository.document_repository import DocumentRepository
 from database.repository.project_repository import Project as ProjectRepository
+from exceptions.notebook_exceptions import InvalidNoteContent, NotebookSaveException, NotebookNotFoundError
 import io 
 
 class NotebookService:
@@ -16,6 +17,26 @@ class NotebookService:
         self.document_repository = DocumentRepository
         self.project_repository = ProjectRepository
 
+    def _validate_note_content(self, note: str):
+        """
+        Validate note content before saving.
+        
+        :param note: The note content to validate
+        :type note: str
+        :raises InvalidNoteContent: If the note content is invalid
+        """
+        if note is None:
+            note = ""
+        
+        # Only check if note is too long - that's the only restriction that makes sense
+        if len(note) > InvalidNoteContent.MAX_NOTE_LENGTH:
+            raise InvalidNoteContent(
+                f"Note content cannot exceed {InvalidNoteContent.MAX_NOTE_LENGTH} characters. "
+                f"Current length: {len(note)} characters"
+            )
+        
+        # No character restrictions - let users write whatever they want
+
     def get_projects_notebook(self, project_id):
         """
         Get the notebook content for a given project.
@@ -24,9 +45,17 @@ class NotebookService:
         :type project_id: str
         :return: Notebook content as a string
         :rtype: str
+        :raises NotebookNotFoundError: If the project notebook is not found
         """
-        note = self.notebook_repository.get_project_notebook(project_id)
-        return note
+        try:
+            note = self.notebook_repository.get_project_notebook(project_id)
+            if note is None:
+                raise NotebookNotFoundError("project", project_id)
+            return note
+        except Exception as e:
+            if isinstance(e, NotebookNotFoundError):
+                raise
+            raise NotebookSaveException(f"Failed to retrieve project notebook: {str(e)}")
 
     def get_documents_notebook(self, document_id):
         """
@@ -36,9 +65,17 @@ class NotebookService:
         :type document_id: str
         :return: Notebook content as a string
         :rtype: str
+        :raises NotebookNotFoundError: If the document notebook is not found
         """
-        note = self.notebook_repository.get_document_notebook(document_id)
-        return note
+        try:
+            note = self.notebook_repository.get_document_notebook(document_id)
+            if note is None:
+                raise NotebookNotFoundError("document", document_id)
+            return note
+        except Exception as e:
+            if isinstance(e, NotebookNotFoundError):
+                raise
+            raise NotebookSaveException(f"Failed to retrieve document notebook: {str(e)}")
     
     def update_document_notebook(self, document_id, note):
         """
@@ -50,8 +87,25 @@ class NotebookService:
         :type note: str
         :return: True if update was successful, else False
         :rtype: bool
+        :raises InvalidNoteContent: If the note content is invalid
+        :raises NotebookSaveException: If the save operation fails
         """
-        return NotebookRepository.update_document_notebook(document_id, note)
+        try:
+            # Validate note content before saving
+            self._validate_note_content(note)
+            
+            # Attempt to save
+            result = NotebookRepository.update_document_notebook(document_id, note)
+            
+            if not result:
+                raise NotebookSaveException("Database update returned False")
+                
+            return result
+            
+        except InvalidNoteContent:
+            raise  # Re-raise validation errors
+        except Exception as e:
+            raise NotebookSaveException(f"Failed to save document notebook: {str(e)}")
 
     def update_project_notebook(self, project_id, note):
         """
@@ -63,8 +117,25 @@ class NotebookService:
         :type note: str
         :return: True if update was successful, else False
         :rtype: bool
+        :raises InvalidNoteContent: If the note content is invalid
+        :raises NotebookSaveException: If the save operation fails
         """
-        return NotebookRepository.update_project_notebook(project_id, note)
+        try:
+            # Validate note content before saving
+            self._validate_note_content(note)
+            
+            # Attempt to save
+            result = NotebookRepository.update_project_notebook(project_id, note)
+            
+            if not result:
+                raise NotebookSaveException("Database update returned False")
+                
+            return result
+            
+        except InvalidNoteContent:
+            raise  # Re-raise validation errors
+        except Exception as e:
+            raise NotebookSaveException(f"Failed to save project notebook: {str(e)}")
 
     def download_documents_notebook(self, document_id):
         """
@@ -97,4 +168,3 @@ class NotebookService:
         buffer = io.BytesIO()
         buffer.write(notebook.encode('utf-8'))
         return buffer, notes_title
-

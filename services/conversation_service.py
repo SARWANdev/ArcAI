@@ -2,6 +2,7 @@ from typing import List, Optional, Any
 from exceptions.conversation_exceptions import ConversationNotFoundError 
 from database.repository.conversation_repository import ConversationRepository
 from model.ai_chat.conversation import Conversation as ConversationModel
+from validators.conversation_validator import ConvesationValidator
 from bson import ObjectId
 from database.repository.date_time_utils import get_utc_zulu_timestamp
 
@@ -184,7 +185,7 @@ class ConversationService:
         :param new_name: The new name for the conversation.
         :type new_name: str
         """
-        
+         
         return self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
     
     def rename_chat(self, conversation_id: Any, new_name: str) -> bool:
