@@ -209,11 +209,29 @@ class DocumentRepository:
                 #Deletion in Mongo
                 result = db.documents.delete_one({"_id": ObjectId(document_id)})
                 #Deletion in Elasticsearch
-                es.delete(index = "documents", id=document_id)
+                #es.delete(index = "documents", id=document_id)
                 return result.deleted_count > 0
         except Exception as e:
             print(f"Document could not be deleted: {e}")
             return False
+
+    @staticmethod
+    def delete_elastic(document_id) -> bool:
+        """
+                Deletes document from Elasticsearch.
+
+                :param document_id: ID of a document.
+
+                :return: True if deleted.
+        """
+        try:
+            es.delete(index="documents", id=document_id)
+            return True
+        except Exception as e:
+            print(f"elastic could not be deleted: {e}")
+            return False
+
+
 
     @staticmethod
     def get_note(document_id):
