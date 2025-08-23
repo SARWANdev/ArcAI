@@ -1,7 +1,6 @@
 from habanero import Crossref
 import bibtexparser
 import requests
-import os
 from typing import Optional, Dict, Any
 from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException, BibTeXNotFoundException
 
@@ -37,17 +36,16 @@ class BibTeX_Service:
         :return: None
         :rtype: None
         """
-        try:
-            self.__paper_name = paper_name.replace("_", " ")
-            if self.__paper_name.lower().endswith('.pdf'):
-                self.__paper_name = self.__paper_name[:-4]
-            unformatted_bibtex_string = self.get_bibtex_str(self.__paper_name)
-            if unformatted_bibtex_string:
-                self._parse_bibtex(unformatted_bibtex_string)
-            else:
-                print(f"No BibTeX data found for: {self.__paper_name}")
-        except Exception as e:
-            print(f"Error processing paper name '{paper_name}': {e}")
+    
+        self.__paper_name = paper_name.replace("_", " ")
+        if self.__paper_name.lower().endswith('.pdf'):
+            self.__paper_name = self.__paper_name[:-4]
+        unformatted_bibtex_string = self.get_bibtex_str(self.__paper_name)
+        if unformatted_bibtex_string:
+            self._parse_bibtex(unformatted_bibtex_string)
+        else:
+            print(f"No BibTeX data found for: {self.__paper_name}")
+        
 
     def _parse_bibtex(self, bibtex_string: str) -> None:
         """
@@ -94,13 +92,12 @@ class BibTeX_Service:
         :return: True if successful, False otherwise.
         :rtype: bool
         """
-        try:
-            self._parse_bibtex(bibtex)
-            if self.__bibtex_library and self.__bibtex_library.entries:
-                self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
-            return True
-        except Exception:
-            raise BibTeXSaveException("Error saving BibTex")
+        
+        self._parse_bibtex(bibtex)
+        if self.__bibtex_library and self.__bibtex_library.entries:
+            self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
+        return True
+    
 
     def get_bibtex_str(self, paper_name: str) -> Optional[str]:
         """
@@ -111,25 +108,23 @@ class BibTeX_Service:
         :return: BibTeX string if found, None otherwise.
         :rtype: str or None
         """
-        try:
-            cr = Crossref()
-            cr.timeout = 1200
-            res = cr.works(query=paper_name, limit=1)
-            if not res['message']['items']:
-                print(f"No results found for: {paper_name}")
-                return None
-            doi = res['message']['items'][0]['DOI']
-            response = requests.get(
-                f"https://doi.org/{doi}", 
-                headers={"Accept": "application/x-bibtex"}, 
-                stream=False,
-                timeout=30
-            )
-            response.raise_for_status()
-            return response.text
+    
+        cr = Crossref()
+        cr.timeout = 1200
+        res = cr.works(query=paper_name, limit=1)
+        if not res['message']['items']:
+            print(f"No results found for: {paper_name}")
+            return None
+        doi = res['message']['items'][0]['DOI']
+        response = requests.get(
+            f"https://doi.org/{doi}", 
+            headers={"Accept": "application/x-bibtex"}, 
+            stream=False,
+            timeout=30
+        )
+        response.raise_for_status()
+        return response.text
         
-        except Exception:
-            raise BibTeXNotFoundException()
 
 
 

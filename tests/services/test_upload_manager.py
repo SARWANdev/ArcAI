@@ -19,6 +19,31 @@ def test_get_pdf_sha256_file_not_found():
 def test_relative_path_generator():
     assert hash_manager.relative_path_generator("user1", "proj1") == "user1/proj1"
 
+# New tests for hash_manager
+def test_get_pdf_sha256_ioerror(monkeypatch, tmp_path):
+    file_path = tmp_path / "test.pdf"
+    file_path.write_bytes(b"test content")
+    class DummyFile:
+        def read(self, n):
+            raise IOError("fail")
+        def __enter__(self): return self
+        def __exit__(self, *a): pass
+    monkeypatch.setattr("pathlib.Path.open", lambda self, mode: DummyFile())
+    with pytest.raises(IOError):
+        hash_manager.get_pdf_sha256(str(file_path))
+
+def test_get_pdf_sha256_empty_file(tmp_path):
+    file_path = tmp_path / "empty.pdf"
+    file_path.write_bytes(b"")
+    result = hash_manager.get_pdf_sha256(str(file_path))
+    import hashlib
+    expected = hashlib.sha256(b"").hexdigest()
+    assert result == expected
+
+def test_relative_path_generator_empty():
+    assert hash_manager.relative_path_generator("", "") == "/"
+
+
 # embeddings_manager tests
 def test_serialize_vector_store():
     mock_faiss = MagicMock()
@@ -82,6 +107,18 @@ def test_save_document_content_error():
         result = server_conection.save_document_content("/remote/file", b"data")
         assert result is False
 
+# New tests for server_conection
+def test_save_document_content_write_error():
+    with patch("services.upload_manager.server_conection.ssh_connection") as mock_ssh:
+        mock_sftp = MagicMock()
+        mock_ssh_inst = MagicMock()
+        mock_ssh.return_value = mock_ssh_inst
+        mock_ssh_inst.open_sftp.return_value = mock_sftp
+        mock_file = mock_sftp.file.return_value.__enter__.return_value
+        mock_file.write.side_effect = Exception("fail")
+        result = server_conection.save_document_content("/remote/file", b"data")
+        assert result is False
+
 def test_retrieve_document_content():
     with patch("services.upload_manager.server_conection.ssh_connection") as mock_ssh:
         mock_sftp = MagicMock()
@@ -111,6 +148,14 @@ def test_delete_remote_directory_error():
         result = server_conection.delete_remote_directory("/remote/dir")
         assert result is False
 
+def test_delete_remote_directory_nonzero_exit():
+    with patch("services.upload_manager.server_conection.ssh_connection") as mock_ssh:
+        mock_ssh_inst = MagicMock()
+        mock_ssh.return_value = mock_ssh_inst
+        mock_ssh_inst.exec_command.return_value = (None, MagicMock(channel=MagicMock(recv_exit_status=MagicMock(return_value=1))), MagicMock(read=MagicMock(return_value=b"error")))
+        result = server_conection.delete_remote_directory("/remote/dir")
+        assert result is False
+
 def test_delete_remote_directory_if_empty():
     with patch("services.upload_manager.server_conection.ssh_connection") as mock_ssh:
         mock_ssh_inst = MagicMock()
@@ -125,6 +170,18 @@ def test_delete_remote_directory_if_empty():
 
 def test_delete_remote_directory_if_empty_error():
     with patch("services.upload_manager.server_conection.ssh_connection", side_effect=Exception("fail")):
+        result = server_conection.delete_remote_directory_if_empty("/remote/dir/file.pdf")
+        assert result is False
+
+def test_delete_remote_directory_if_empty_not_empty():
+    with patch("services.upload_manager.server_conection.ssh_connection") as mock_ssh:
+        mock_ssh_inst = MagicMock()
+        mock_ssh.return_value = mock_ssh_inst
+        # Simulate not empty dir
+        mock_ssh_inst.exec_command.side_effect = [
+            (None, MagicMock(read=MagicMock(return_value=b"NOTEMPTY")), None),
+            (None, MagicMock(channel=MagicMock(recv_exit_status=MagicMock(return_value=0))), MagicMock(read=MagicMock(return_value=b"")))
+        ]
         result = server_conection.delete_remote_directory_if_empty("/remote/dir/file.pdf")
         assert result is False
 

@@ -106,3 +106,46 @@ def test_search_conversations(conversation_service):
     with patch.object(conversation_service.conversation_repository, 'search_conversation', return_value=None):
         result = conversation_service.search_conversations('user1', 'query')
         assert result == []
+
+def test_get_conversation_by_document_id_found(conversation_service):
+    with patch.object(conversation_service.conversation_repository, 'get_conversation_by_document', return_value={'name': 'Test'}):
+        with patch('model.ai_chat.conversation.Conversation.from_dict', return_value=MagicMock()):
+            result = conversation_service.get_conversation_by_document_id('doc1')
+            assert result is not None
+
+def test_get_conversation_by_document_id_not_found(conversation_service):
+    with patch.object(conversation_service.conversation_repository, 'get_conversation_by_document', return_value=None):
+        result = conversation_service.get_conversation_by_document_id('doc1')
+        assert result is None
+
+def test_validate_conversation_name_empty(conversation_service):
+    with pytest.raises(Exception):
+        conversation_service._validate_conversation_name('', 'user1', None)
+
+def test_validate_conversation_name_too_long(conversation_service):
+    class DummyInvalid(Exception):
+        MAX_NAME_LENGTH = 5
+        MIN_NAME_LENGTH = 1
+    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid):
+        with pytest.raises(Exception):
+            conversation_service._validate_conversation_name('toolongname', 'user1', None)
+
+def test_validate_conversation_name_too_short(conversation_service):
+    class DummyInvalid(Exception):
+        MAX_NAME_LENGTH = 100
+        MIN_NAME_LENGTH = 5
+    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid):
+        with pytest.raises(Exception):
+            conversation_service._validate_conversation_name('abc', 'user1', None)
+
+def test_validate_conversation_name_duplicate(conversation_service):
+    class DummyInvalid(Exception):
+        MAX_NAME_LENGTH = 100
+        MIN_NAME_LENGTH = 1
+    class DummyDuplicate(Exception):
+        pass
+    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid), \
+         patch('exceptions.conversation_exceptions.DuplicateConversationName', DummyDuplicate):
+        conversation_service.get_conversation_history = lambda user_id: [MagicMock(name='DupName', conversation_id='id1')]
+        with pytest.raises(DummyDuplicate):
+            conversation_service._validate_conversation_name('DupName', 'user1', 'id2')

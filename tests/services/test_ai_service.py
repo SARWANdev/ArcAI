@@ -171,3 +171,79 @@ def test_perform_similarity_search_network_error(ai_service):
     with patch('services.ai_service.requests.post', side_effect=Exception("network error")):
         with pytest.raises(AIConnectionException):
             ai_service._AIService__perform_similarity_search("query", conversation)
+
+def test_get_vector_store_success(ai_service):
+    with patch("services.ai_service.FAISS.from_texts") as mock_from_texts:
+        mock_vs = MagicMock()
+        mock_from_texts.return_value = mock_vs
+        result = ai_service.get_vector_store(["a", "b"])
+        assert result == mock_vs
+
+def test_get_vector_store_save_error(ai_service):
+    with patch("services.ai_service.FAISS.from_texts") as mock_from_texts:
+        mock_vs = MagicMock()
+        mock_vs.save_local.side_effect = Exception("fail")
+        mock_from_texts.return_value = mock_vs
+        with pytest.raises(AIEmbeddingException):
+            ai_service.get_vector_store(["a"], embedding_path="/tmp/path")
+
+def test_get_vector_store_embed_error(ai_service):
+    with patch("services.ai_service.FAISS.from_texts", side_effect=Exception("fail")):
+        with pytest.raises(AIEmbeddingException):
+            ai_service.get_vector_store(["a"])
+
+def test_load_vector_store_from_path_success(ai_service):
+    with patch("services.ai_service.FAISS.load_local") as mock_load:
+        mock_vs = MagicMock()
+        mock_load.return_value = mock_vs
+        result = ai_service.load_vector_store_from_path("/tmp/path")
+        assert result == mock_vs
+
+def test_load_vector_store_from_path_error(ai_service):
+    with patch("services.ai_service.FAISS.load_local", side_effect=Exception("fail")):
+        with pytest.raises(AIEmbeddingException):
+            ai_service.load_vector_store_from_path("/tmp/path")
+
+def test_merge_vector_stores_empty(ai_service):
+    with pytest.raises(AIEmbeddingException):
+        ai_service.merge_vector_stores([])
+
+def test_merge_vector_stores_single(ai_service):
+    mock_vs = MagicMock()
+    result = ai_service.merge_vector_stores([mock_vs])
+    assert result == mock_vs
+
+def test_merge_vector_stores_merge_error(ai_service):
+    mock_vs1 = MagicMock()
+    mock_vs2 = MagicMock()
+    mock_vs1.merge_from.side_effect = Exception("fail")
+    with pytest.raises(AIEmbeddingException):
+        ai_service.merge_vector_stores([mock_vs1, mock_vs2])
+
+def test_merge_vector_stores_success(ai_service):
+    mock_vs1 = MagicMock()
+    mock_vs2 = MagicMock()
+    mock_vs1.merge_from = MagicMock()
+    result = ai_service.merge_vector_stores([mock_vs1, mock_vs2])
+    mock_vs1.merge_from.assert_called_with(mock_vs2)
+    assert result == mock_vs1
+
+def test_generate_conversation_name_success(ai_service):
+    conversation = MagicMock()
+    conversation.get_messages.return_value = ["msg1", "msg2"]
+    conversation.document_ids = [1, 2]
+    with patch("services.ai_service.DocumentRepository.get_bibtex_by_document_id", return_value="@article{foo}"):
+        with patch.object(ai_service, "generate") as mock_generate, \
+             patch.object(ai_service, "output_streaming_response", return_value="title") as mock_output:
+            mock_generate.return_value = MagicMock()
+            result = ai_service.generate_conversation_name(conversation)
+            assert result == "title"
+
+def test_generate_conversation_name_error(ai_service):
+    conversation = MagicMock()
+    conversation.get_messages.return_value = ["msg1"]
+    conversation.document_ids = [1]
+    with patch("services.ai_service.DocumentRepository.get_bibtex_by_document_id", return_value="@article{foo}"):
+        with patch.object(ai_service, "generate", side_effect=Exception("fail")):
+            with pytest.raises(AIConnectionException):
+                ai_service.generate_conversation_name(conversation)
