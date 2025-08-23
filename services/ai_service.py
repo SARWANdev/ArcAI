@@ -278,12 +278,11 @@ class AIService:
                     3. Make sure that the conversation references the Documents and is very strongly linked to the User Message.
                     4. Only give one output without any extra information because your response will be used without any further checks in the backend
                     5. Make the title scientific and concise and between 10 to 15 words"""
-        try:
-            response = self.generate(prompt=prompt)
-            name = self.output_streaming_response(response=response, output_function=len, mode="generate")
-            return name
-        except Exception as e:
-            raise AIGenerationException("Failed to generate name for conversation")
+        
+        response = self.generate(prompt=prompt)
+        name = self.output_streaming_response(response=response, output_function=len, mode="generate")
+        return name
+    
     
     def __perform_similarity_search(self, query:str, vector_store:FAISS, top_k: int)->str:
         """
@@ -299,12 +298,10 @@ class AIService:
         :returns: The concatenated content of the top matching documents.
         :rtype: str
         """
-        try:
-            relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
-            context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
-            return context
-        except Exception as e:
-            raise AIGenerationException("Similarity Search Failed.")
+        relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
+        context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
+        return context
+    
 
     
 
