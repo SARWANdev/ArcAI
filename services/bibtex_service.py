@@ -3,7 +3,7 @@ import bibtexparser
 import requests
 import os
 from typing import Optional, Dict, Any
-from exceptions.bibtex_exceptions import BibTeXFieldMissingException, BibTeXParseException, BibTeXSaveException
+from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException
 
 class BibTeX_Service:
     """
