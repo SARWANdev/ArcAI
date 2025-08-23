@@ -1,7 +1,7 @@
 from exceptions.base_exceptions import ValidationException, BusinessLogicException, InfrastructureException
 
 class InvalidConversationName(ValidationException):
-    """Invalid conversatio name (Validation exception)"""
+    """Invalid conversation name (Validation exception)"""
 
     MAX_NAME_LENGTH = 200
     MIN_NAME_LENGTH = 1
@@ -23,3 +23,4 @@ class DuplicateConversationName(BusinessLogicException):
 
 class ConversationNotFoundError(InfrastructureException):
     """Conversation could not be found"""
+    pass
