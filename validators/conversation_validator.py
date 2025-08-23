@@ -2,7 +2,7 @@ from database.repository.user_repository import UserRepository
 from database.repository.document_repository import DocumentRepository
 from database.repository.conversation_repository import ConversationRepository
 from exceptions.conversation_exceptions import InvalidConversationName, DuplicateConversationName, ConversationNotFoundError
-from exceptions.user_exceptions import UserExceptions
+from exceptions.user_exceptions import UserNotFound
 
 class ConvesationValidator:
     
@@ -24,6 +24,8 @@ class ConvesationValidator:
         
         try:
             self._validate_name_length(conversation_name)
+            return True
+            self._validate_user_existence(user_id)
             user_conversations = self.get_conversation_history(user_id)
             if user_conversations:
                 for conversation in user_conversations:
@@ -32,12 +34,14 @@ class ConvesationValidator:
                     if conversation.name.lower() == conversation_name.lower():
                         raise DuplicateConversationName(conversation_name)
                     
-        except InvalidConversationName as e:
+        except InvalidConversationName:
             return False
         except DuplicateConversationName:
             return False
+        except UserNotFound:
+            return False
                     
-                
+             
     def _validate_name_length(self, name: str):
         if not name or not name.strip():
             raise InvalidConversationName("Conversation name cannot me empty")
@@ -49,6 +53,10 @@ class ConvesationValidator:
             raise InvalidConversationName(f"Conversation name must be at least {InvalidConversationName.MIN_NAME_LENGTH} character long")
         
     def _validate_user_existence(self, user_id: str):
+        if not UserRepository.user_exists(user_id):
+            raise UserNotFound(user_id)
+        
+    def _duplicate_conversation_name(self, user_id: str, conversation_name: str):
         pass
 
             

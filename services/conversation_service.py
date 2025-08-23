@@ -204,7 +204,7 @@ class ConversationService:
             raise ConversationNotFoundError(f"Conversation with ID {conversation_id} not found")
         
         # Validate new project name
-        ConvesationValidator.validate_conversation_name(new_name, current_conversation.user_id, exclude_conversation_id=conversation_id)
+        self._validate_conversation_name(new_name, current_conversation.user_id, exclude_conversation_id=conversation_id)
         
         return self.update_name(conversation_id, new_name)
 
