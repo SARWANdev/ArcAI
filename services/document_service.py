@@ -270,17 +270,15 @@ class DocumentService:
             try:
                 pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
                 success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
-                print("I ma here")
             except InvalidServerConnectionException as e:
                 server_success = False
 
-        print(success_embeddings)
-        print(server_success)
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
         text = self.__get_pdf_text(document_path)
-        DocumentRepository.save_elastic(document_id, text)
+        elastic_success = DocumentRepository.save_elastic(document_id, text)
 
-        if not success_embeddings or not server_success:
+        if not success_embeddings or not server_success or not elastic_success:
+            print(13)
             self.delete_document(document_id)
             raise InvalidServerConnectionException("Either server or Ai failed")
 
