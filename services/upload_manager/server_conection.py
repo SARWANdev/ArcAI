@@ -6,6 +6,8 @@ import os
 import posixpath
 from dotenv import load_dotenv
 
+from exceptions.document_exceptions import InvalidServerConnectionException
+
 load_dotenv()
 
 remote_dir = os.getenv("REMOTE_DIR") # /home/pse03
@@ -81,7 +83,7 @@ def upload_document(local_path: str, relative_path: str, pdf_hash: str):
 
     except Exception as e:
         print(f"❌ Error: {e}")
-        return None
+        raise InvalidServerConnectionException("Document Upload Failed")
 
 
 def download_document(remote_file_path: str, parent_local_folder: str, document_name: str):
