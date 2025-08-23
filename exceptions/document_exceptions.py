@@ -38,3 +38,17 @@ class InvalidServerConnectionException(InfrastructureException):
         self.details = details
         self.root_message = root_message
 
+
+class InvalidDocumentName(ValidationException):
+    """Invalid project name (validation error)"""
+
+    # Validation constants
+    MAX_NAME_LENGTH = 2000
+    MIN_NAME_LENGTH = 1
+
+    def __init__(self, details: str = "Unspecified naming violation"):
+        root_message = "Invalid document name"
+        super().__init__(root_message, details)
+        self.details = details
+        self.root_message = root_message
+

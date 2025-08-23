@@ -569,6 +569,10 @@ class DocumentService:
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
         pdf_name = self.document_repository.get_name(document_id)
         self.__create_document(document_name=pdf_name, project_id=project_id, pdf_master_id=pdf_master_id)
+        #TODO Do not delete this 3 lines of code
+        #document_path = self.document_repository.get_path(document_id)
+        #text = self.__get_pdf_text(document_path)
+        #DocumentRepository.save_elastic(document_id, text)
 
     def move_document(self, document_id, new_project_id):
         """
@@ -627,5 +631,6 @@ class DocumentService:
         :param new_name: New name to set
         :return: True if successful, False otherwise
         """
+        DocumentValidator.validate_rename(new_name)
         success = self.document_repository.update_document_name(document_id, new_name)
         return success
