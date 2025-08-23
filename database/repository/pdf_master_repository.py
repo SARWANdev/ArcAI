@@ -4,6 +4,7 @@ from database.repository.date_time_utils import get_utc_zulu_timestamp
 from database.utils.mongo_connector import mongo_connection
 from model.document_reader.pdf_master import PdfMaster
 from services.bibtex_service import BibTeX_Service
+from exceptions.bibtex_exceptions import BibTeXParseException
 
 
 class PdfMasterRepository:
@@ -356,9 +357,7 @@ class PdfMasterRepository:
                                                                                      "first_author": first_author,
                                                                                      "title": title,
                                                                                      "updated_at": get_utc_zulu_timestamp()}})
-
-        except Exception as e:
-            print(f"Failed to set pages for PDF {pdf_master_id}: {e}")
+    
 
     @staticmethod
     def get_bibtex(pdf_master_id):

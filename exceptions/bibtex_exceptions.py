@@ -29,3 +29,12 @@ class BibTeXSaveException(InfrastructureException):
         super().__init__(full_message)
         self.details = details
         self.root_message = root_message
+
+class BibTeXNotFoundException(BusinessLogicException):
+    """Raised when a requested BibTeX entry or file is not found."""
+    def __init__(self, details: str = "BibTeX entry or file not found."):
+        root_message = "BibTeX not found error"
+        full_message = f"{root_message}: {details}"
+        super().__init__(full_message)
+        self.details = details
+        self.root_message
