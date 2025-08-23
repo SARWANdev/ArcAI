@@ -11,7 +11,7 @@ class DocumentValidator:
         if not file.filename or file.filename.strip() == " ":
             raise InvalidDocumentNamingException("no filename provided.")
 
-        if len(file.filename) > 20:
+        if len(file.filename) > 1000:
             raise InvalidDocumentNamingException("filename is too long.")
 
         if not file.filename.endswith(".pdf"):
