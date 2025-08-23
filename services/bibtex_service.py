@@ -3,7 +3,7 @@ import bibtexparser
 import requests
 import os
 from typing import Optional, Dict, Any
-from exceptions.bibtex_exceptions import BibTeXFieldMissingException, BibTeXParseException, BibTeXSaveException
+from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException
 
 class BibTeX_Service:
     """
@@ -100,7 +100,7 @@ class BibTeX_Service:
                 self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
             return True
         except Exception as e:
-            raise BibTeXParseException("Error parsing and saving BibTex")
+            raise BibTeXSaveException("Error saving BibTex")
 
     def get_bibtex_str(self, paper_name: str) -> Optional[str]:
         """
