@@ -184,6 +184,19 @@ class ConversationService:
         :param new_name: The new name for the conversation.
         :type new_name: str
         """
+        
+        return self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
+    
+    def rename_chat(self, conversation_id: Any, new_name: str) -> bool:
+        """
+        Rename a chat (alias for update_name).
+
+        :param conversation_id: The ID of the conversation to rename.
+        :type conversation_id: Any
+        :param new_name: The new name for the conversation.
+        :type new_name: str
+        """
+
         # Get the current conversation to check its existence and get user_id
         current_conversation = self.get_conversation(conversation_id)
         if not current_conversation:
@@ -192,7 +205,8 @@ class ConversationService:
         # Validate new project name
         self._validate_conversation_name(new_name, current_conversation.user_id, exclude_conversation_id=conversation_id)
         
-        return self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
+        return self.update_name(conversation_id, new_name)
+
 
     def delete_chat(self, conversation_id: Any) -> None:
         """
@@ -274,7 +288,7 @@ class ConversationService:
         user_conversations = self.get_conversation_history(user_id)
         if user_conversations:
             for conversation in user_conversations:
-                if exclude_conversation_id and str(conversation.id) == exclude_conversation_id:
+                if exclude_conversation_id and str(conversation.conversation_id) == exclude_conversation_id:
                     continue
                 if conversation.name.lower() == conversation_name.lower():
                     raise DuplicateConversationName(conversation_name)
