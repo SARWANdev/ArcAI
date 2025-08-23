@@ -8,6 +8,9 @@ from database.repository.conversation_repository import ConversationRepository
 import os
 from dotenv import load_dotenv
 load_dotenv()
+from exceptions.ai_exceptions import AIConnectionException, AIGenerationException, AIEmbeddingException
+
+
 
 class AIService:
     """
@@ -70,37 +73,33 @@ class AIService:
         """
         self.__embedding_model_name = embedding_model_name
 
-    def generate(self, prompt: str,  user_id= None) -> Response|None:
+    def generate(self, prompt: str, user_id=None) -> Response | None:
         """
         Sends a prompt to the language model API and returns the response.
-        
-        
+
         :param prompt: The input prompt to generate a response for.
         :type prompt: str
         :param user_id: The user identifier (optional).
 
         :returns: The HTTP response object if the request is successful, otherwise None.
         :rtype: Response|None
-        
-        :raises: Exception: In case of errors during the request.
 
-        Notes:
-            - Prints error messages for non-200 HTTP responses and exceptions.
-            - TODO: Implement specific error messages for each possible error.
+        :raises: AIServiceError: In case of errors during the request.
         """
         generate_url = f"{self.__base_url}{self.__GENERATE_PATH}"
-        payload = {"model": self.__llm_name,
-                    "prompt": prompt}
+        payload = {"model": self.__llm_name, "prompt": prompt}
         try:
             response = requests.post(url=generate_url, json=payload, stream=True)
             if response.status_code != 200:
-                print(f"Error: {response.status_code}")
-                print(response.text)
-            else:
-
-                return response
+                # Log the error details internally if needed
+                print(f"AIService generate error: {response.status_code}")
+                # Raise sanitized error for the frontend or caller
+                raise AIGenerationException("Failed to generate response from language model.")
+            return response
+        except requests.RequestException as e:
+            raise AIConnectionException("Network error while contacting language model.")
         except Exception as e:
-            print(f"Exception: {e}")
+            raise AIConnectionException("Unexpected error during language model generation.")
 
     def send_chat_message(self, question: str, conversation: Conversation):
         """
@@ -118,38 +117,32 @@ class AIService:
             - Formats the payload with the model name and the latest user message, including context.
             - Sends the request as a streaming POST to the chat service endpoint.
         """
-        vector_store = conversation.get_vector_store()
-        chat_url = f"{self.__base_url}{self.__CHAT_PATH}"
-        context = self.__perform_similarity_search(query=question, vector_store=vector_store, top_k=5)
+        try:
+            vector_store = conversation.get_vector_store()
+            chat_url = f"{self.__base_url}{self.__CHAT_PATH}"
+            context = self.__perform_similarity_search(query=question, vector_store=vector_store, top_k=5)
+            
+            payload = {"model": self.__llm_name,
+                        "messages": conversation.format_last_user_message(context=context),
+                        }
+            response = requests.post(url=chat_url, json=payload, stream=True)
+            if response.status_code != 200:
+                print(f"AIService send_chat_message error: {response.status_code}, {response.text}")
+                raise AIGenerationException("Failed to get chat response from language model.")
+            return response
+        except AIGenerationException as e:
+            raise AIGenerationException("Couldn't perform Similarity Search, LLM maybe offline.")        
+        except requests.Timeout:
+            raise AIConnectionException("The request to the language model timed out.")
+        except requests.RequestException as e:
+            print(f"AIService network error in send_chat_message: {str(e)}")
+            raise AIConnectionException("Network error while contacting chat service.")
+        except Exception as e:
+            print(e)
+            print(f"AIService unexpected error in send_chat_message: {str(e)}")
+            raise AIConnectionException("Unexpected error during chat message processing.")
         
-        payload = {"model": self.__llm_name,
-                    "messages": conversation.format_last_user_message(context=context),
-                    }
-        response = requests.post(url=chat_url, json=payload, stream=True)
-        print("context", response)
-        return response
-        
-    def send_system_message(self, system_message:str, conversation: Conversation):
-        """
-        Sends a system message to the chat endpoint for a given conversation.
 
-        
-        :param system_message: The system message content to be sent.
-        :type system_message: str
-        :param conversation: The conversation object to which the system message is related.
-        :type conversation: Conversation
-
-        :returns: The HTTP response object from the chat service API.
-
-        Note:
-            This method sends a POST request to the chat endpoint with the specified system message.
-        """
-        chat_url = f"{self.__base_url}{self.__CHAT_PATH}"
-        payload = {"model": self.__llm_name,
-                    "messages": {"role": "system",
-                                "content": system_message}
-                    }
-        requests.post(url=chat_url, json=payload, stream=False)
 
             
             
@@ -189,47 +182,46 @@ class AIService:
 
 
 
-    def summarize(self, vector_store:FAISS):
-        """
-        Generates an objective summary of the most relevant parts of the text in the provided vector store.
-        
-        :param vector_store: The FAISS vector store containing the text to summarize.
-        :type vector_store: FAISS
-        
-        :returns: A concise summary of the most relevant content.
-        """
-        similarity_search_prompt = "Most relevant parts of this text"
-        relevant_chunks = self.__perform_similarity_search(vector_store=vector_store, query=similarity_search_prompt, top_k=5)
-        response = self.generate(f"Give me an objective summary of the following in 50 words: {relevant_chunks}")
-        return response
-        
 
-    def get_vector_store(self, text_chunks:list[str], embedding_path:str|None=None)->FAISS: 
+    def get_vector_store(self, text_chunks: list[str], embedding_path: str | None = None) -> FAISS:
         """
         Creates a FAISS vector store from a list of text chunks using Ollama embeddings.
 
         :param text_chunks: A list of text strings to be embedded and stored in the vector store.
         :type text_chunks: list[str]
         :param embedding_path: Path to save the vector store locally. If None, the vector store is not saved.
-        :type embbeding_path :str | None, optional
+        :type embedding_path: str | None, optional
 
         :returns: The created FAISS vector store containing the embedded text chunks.
         :rtype: FAISS
+
+        :raises: AIServiceError: If vector store creation or saving fails.
         """
-        vector_store = FAISS.from_texts(text_chunks, embedding=self.embeddings)
-        if embedding_path:
-            vector_store.save_local(embedding_path)
-        return vector_store
+        try:
+            vector_store = FAISS.from_texts(text_chunks, embedding=self.embeddings)
+            if embedding_path:
+                try:
+                    vector_store.save_local(embedding_path)
+                except Exception as e:
+                    raise AIEmbeddingException("Failed to save generated embedding.")
+            return vector_store
+        except Exception as e:
+            raise AIEmbeddingException("Failed to embed document.")
+        
 
 
 
     
     
     def load_vector_store_from_path(self, embedding_path:str):
-        loaded_vector_store = FAISS.load_local(
-        folder_path=embedding_path, embeddings=self.embeddings, allow_dangerous_deserialization=True
-        )
-        return loaded_vector_store
+        try:
+            loaded_vector_store = FAISS.load_local(
+            folder_path=embedding_path, embeddings=self.embeddings, allow_dangerous_deserialization=True
+            )
+            return loaded_vector_store
+        except Exception as e:
+            raise AIEmbeddingException("Failed to load embeddings.")
+
     
     def merge_vector_stores(self, vector_stores: list[FAISS]) -> FAISS:
         """
@@ -244,7 +236,7 @@ class AIService:
         :raises: ValueError: If the input list is empty or contains non-FAISS objects.
         """
         if not vector_stores:
-            raise ValueError("Cannot merge empty list of vector stores")
+            raise AIEmbeddingException("Cannot merge empty list of embeddings")
         
         if len(vector_stores) == 1:
             return vector_stores[0]
@@ -257,27 +249,11 @@ class AIService:
             try:
                 merged_vector_store.merge_from(vector_stores[i])
             except Exception as e:
-                print(f"Error merging vector store {i}: {e}")
+                raise AIEmbeddingException("Error merging embeddings.")
                 continue
         
         return merged_vector_store
 
-    def merge_and_save_vector_stores(self, vector_stores: list[FAISS], save_path: str) -> FAISS:
-        """
-        Merges multiple FAISS vector stores and saves the result to a specified path.
-        
-        Args:
-        :param vector_stores: A list of FAISS vector stores to be merged.
-        :type vector_stores: list[FAISS]
-        :param save_path: Path where the merged vector store will be saved.
-        :type save_path: str
-            
-        :returns: The merged vector store.
-        :rtype: FAISS
-        """
-        merged_store = self.merge_vector_stores(vector_stores)
-        merged_store.save_local(save_path)
-        return merged_store
     
     def generate_conversation_name(self, conversation:Conversation)->str:
         """
@@ -302,10 +278,12 @@ class AIService:
                     3. Make sure that the conversation references the Documents and is very strongly linked to the User Message.
                     4. Only give one output without any extra information because your response will be used without any further checks in the backend
                     5. Make the title scientific and concise and between 10 to 15 words"""
-
-        response = self.generate(prompt=prompt)
-        name = self.output_streaming_response(response=response, output_function=len, mode="generate")
-        return name
+        try:
+            response = self.generate(prompt=prompt)
+            name = self.output_streaming_response(response=response, output_function=len, mode="generate")
+            return name
+        except Exception as e:
+            raise AIGenerationException("Failed to generate name for conversation")
     
     def __perform_similarity_search(self, query:str, vector_store:FAISS, top_k: int)->str:
         """
@@ -321,9 +299,13 @@ class AIService:
         :returns: The concatenated content of the top matching documents.
         :rtype: str
         """
-        relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
-        context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
-        return context
+        try:
+            relevant_embeddings = vector_store.similarity_search(query=query, k=top_k)
+            context = "\n\n".join(doc.page_content for doc in relevant_embeddings)
+            return context
+        except Exception as e:
+            raise AIGenerationException("Similarity Search Failed.")
+
     
 
 
