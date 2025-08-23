@@ -29,7 +29,7 @@ class DocumentValidator:
     @staticmethod
     def validate_project_id(project_id):
         if not project_id or project_id.strip() == "":
-            raise InvalidUserIdException("nno user id provided. ")
+            raise InvalidUserIdException("no user id provided. ")
 
         project_exists = Project.project_exists(project_id)
         if not project_exists:
