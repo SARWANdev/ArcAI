@@ -248,6 +248,7 @@ class DocumentService:
 
 
 
+
     def __upload_document(self, document_path: str, user_id: str, project_id: str, original_name: str):
         """
         Handles document deduplication via hash checks, creates necessary database records,
@@ -271,10 +272,12 @@ class DocumentService:
             try:
                 pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
                 success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
+                print("pdf_master_id: " + pdf_master_id)
             except InvalidServerConnectionException as e:
                 server_success = False
 
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
+        print("document_id: " + document_id)
         text = self.__get_pdf_text(document_path)
         elastic_success = DocumentRepository.save_elastic(document_id, text)
 
