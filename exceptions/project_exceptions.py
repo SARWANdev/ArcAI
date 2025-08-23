@@ -12,7 +12,7 @@ class InvalidProjectName(ValidationException):
     """Invalid project name (validation error)"""
     
     # Validation constants
-    MAX_NAME_LENGTH = 200
+    MAX_NAME_LENGTH = 80
     MIN_NAME_LENGTH = 1
     
     def __init__(self, details: str = "Unspecified naming violation"):

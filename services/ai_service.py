@@ -265,23 +265,27 @@ class AIService:
         :returns: The generated name.
         :rtype: str 
         """
-        from database.repository.document_repository import DocumentRepository
-        messages = str(conversation.get_messages())
-        document_ids = conversation.document_ids
-        merged_bibtex = ""
-        for document_id in document_ids:
-            bibtex = DocumentRepository.get_bibtex_by_document_id(document_id=document_id)
-            merged_bibtex+=bibtex
+        try:
+            from database.repository.document_repository import DocumentRepository
+            messages = str(conversation.get_messages())
+            document_ids = conversation.document_ids
+            merged_bibtex = ""
+            for document_id in document_ids:
+                bibtex = DocumentRepository.get_bibtex_by_document_id(document_id=document_id)
+                merged_bibtex+=bibtex
+                
+            prompt = f"""1. Make a Title for a Conversation with the following human messages:{messages} Make sure that the generated title is influenced by the given messages.
+                        2. The Question was asked in the context of multiple documents. Here is the merged bibtex of all the documents: {merged_bibtex} make sure that the title has a simple reference to the multiple papers in the context.
+                        3. Make sure that the conversation references the Documents and is very strongly linked to the User Message.
+                        4. Only give one output without any extra information because your response will be used without any further checks in the backend
+                        5. Make the title scientific and concise and between 10 to 15 words and under 80 characters
+                        6. Again it is very importand that the title is under 80 words. """
             
-        prompt = f"""1. Make a Title for a Conversation with the following human messages:{messages} Make sure that the generated title is influenced by the given messages.
-                     2. The Question was asked in the context of multiple documents. Here is the merged bibtex of all the documents: {merged_bibtex} make sure that the title has a simple reference to the multiple papers in the context.
-                    3. Make sure that the conversation references the Documents and is very strongly linked to the User Message.
-                    4. Only give one output without any extra information because your response will be used without any further checks in the backend
-                    5. Make the title scientific and concise and between 10 to 15 words"""
-        
-        response = self.generate(prompt=prompt)
-        name = self.output_streaming_response(response=response, output_function=len, mode="generate")
-        return name
+            response = self.generate(prompt=prompt)
+            name = self.output_streaming_response(response=response, output_function=len, mode="generate")
+            return name
+        except Exception as e:
+            raise AIConnectionException("Connection Timed out.")
     
     
     def __perform_similarity_search(self, query:str, vector_store:FAISS, top_k: int)->str:

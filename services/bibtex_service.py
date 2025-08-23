@@ -3,6 +3,7 @@ import bibtexparser
 import requests
 import os
 from typing import Optional, Dict, Any
+from exceptions.bibtex_exceptions import BibTeXFieldMissingException, BibTeXParseException, BibTeXSaveException
 
 class BibTeX_Service:
     """
@@ -64,9 +65,9 @@ class BibTeX_Service:
             )
             self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
         except Exception as e:
-            print(f"Error parsing BibTeX: {e}")
             self.__bibtex_library = None
             self.formatted_bibtex_string = None
+            raise BibTeXParseException()
 
     @classmethod
     def from_bibtex(cls, bibtex_string: str, pdf_hash: Optional[str] = None):
@@ -99,8 +100,7 @@ class BibTeX_Service:
                 self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
             return True
         except Exception as e:
-            print(f"Error setting BibTeX: {e}")
-            return False
+            raise BibTeXParseException("Error parsing and saving BibTex")
 
     def get_bibtex_str(self, paper_name: str) -> Optional[str]:
         """
