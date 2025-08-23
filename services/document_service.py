@@ -6,6 +6,8 @@ from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import Project as ProjectRepository
+from exceptions.base_exceptions import ArcAIException
+from exceptions.document_exceptions import InvalidDocumentNamingException, InvalidServerConversation
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -21,6 +23,8 @@ from services.upload_manager.hash_manager import get_pdf_sha256, relative_path_g
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.upload_manager.server_conection import upload_document, delete_remote_directory, save_embeddings
 from services.notebook_service import NotebookService
+from validators.document_validator import DocumentValidator
+
 
 class DocumentService:
 
@@ -60,6 +64,13 @@ class DocumentService:
         :param project_id: Target project ID
         :return: None
         """
+        print(1)
+        DocumentValidator.validate_file(file)
+        print(2)
+        DocumentValidator.validate_user_id(user_id)
+        print(3)
+        DocumentValidator.validate_project_id(project_id)
+
         original_name = file.filename
         suffix = "." + file.filename.split(".")[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
@@ -242,19 +253,38 @@ class DocumentService:
         :param project_id: Target project for upload
         :param original_name: Original filename from uploader
         """
+        # Checks if document path, user_id and project_id
 
         pdf_hash = get_pdf_sha256(document_path)
         existing_pdf_master = self.pdf_master_repository.is_document_uploaded(pdf_hash, user_id)
+        success_embeddings = True
+        server_success = True
 
         if existing_pdf_master:
             pdf_master_id = str(existing_pdf_master.get("_id"))
         else:
-            pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
-            self.__embeddings_storage(document_path, pdf_master_id)
 
+            try:
+                pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
+            except InvalidServerConversation as e:
+                server_success = False
+            success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
+            success_embeddings = True
+
+        print(10)
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
+        print(11)
         text = self.__get_pdf_text(document_path)
+        print(12)
         DocumentRepository.save_elastic(document_id, text)
+
+        if not success_embeddings or not server_success:
+            print(13)
+            self.delete_document(document_id)
+
+
+
+
 
 
     def __get_pdf_text(self, document) -> str:
@@ -335,6 +365,7 @@ class DocumentService:
         self.conversation_repository.delete_conversation_for_document(str(document_id))
         ref_count = self.pdf_master_repository.get_ref_count(pdf_master_id)
 
+        print("delete in delete")
         if ref_count == 0:
             remote_dir_path = os.path.dirname(remote_path)
             delete_remote_directory(remote_dir_path)
@@ -545,6 +576,8 @@ class DocumentService:
         :param document_id: The id of the document to move
         :param new_project_id: the id of the new project
         """
+        #TODO: check if document_id and new_project_id are valid.
+
 
         self.document_properties_repo.set_new_project_id(document_id, new_project_id)
     
@@ -595,6 +628,9 @@ class DocumentService:
         :param new_name: New name to set
         :return: True if successful, False otherwise
         """
+        # TODO: check if documents id and new name is a valid name
+
+
         success = self.document_repository.update_document_name(document_id, new_name)
         if success:
             print(f"Successfully updated name: {new_name}")

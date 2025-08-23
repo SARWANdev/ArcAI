@@ -169,5 +169,16 @@ class Project:
             print(f"Error getting project name from project {e}")
             return str()
 
+    @staticmethod
+    def project_exists(project_id) -> bool:
+        try:
+            with mongo_connection() as db:
+                result = db.projects.find_one({"_id": ObjectId(project_id)})
+                return result is not None
+        except Exception as e:
+            print(f"Project could not be retrieved: {e}")
+            return False
+
+
 
 

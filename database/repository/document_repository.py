@@ -342,3 +342,19 @@ class DocumentRepository:
         """
         pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
         return PdfMasterRepository.get_user_id(pdf_master_id)
+
+    @staticmethod
+    def user_exists(user_id) -> bool:
+        """
+        Check if a user_id exists in the users collection
+        """
+
+        try:
+            print(user_id)
+            print(type(user_id))
+            with mongo_connection() as db:
+                result = db.users.find_one({"_id": user_id})
+                return result is not None
+        except Exception as e:
+            print(f"User could not be retrieved: {e}")
+            return False

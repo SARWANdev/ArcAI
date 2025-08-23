@@ -1,4 +1,4 @@
-from exceptions.base_exceptions import ValidationException
+from exceptions.base_exceptions import ValidationException, BusinessLogicException, InfrastructureException
 
 
 class InvalidDocumentNamingException(ValidationException):
@@ -10,10 +10,31 @@ class InvalidDocumentNamingException(ValidationException):
         self.details = details
         self.root_message = root_message
 
+class InvalidUserIdException(BusinessLogicException):
+    """Raised when a document name is invalid"""
+    def __init__(self, details: str = "Unexpected user id violation"):
+        root_message = "Invalid user id: "
+        full_message = f"{root_message}: {details}"
+        super().__init__(full_message)
+        self.details = details
+        self.root_message = root_message
 
-def validate_name(name):
-    if len(name) > 3:
-        raise InvalidDocumentNamingException("Name too long")
-    return True
+class InvalidProjectIdException(BusinessLogicException):
+    """Raised when a document name is invalid"""
+    def __init__(self, details: str = "Unexpected project id violation"):
+        root_message = "Invalid project id: "
+        full_message = f"{root_message}: {details}"
+        super().__init__(full_message)
+        self.details = details
+        self.root_message = root_message
 
-print(validate_name("<NAME>"))
+class InvalidServerConversation(InfrastructureException):
+    """Raised when the server connection failed"""
+
+    def __init__(self, details: str = "Unexpected server connection failed"):
+        root_message = "Invalid server connection: "
+        full_message = f"{root_message}: {details}"
+        super().__init__(full_message)
+        self.details = details
+        self.root_message = root_message
+
