@@ -3,7 +3,7 @@ import bibtexparser
 import requests
 import os
 from typing import Optional, Dict, Any
-from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException
+from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException, BibTeXNotFoundException
 
 class BibTeX_Service:
     """
@@ -127,15 +127,9 @@ class BibTeX_Service:
             )
             response.raise_for_status()
             return response.text
-        except requests.RequestException as e:
-            print(f"Network error fetching BibTeX for '{paper_name}': {e}")
-            return None
-        except KeyError as e:
-            print(f"Unexpected API response format: {e}")
-            return None
+        
         except Exception as e:
-            print(f"Error fetching BibTeX for '{paper_name}': {e}")
-            return None
+            raise BibTeXNotFoundException()
 
     def save_to_file(self, custom_path: Optional[str] = None) -> bool:
         """
@@ -159,8 +153,7 @@ class BibTeX_Service:
             print(f"BibTeX saved to: {file_path}")
             return True
         except Exception as e:
-            print(f"Error saving BibTeX file: {e}")
-            return False
+            raise BibTeXSaveException()
 
     def get_file(self) -> Optional[str]:
         """
@@ -217,7 +210,6 @@ class BibTeX_Service:
             authors = author_string.split(" and ")
             return [author.strip() for author in authors]
         except Exception as e:
-            print(f"Error parsing authors: {e}")
             return None
 
     def get_first_author(self) -> Optional[str]:
@@ -247,7 +239,6 @@ class BibTeX_Service:
                     return bib_dict[field]
             return None
         except Exception as e:
-            print(f"Error getting source: {e}")
             return None
 
     def get_year(self) -> Optional[str]:
