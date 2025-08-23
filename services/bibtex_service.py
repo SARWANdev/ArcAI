@@ -131,40 +131,7 @@ class BibTeX_Service:
         except Exception:
             raise BibTeXNotFoundException()
 
-    def save_to_file(self, custom_path: Optional[str] = None) -> bool:
-        """
-        Save BibTeX to file.
 
-        :param custom_path: Custom directory path to save file.
-        :type custom_path: str, optional
-        :return: True if successful, False otherwise.
-        :rtype: bool
-        """
-        if not self._has_valid_data() or not self.formatted_bibtex_string:
-            print("No valid BibTeX data to save")
-            return False
-        try:
-            path = custom_path or "F:/PSE/arcai/services/bibtex/"
-            os.makedirs(path, exist_ok=True)
-            filename = self.pdf_hash if self.pdf_hash else "default"
-            file_path = os.path.join(path, f"{filename}.bib")
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write(self.formatted_bibtex_string)
-            print(f"BibTeX saved to: {file_path}")
-            return True
-        except Exception:
-            raise BibTeXSaveException()
-
-    def get_file(self) -> Optional[str]:
-        """
-        Get the BibTeX file content as string.
-
-        :return: BibTeX content if available, None otherwise.
-        :rtype: str or None
-        """
-        if not self._has_valid_data():
-            return None
-        return self.formatted_bibtex_string
 
     def get_bibtex_string(self) -> Optional[str]:
         """
@@ -175,14 +142,7 @@ class BibTeX_Service:
         """
         return self.formatted_bibtex_string
 
-    def get_paper_name(self) -> Optional[str]:
-        """
-        Get paper name.
 
-        :return: The paper name if available, None otherwise.
-        :rtype: str or None
-        """
-        return self.__paper_name
 
     def get_bibtex_library_dict(self) -> Optional[Dict[str, Any]]:
         """
@@ -255,22 +215,7 @@ class BibTeX_Service:
             print(f"Error getting year: {e}")
             return None
 
-    def create_misc_bibtex(self, author: str, title: str, year: int, citekey: str) -> str:
-        """
-        Create a basic misc BibTeX entry.
 
-        :param author: Author name.
-        :type author: str
-        :param title: Paper title.
-        :type title: str
-        :param year: Publication year.
-        :type year: int
-        :param citekey: Citation key.
-        :type citekey: str
-        :return: BibTeX entry as string.
-        :rtype: str
-        """
-        return f"@misc{{{citekey}, author = {{{author}}}, title = {{{title}}}, year = {{{year}}}}}"
 
     def _has_valid_data(self) -> bool:
         """

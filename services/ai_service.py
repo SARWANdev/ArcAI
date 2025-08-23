@@ -47,31 +47,7 @@ class AIService:
         self.__base_url = base_url if base_url else self.__DEFAULT_BASE_URL
         self.embeddings = OllamaEmbeddings(base_url=self.__DEFAULT_BASE_URL, model=self.__DEFAULT_EMBEDDING_MODEL_NAME, show_progress=True)
 
-    def set_ollama_url(self, ollama_url:str):
-        """
-        Sets the Ollama API URL.
-        
-        :param ollama_url: The URL to the Ollama API.
-        :type ollama_url: str
-        """
-        self.__ollama_api_url = ollama_url
 
-    def set_llm_name(self, llm_name:str):
-        """
-        Sets the name for the language model.
-        
-        :param llm_name: The name of the language model to use.
-        :type llm_name: str
-        """
-        self.__llm_name = llm_name
-
-    def set_embedding_model_name(self, embedding_model_name:str):
-        """
-        Sets the name for the embedding model.
-        
-        :param embedding_model_name: The name of the embedding model to use.
-        """
-        self.__embedding_model_name = embedding_model_name
 
     def generate(self, prompt: str, user_id=None) -> Response | None:
         """
