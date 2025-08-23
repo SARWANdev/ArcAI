@@ -1,4 +1,5 @@
 from typing import List, Optional, Any
+from exceptions.conversation_exceptions import ConversationNotFoundError 
 from database.repository.conversation_repository import ConversationRepository
 from model.ai_chat.conversation import Conversation as ConversationModel
 from bson import ObjectId
@@ -183,8 +184,9 @@ class ConversationService:
         :param new_name: The new name for the conversation.
         :type new_name: str
         """
+        
         return self.conversation_repository.update_conversation_name(conversation_id=conversation_id, new_name=new_name)
-
+    
     def rename_chat(self, conversation_id: Any, new_name: str) -> bool:
         """
         Rename a chat (alias for update_name).
@@ -194,7 +196,17 @@ class ConversationService:
         :param new_name: The new name for the conversation.
         :type new_name: str
         """
+
+        # Get the current conversation to check its existence and get user_id
+        current_conversation = self.get_conversation(conversation_id)
+        if not current_conversation:
+            raise ConversationNotFoundError(f"Conversation with ID {conversation_id} not found")
+        
+        # Validate new project name
+        self._validate_conversation_name(new_name, current_conversation.user_id, exclude_conversation_id=conversation_id)
+        
         return self.update_name(conversation_id, new_name)
+
 
     def delete_chat(self, conversation_id: Any) -> None:
         """
@@ -247,3 +259,37 @@ class ConversationService:
             if not conversation_model.get_document_id():
                 conversation_list.append(conversation_model)
         return conversation_list
+    
+    def _validate_conversation_name(self, conversation_name: str, user_id: str, exclude_conversation_id: str):
+        """
+        Validate conversation name according to business rules.
+
+        :param conversation_name: The conversation name to validate.
+        :type conversation_name: str
+        :param user_id: The user ID to check for duplicates.
+        :type user_id: str
+        :param exclude_conversation_id: Conversation ID to exclude from duplicate check (for updates).
+        :type exclude_conversation_id: str, optional
+        :raises InvalidConversationName: If the conversation name is invalid.
+        :raises DuplicateConversationName: If a conversation with the same name already exists.
+        """
+
+        from exceptions.conversation_exceptions import InvalidConversationName, DuplicateConversationName
+
+        if not conversation_name or not conversation_name.strip():
+            raise InvalidConversationName("Conversation name cannot me empty")
+        
+        if len(conversation_name.strip()) > InvalidConversationName.MAX_NAME_LENGTH:
+            raise InvalidConversationName(f"Conversation name cannot exceed {InvalidConversationName.MAX_NAME_LENGTH} characters")
+        
+        if len(conversation_name.strip()) < InvalidConversationName.MIN_NAME_LENGTH:
+            raise InvalidConversationName(f"Conversation name must be at least {InvalidConversationName.MIN_NAME_LENGTH} character long")
+        
+        user_conversations = self.get_conversation_history(user_id)
+        if user_conversations:
+            for conversation in user_conversations:
+                if exclude_conversation_id and str(conversation.conversation_id) == exclude_conversation_id:
+                    continue
+                if conversation.name.lower() == conversation_name.lower():
+                    raise DuplicateConversationName(conversation_name)
+

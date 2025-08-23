@@ -1,5 +1,6 @@
 from services.ai_service import AIService
 from services.conversation_service import ConversationService
+from exceptions.conversation_exceptions import ConversationNotFoundError, InvalidConversationName, DuplicateConversationName
 from services.ai_service import AIService
 from flask import Blueprint, Flask, jsonify, request
 
@@ -296,10 +297,17 @@ class ChatController:
             if not all([user_id, conversation_id, new_name]):
                 return jsonify({'error': 'Missing required fields'}), 400
             self.conversation_service.rename_chat(conversation_id, new_name)
+             
             return jsonify({
                 "status": "success",
                 "message": "Conversation renamed successfully"
             }), 200
+        except InvalidConversationName as e:
+            return jsonify({"error": str(e)}), 400
+        except DuplicateConversationName as e:
+            return jsonify({"error": str(e)}), 409
+        except ConversationNotFoundError as e:
+            return jsonify({"error": str(e)}), 404
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
