@@ -28,7 +28,7 @@ class InvalidProjectIdException(BusinessLogicException):
         self.details = details
         self.root_message = root_message
 
-class InvalidServerConversation(InfrastructureException):
+class InvalidServerConnectionException(InfrastructureException):
     """Raised when the server connection failed"""
 
     def __init__(self, details: str = "Unexpected server connection failed"):

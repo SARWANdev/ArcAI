@@ -6,7 +6,7 @@ from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import Project as ProjectRepository
-from exceptions.document_exceptions import InvalidServerConversation
+from exceptions.document_exceptions import InvalidServerConnectionException
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -270,10 +270,9 @@ class DocumentService:
 
             try:
                 pdf_master_id = self.__create_pdf_master(document_path, user_id, project_id, pdf_hash, original_name)
-            except InvalidServerConversation as e:
+                success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
+            except InvalidServerConnectionException as e:
                 server_success = False
-            success_embeddings = self.__embeddings_storage(document_path, pdf_master_id)
-            success_embeddings = True
 
         document_id = self.__create_document(original_name, project_id, pdf_master_id)
         text = self.__get_pdf_text(document_path)
