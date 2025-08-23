@@ -222,7 +222,7 @@ class ConversationRepository:
         try:
             with mongo_connection() as db:
                 result = db.conversations.update_one({"_id": ObjectId(conversation_id)},
-                                                     {"$set": {"name": new_name}})
+                    {"$set": {"name": new_name}})
                 if es.exists(index="conversations", id=conversation_id):
                     es.update(index = "conversations", id = conversation_id, body={
                         "doc": {"name": new_name}

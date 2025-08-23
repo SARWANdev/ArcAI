@@ -3,7 +3,7 @@ from exceptions.base_exceptions import ValidationException, BusinessLogicExcepti
 class InvalidConversationName(ValidationException):
     """Invalid conversation name (Validation exception)"""
 
-    MAX_NAME_LENGTH = 200
+    MAX_NAME_LENGTH = 100
     MIN_NAME_LENGTH = 1
 
     def __init__(self, details: str = "Unspecified naming violation"):
