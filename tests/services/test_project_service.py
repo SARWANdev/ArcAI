@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import patch, MagicMock
 from services.project_service import ProjectService
 from model.document_reader.project import Project as ProjectModel
-from model.document_reader.document import Document as DocumentModel
 from exceptions.project_exceptions import ProjectNotFoundError, InvalidProjectName, DuplicateProjectName
 
 @pytest.fixture

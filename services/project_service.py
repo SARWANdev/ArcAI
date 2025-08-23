@@ -43,7 +43,9 @@ class ProjectService:
         )
         project_id = self.project_repository.save(project_model)
         project_model.id = project_id
-        self.notebook_service.update_project_notebook(project_id, "")
+        
+        # Don't call notebook service here - the note field is already set to "" in new_project_dict()
+        # The notebook will be created automatically with the project
         return project_model
 
     def get_project(self, project_id):
@@ -175,7 +177,6 @@ class ProjectService:
         :raises InvalidProjectName: If the project name is invalid.
         :raises DuplicateProjectName: If a project with the same name already exists.
         """
-        from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName
         
         # Check if project name is empty or too short
         if not project_name or not project_name.strip():

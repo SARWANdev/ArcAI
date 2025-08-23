@@ -1,7 +1,6 @@
 from habanero import Crossref
 import bibtexparser
 import requests
-import os
 from typing import Optional, Dict, Any
 from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException, BibTeXNotFoundException
 
@@ -37,17 +36,16 @@ class BibTeX_Service:
         :return: None
         :rtype: None
         """
-        try:
-            self.__paper_name = paper_name.replace("_", " ")
-            if self.__paper_name.lower().endswith('.pdf'):
-                self.__paper_name = self.__paper_name[:-4]
-            unformatted_bibtex_string = self.get_bibtex_str(self.__paper_name)
-            if unformatted_bibtex_string:
-                self._parse_bibtex(unformatted_bibtex_string)
-            else:
-                print(f"No BibTeX data found for: {self.__paper_name}")
-        except Exception as e:
-            print(f"Error processing paper name '{paper_name}': {e}")
+    
+        self.__paper_name = paper_name.replace("_", " ")
+        if self.__paper_name.lower().endswith('.pdf'):
+            self.__paper_name = self.__paper_name[:-4]
+        unformatted_bibtex_string = self.get_bibtex_str(self.__paper_name)
+        if unformatted_bibtex_string:
+            self._parse_bibtex(unformatted_bibtex_string)
+        else:
+            print(f"No BibTeX data found for: {self.__paper_name}")
+        
 
     def _parse_bibtex(self, bibtex_string: str) -> None:
         """
@@ -64,7 +62,7 @@ class BibTeX_Service:
                 parser=bibtexparser.bparser.BibTexParser()
             )
             self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
-        except Exception as e:
+        except Exception:
             self.__bibtex_library = None
             self.formatted_bibtex_string = None
             raise BibTeXParseException()
@@ -94,13 +92,12 @@ class BibTeX_Service:
         :return: True if successful, False otherwise.
         :rtype: bool
         """
-        try:
-            self._parse_bibtex(bibtex)
-            if self.__bibtex_library and self.__bibtex_library.entries:
-                self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
-            return True
-        except Exception as e:
-            raise BibTeXSaveException("Error saving BibTex")
+        
+        self._parse_bibtex(bibtex)
+        if self.__bibtex_library and self.__bibtex_library.entries:
+            self.__paper_name = self.__bibtex_library.entries[0].get('title', '')
+        return True
+    
 
     def get_bibtex_str(self, paper_name: str) -> Optional[str]:
         """
@@ -111,60 +108,25 @@ class BibTeX_Service:
         :return: BibTeX string if found, None otherwise.
         :rtype: str or None
         """
-        try:
-            cr = Crossref()
-            cr.timeout = 1200
-            res = cr.works(query=paper_name, limit=1)
-            if not res['message']['items']:
-                print(f"No results found for: {paper_name}")
-                return None
-            doi = res['message']['items'][0]['DOI']
-            response = requests.get(
-                f"https://doi.org/{doi}", 
-                headers={"Accept": "application/x-bibtex"}, 
-                stream=False,
-                timeout=30
-            )
-            response.raise_for_status()
-            return response.text
-        
-        except Exception as e:
-            raise BibTeXNotFoundException()
-
-    def save_to_file(self, custom_path: Optional[str] = None) -> bool:
-        """
-        Save BibTeX to file.
-
-        :param custom_path: Custom directory path to save file.
-        :type custom_path: str, optional
-        :return: True if successful, False otherwise.
-        :rtype: bool
-        """
-        if not self._has_valid_data() or not self.formatted_bibtex_string:
-            print("No valid BibTeX data to save")
-            return False
-        try:
-            path = custom_path or "F:/PSE/arcai/services/bibtex/"
-            os.makedirs(path, exist_ok=True)
-            filename = self.pdf_hash if self.pdf_hash else "default"
-            file_path = os.path.join(path, f"{filename}.bib")
-            with open(file_path, "w", encoding="utf-8") as file:
-                file.write(self.formatted_bibtex_string)
-            print(f"BibTeX saved to: {file_path}")
-            return True
-        except Exception as e:
-            raise BibTeXSaveException()
-
-    def get_file(self) -> Optional[str]:
-        """
-        Get the BibTeX file content as string.
-
-        :return: BibTeX content if available, None otherwise.
-        :rtype: str or None
-        """
-        if not self._has_valid_data():
+    
+        cr = Crossref()
+        cr.timeout = 1200
+        res = cr.works(query=paper_name, limit=1)
+        if not res['message']['items']:
+            print(f"No results found for: {paper_name}")
             return None
-        return self.formatted_bibtex_string
+        doi = res['message']['items'][0]['DOI']
+        response = requests.get(
+            f"https://doi.org/{doi}", 
+            headers={"Accept": "application/x-bibtex"}, 
+            stream=False,
+            timeout=30
+        )
+        response.raise_for_status()
+        return response.text
+        
+
+
 
     def get_bibtex_string(self) -> Optional[str]:
         """
@@ -175,14 +137,7 @@ class BibTeX_Service:
         """
         return self.formatted_bibtex_string
 
-    def get_paper_name(self) -> Optional[str]:
-        """
-        Get paper name.
 
-        :return: The paper name if available, None otherwise.
-        :rtype: str or None
-        """
-        return self.__paper_name
 
     def get_bibtex_library_dict(self) -> Optional[Dict[str, Any]]:
         """
@@ -209,7 +164,7 @@ class BibTeX_Service:
             author_string = bib_dict['author']
             authors = author_string.split(" and ")
             return [author.strip() for author in authors]
-        except Exception as e:
+        except Exception:
             return None
 
     def get_first_author(self) -> Optional[str]:
@@ -238,7 +193,7 @@ class BibTeX_Service:
                 if field in bib_dict and bib_dict[field]:
                     return bib_dict[field]
             return None
-        except Exception as e:
+        except Exception:
             return None
 
     def get_year(self) -> Optional[str]:
@@ -255,22 +210,7 @@ class BibTeX_Service:
             print(f"Error getting year: {e}")
             return None
 
-    def create_misc_bibtex(self, author: str, title: str, year: int, citekey: str) -> str:
-        """
-        Create a basic misc BibTeX entry.
 
-        :param author: Author name.
-        :type author: str
-        :param title: Paper title.
-        :type title: str
-        :param year: Publication year.
-        :type year: int
-        :param citekey: Citation key.
-        :type citekey: str
-        :return: BibTeX entry as string.
-        :rtype: str
-        """
-        return f"@misc{{{citekey}, author = {{{author}}}, title = {{{title}}}, year = {{{year}}}}}"
 
     def _has_valid_data(self) -> bool:
         """
