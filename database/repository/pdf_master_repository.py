@@ -342,21 +342,22 @@ class PdfMasterRepository:
         :param new_bibtex: The new BibTeX string to set.
         :type new_bibtex: str
         """
-        try:
-            with mongo_connection() as db:
-                bibtex_instance = BibTeX_Service().from_bibtex(new_bibtex)
-                first_author = bibtex_instance.get_first_author()
-                year = bibtex_instance.get_year()
-                authors = bibtex_instance.get_authors()
-                source = bibtex_instance.get_source()
-                title = bibtex_instance.get_title()
+    
+        with mongo_connection() as db:
+            bibtex_instance = BibTeX_Service().from_bibtex(new_bibtex)
+            first_author = bibtex_instance.get_first_author()
+            year = bibtex_instance.get_year()
+            authors = bibtex_instance.get_authors()
+            source = bibtex_instance.get_source()
+            title = bibtex_instance.get_title()
 
-                db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"bibtex": new_bibtex, "year": year,
-                                                                                     "source": source,
-                                                                                     "authors": authors,
-                                                                                     "first_author": first_author,
-                                                                                     "title": title,
-                                                                                     "updated_at": get_utc_zulu_timestamp()}})
+            db.pdf_master.update_one({"_id": ObjectId(pdf_master_id)}, {"$set": {"bibtex": new_bibtex, "year": year,
+                                                                                    "source": source,
+                                                                                    "authors": authors,
+                                                                                    "first_author": first_author,
+                                                                                    "title": title,
+                                                                                    "updated_at": get_utc_zulu_timestamp()}})
+    
     
 
     @staticmethod
