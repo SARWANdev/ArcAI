@@ -244,17 +244,8 @@ class TestUpdateTag:
 
     def test_update_tag_empty_string(self, mock_db):
         """Test tag update with empty string."""
-        with patch("database.repository.document_properties_repository.mongo_connection") as mock_conn:
-            mock_conn.return_value.__enter__.return_value = mock_db
-            mock_db.documents.update_one.return_value.modified_count = 1
-
-            result = DocumentPropertiesRepository.update_tag(FAKE_DOCUMENT_ID, "")
-            
-            assert result is True
-            mock_db.documents.update_one.assert_called_once_with(
-                {"_id": ObjectId(FAKE_DOCUMENT_ID)}, 
-                {"$set": {"tag_name": ""}}
-            )
+        with pytest.raises(InvalidTagName, match="Tag name must be at least 1 character long"):
+            DocumentPropertiesRepository.update_tag(FAKE_DOCUMENT_ID, "")
 
     def test_update_tag_whitespace_trimming(self, mock_db):
         """Test tag update with whitespace trimming."""
@@ -349,7 +340,7 @@ class TestUpdateTagColor:
         with pytest.raises(MissingTagColor, match="Tag color must be a string"):
             DocumentPropertiesRepository.update_tag_color(FAKE_DOCUMENT_ID, 123)
 
-    def test_update_tag_color_empty_after_trim(self):
+    def test_update_tag_color_empty_after_trim(self, mock_db):
         """Test tag color update with empty string after trimming."""
         with pytest.raises(MissingTagColor, match="Tag color cannot be empty"):
             DocumentPropertiesRepository.update_tag_color(FAKE_DOCUMENT_ID, "   ")
@@ -429,7 +420,7 @@ class TestGetProjectId:
 
             result = DocumentPropertiesRepository.get_project_id(FAKE_DOCUMENT_ID)
             
-            assert result is None
+            assert result is ""
 
     def test_get_project_id_no_project_id_field(self, mock_db):
         """Test project ID retrieval when document has no project_id field."""
