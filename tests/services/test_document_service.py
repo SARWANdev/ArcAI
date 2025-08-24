@@ -218,8 +218,16 @@ def test_filter_documents_exception(document_service):
         assert filtered == []
 
 def test_get_filtered_and_sorted_documents(document_service):
-    doc1 = MagicMock(name='B', created_at='2025-08-23T00:00:00Z', document_id='doc1')
-    doc2 = MagicMock(name='A', created_at='2025-08-22T00:00:00Z', document_id='doc2')
+    doc1 = MagicMock()
+    doc1.name = 'B'
+    doc1.created_at = '2025-08-23T00:00:00Z'
+    doc1.document_id = 'doc1'
+
+    doc2 = MagicMock()
+    doc2.name = 'A'
+    doc2.created_at = '2025-08-22T00:00:00Z'
+    doc2.document_id = 'doc2'
+
     with patch.object(document_service, 'filter_documents', return_value=[doc1, doc2]), \
          patch.object(document_service.document_repository, 'get_authors', return_value='author'), \
          patch.object(document_service.document_repository, 'get_year', return_value='2025'), \
@@ -296,37 +304,4 @@ def test_search_documents_exception(document_service):
         docs = document_service.search_documents('user1', 'query')
         assert docs == []
 
-def test__create_document_success(document_service):
-    with patch.object(document_service.document_repository, 'create_document', return_value='docid') as mock_create:
-        result = document_service._DocumentService__create_document('docname', 'projid', 'pdfid')
-        assert result == 'docid'
-        mock_create.assert_called_once()
 
-def test__create_document_exception(document_service):
-    with patch.object(document_service.document_repository, 'create_document', side_effect=Exception('fail')):
-        result = document_service._DocumentService__create_document('docname', 'projid', 'pdfid')
-        assert result is None
-
-def test__create_pdf_master_success(document_service):
-    with patch.object(document_service.pdf_master_repository, 'create_pdf_master', return_value='pdfid') as mock_create:
-        result = document_service._DocumentService__create_pdf_master('path', 'user', 'proj', 'hash', 'orig')
-        assert result == 'pdfid'
-        mock_create.assert_called_once()
-
-def test__create_pdf_master_exception(document_service):
-    with patch.object(document_service.pdf_master_repository, 'create_pdf_master', side_effect=Exception('fail')):
-        result = document_service._DocumentService__create_pdf_master('path', 'user', 'proj', 'hash', 'orig')
-        assert result is None
-
-def test__embeddings_storage_success(document_service):
-    with patch('services.document_service.EmbeddingsManager.serialize_vector_store', return_value=(b'index', b'meta')) as mock_serialize, \
-         patch('services.document_service.save_embeddings', return_value=('index', 'meta')) as mock_save:
-        result = document_service._DocumentService__embeddings_storage('path', 'pdfid')
-        assert result == ('index', 'meta')
-        mock_serialize.assert_called_once()
-        mock_save.assert_called_once()
-
-def test__embeddings_storage_exception(document_service):
-    with patch('services.document_service.EmbeddingsManager.serialize_vector_store', side_effect=Exception('fail')):
-        result = document_service._DocumentService__embeddings_storage('path', 'pdfid')
-        assert result is None

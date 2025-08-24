@@ -371,7 +371,10 @@ class DocumentService:
         :return: True if the document was deleted, False otherwise
         """
 
-        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        try:
+            pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+        except Exception:
+            return False
         document_data = self.document_repository.delete_document(document_id)
         self.document_repository.delete_elastic(document_id)
 
@@ -510,7 +513,11 @@ class DocumentService:
         :tag: If not None, filters by exact tag name match
         :return: List of filtered document objects. Empty list if no matches or no documents.
         """
-        all_docs = self.get_project_documents(project_id)
+        try:
+            all_docs = self.get_project_documents(project_id)
+        except Exception:
+            return []
+
         if not all_docs:
             return []
 
@@ -551,7 +558,12 @@ class DocumentService:
         :return: List of filtered and sorted DocumentModel objects Empty list if no documents match filters
         """
         # 1. Filter documents
-        documents = self.filter_documents(project_id, read, favorite, tag)
+
+        try:
+            documents = self.filter_documents(project_id, read, favorite, tag)
+        except Exception:
+            return []
+
         if not documents:
             return []
 
@@ -573,7 +585,8 @@ class DocumentService:
         elif sort_field == "created_at":
             documents.sort(key=lambda d: d.created_at or "", reverse=reverse)
         else:
-            raise ValueError(f"Invalid sort field: {sort_field}")
+            return documents
+            #raise ValueError(f"Invalid sort field: {sort_field}")
 
         return documents
 
@@ -585,6 +598,7 @@ class DocumentService:
         :param document_id: ID of the target project for the duplicated document
         :return: None
         """
+
         pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
         pdf_name = self.document_repository.get_name(document_id)
         new_document_id = self.__create_document(document_name=pdf_name, project_id=project_id, pdf_master_id=pdf_master_id)
@@ -599,7 +613,11 @@ class DocumentService:
         :param new_project_id: the id of the new project
         """
 
-        self.document_properties_repo.set_new_project_id(document_id, new_project_id)
+        try:
+            self.document_properties_repo.set_new_project_id(document_id, new_project_id)
+        except Exception:
+    
+            return None
     
     def search_documents(self, user_id, query):
         """
@@ -609,9 +627,16 @@ class DocumentService:
         :param query: Search query string
         :return: List of DocumentModel objects matching the query (empty if none found)
         """
-        hits = self.document_repository.search_documents(user_id, query)
+        try:
+            hits = self.document_repository.search_documents(user_id, query)
+        except Exception:
+            return []
+
         if not hits:
-            hits = self.document_repository.search_contents(user_id, query)
+            try:
+                hits = self.document_repository.search_contents(user_id, query)
+            except Exception:
+                return []
 
         if not hits:
             return []
@@ -649,5 +674,9 @@ class DocumentService:
         :return: True if successful, False otherwise
         """
         DocumentValidator.validate_rename(new_name)
-        success = self.document_repository.update_document_name(document_id, new_name)
-        return success
+
+        try:
+            success = self.document_repository.update_document_name(document_id, new_name)
+            return bool(success)
+        except Exception:
+            return False

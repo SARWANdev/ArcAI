@@ -155,13 +155,9 @@ class ProjectService:
                 return (repo.get_source(doc.document_id) or "").lower()
             elif sort_field == "created_at":
                 return doc.created_at or ""
-            else:
-                raise ValueError(f"Invalid sort field: {sort_field}")
-        try:
-            documents.sort(key=get_field_value, reverse=reverse)
-        except Exception as e:
-            print(f"Error while sorting documents: {e}")
-            return documents  # fallback: return unsorted
+            raise ValueError(f"Invalid sort field: {sort_field}")
+        
+        documents.sort(key=get_field_value, reverse=reverse)
         return documents
 
     def _validate_project_name(self, project_name: str, user_id: str, exclude_project_id: str = None):
