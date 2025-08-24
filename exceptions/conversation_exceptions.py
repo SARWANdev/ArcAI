@@ -23,4 +23,7 @@ class DuplicateConversationName(BusinessLogicException):
 
 class ConversationNotFoundError(InfrastructureException):
     """Conversation could not be found"""
-    pass
+    def __init__(self, root_message: str = "An infrastructure error occurred", details: str = ""):
+        super().__init__(root_message, details)
+        self.details = details
+        self.root_message = root_message

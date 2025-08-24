@@ -21,7 +21,7 @@ class ConvesationValidator:
         :raises DuplicateConversationName: If a conversation with the same name already exists.
         """
         
-        
+
         try:
             self._validate_name_length(conversation_name)
             self._validate_user_existence(user_id)
@@ -41,11 +41,12 @@ class ConvesationValidator:
             return False
     
     def validate_delete_conversation(self, conversation_id, user_id):
-        pass
+
+        
              
-    def _validate_name_length(self, name: str):
-        if not name or not name.strip():
-            raise InvalidConversationName("Conversation name cannot me empty")
+  #  def _validate_name_length(self, name: str):
+   #     if not name or not name.strip():
+    #        raise InvalidConversationName("Conversation name cannot me empty")
         
         if len(name.strip()) > InvalidConversationName.MAX_NAME_LENGTH:
             raise InvalidConversationName(f"Conversation name cannot exceed {InvalidConversationName.MAX_NAME_LENGTH} characters")
@@ -59,6 +60,10 @@ class ConvesationValidator:
         
     def _duplicate_conversation_name(self, user_id: str, conversation_name: str):
         pass
+
+    def _validate_conversation_existence(self, conversation_id: str):
+        if not UserRepository.user_exists(conversation_id):
+            raise
 
             
                 
