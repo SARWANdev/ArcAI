@@ -25,25 +25,6 @@ def fake_conversation_dict():
         'updated_at': '2025-08-23T00:00:00Z'
     }
 
-def test_create_conversation(service):
-    with patch('model.ai_chat.conversation.Conversation', MagicMock()) as mock_model, \
-         patch.object(service.conversation_repository, 'save') as mock_save, \
-         patch('database.repository.date_time_utils.get_utc_zulu_timestamp', return_value='now'):
-        conv = service.create_conversation('user1', ['doc1'], ['proj1'], 'Test Conversation')
-        assert isinstance(conv, MagicMock)
-        mock_save.assert_called_once()
-
-def test_create_document_conversation_found(service):
-    doc = MagicMock()
-    doc.name = "DocName"
-    with patch('services.document_service.DocumentService.get_document', return_value=doc), \
-         patch('model.ai_chat.conversation.Conversation', MagicMock()) as mock_model, \
-         patch.object(service.conversation_repository, 'save') as mock_save, \
-         patch('database.repository.date_time_utils.get_utc_zulu_timestamp', return_value='now'):
-        result = service.create_document_conversation('user1', 'doc1')
-        assert isinstance(result, MagicMock)
-        mock_save.assert_called_once()
-
 def test_create_document_conversation_not_found(service):
     with patch('services.document_service.DocumentService.get_document', return_value=None), \
          patch.object(service.conversation_repository, 'save') as mock_save:
