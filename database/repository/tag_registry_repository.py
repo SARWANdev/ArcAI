@@ -1,6 +1,7 @@
 from database.utils.mongo_connector import mongo_connection
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
+from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
 
 class TagRegistryRepository:
     """
@@ -42,7 +43,7 @@ class TagRegistryRepository:
 
         This method checks if the tag already exists in the collection:
         - If the tag exists with the same color, it returns the existing tag.
-        - If the tag exists with a different color, it raises a `ValueError`.
+        - If the tag exists with a different color, it raises a `TagException`.
         - If the tag does not exist, it creates the tag and returns the newly created tag.
 
         :param tag_name: The name of the tag to create or verify.
@@ -53,13 +54,31 @@ class TagRegistryRepository:
         :returns: The tag document if it already exists or has been created.
         :rtype: dict
         
-        :raises ValueError: If the tag already exists with a different color.
+        :raises TagException: If the tag already exists with a different color.
         """
+        # Validate inputs
+        if not tag_name or not isinstance(tag_name, str):
+            raise InvalidTagName("Tag name must be a non-empty string")
+        
+        tag_name = tag_name.strip()
+        if len(tag_name) < InvalidTagName.MIN_NAME_LENGTH:
+            raise InvalidTagName(f"Tag name must be at least {InvalidTagName.MIN_NAME_LENGTH} character long")
+        
+        if len(tag_name) > InvalidTagName.MAX_NAME_LENGTH:
+            raise InvalidTagName(f"Tag name cannot exceed {InvalidTagName.MAX_NAME_LENGTH} characters")
+        
+        if not tag_color or not isinstance(tag_color, str):
+            raise MissingTagColor("Tag color must be a non-empty string")
+        
+        tag_color = tag_color.strip()
+        if not tag_color:
+            raise MissingTagColor("Tag color cannot be empty")
+        
         with mongo_connection() as db:
             existing = db.tag_registry.find_one({"name": tag_name})
             if existing:
                 if existing.get("color") != tag_color:
-                    raise ValueError(f"Tag '{tag_name}' already exists with different color '{existing.get('color')}'")
+                    raise TagException(f"Tag '{tag_name}' already exists with different color '{existing.get('color')}'")
                 return existing
             try:
                 result = db.tag_registry.insert_one({"name": tag_name, "color": tag_color})
