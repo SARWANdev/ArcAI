@@ -571,7 +571,7 @@ class DocumentService:
         pdf_name = self.document_repository.get_name(document_id)
         self.__create_document(document_name=pdf_name, project_id=project_id, pdf_master_id=pdf_master_id)
         text = self.document_repository.get_document_text(document_id)
-        self.document_repository.save_elastic(document_id, text)
+        self.document_repository.save_elastic(new_document_id, text)
 
     def move_document(self, document_id, new_project_id):
         """
