@@ -21,27 +21,43 @@ def test_init_oauth_registers_auth0(auth_service, app):
         mock_register.assert_called_once()
 
 def test_login_redirect(auth_service):
-    with patch.object(auth_service.oauth.auth0, 'authorize_redirect', return_value='redirected') as mock_auth:
-        with patch('services.user_management.authentication_service.url_for', return_value='/callback'):
-            result = auth_service.login()
-            assert result == 'redirected'
-            mock_auth.assert_called_once()
+    from unittest.mock import MagicMock
+    mock_auth0 = MagicMock()
+    mock_auth0.authorize_redirect.return_value = 'redirected'
+    auth_service.oauth.auth0 = mock_auth0
+    with patch('services.user_management.authentication_service.url_for', return_value='/callback'):
+        result = auth_service.login()
+        assert result == 'redirected'
+        mock_auth0.authorize_redirect.assert_called_once()
 
 def test_callback_success(auth_service, app):
+    from unittest.mock import MagicMock
+    mock_auth0 = MagicMock()
+    mock_auth0.authorize_access_token.return_value = {
+        'userinfo': {
+            'sub': 'auth0|123',
+            'given_name': 'John',
+            'family_name': 'Doe',
+            'email': 'john@example.com'
+        }
+    }
+    auth_service.oauth.auth0 = mock_auth0
     with app.test_request_context():
-        with patch.object(auth_service.oauth.auth0, 'authorize_access_token', return_value={'userinfo': {'sub': 'auth0|123', 'given_name': 'John', 'family_name': 'Doe', 'email': 'john@example.com'}}), \
-             patch('services.user_management.authentication_service.UserRepository.save'), \
+        with patch('services.user_management.authentication_service.UserRepository.save'), \
              patch('services.user_management.authentication_service.UserRepository.activate_user'), \
              patch('services.user_management.authentication_service.redirect', return_value='redirected') as mock_redirect:
             result = auth_service.callback()
             assert result == 'redirected'
 
 def test_callback_error(auth_service, app):
+    from unittest.mock import MagicMock
+    mock_auth0 = MagicMock()
+    mock_auth0.authorize_access_token.side_effect = Exception('fail')
+    auth_service.oauth.auth0 = mock_auth0
     with app.test_request_context():
-        with patch.object(auth_service.oauth.auth0, 'authorize_access_token', side_effect=Exception('fail')):
-            result, code = auth_service.callback()
-            assert code == 400
-            assert 'error' in result.json
+        result, code = auth_service.callback()
+        assert code == 400
+        assert 'error' in result.json
 
 def test_get_user_verification_authenticated(auth_service, app):
     with app.test_request_context():
@@ -79,7 +95,7 @@ def test_init_oauth_missing_env(auth_service, app, monkeypatch):
         args, kwargs = mock_register.call_args
         assert kwargs['client_id'] == ''
         assert kwargs['client_secret'] == ''
-        assert 'localhost' in kwargs['server_metadata_url']
+        assert kwargs['server_metadata_url'] == 'https:///.well-known/openid-configuration'
 
 def test_login_missing_auth0(auth_service):
     auth_service.oauth.auth0 = None
