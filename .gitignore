@@ -17,3 +17,5 @@ pipipupu.py
 validators/conversation_validator.py
 .coverage
 htmlcov
+.venv
+.coverage
