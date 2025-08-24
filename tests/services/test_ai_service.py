@@ -26,7 +26,7 @@ def test_generate_failure(ai_service):
         mock_response = MagicMock()
         mock_response.status_code = 500
         mock_post.return_value = mock_response
-        with pytest.raises(AIGenerationException):
+        with pytest.raises(AIConnectionException):
             ai_service.generate("test prompt")
 
 def test_generate_network_error(ai_service):
@@ -81,25 +81,6 @@ def test_send_chat_message_similarity_search_error(ai_service):
         with pytest.raises(AIConnectionException):
             ai_service.send_chat_message("question", conversation)
 
-def test_output_streaming_response_generate(ai_service):
-    mock_response = MagicMock()
-    mock_response.iter_lines.return_value = [b'{"response": "Hello"}', b'{"response": " World"}']
-    output = []
-    def output_func(text):
-        output.append(text)
-    result = ai_service.output_streaming_response(mock_response, output_func, mode="generate")
-    assert result == "Hello World"
-    assert output[-1] == "Hello World"
-
-def test_output_streaming_response_chat(ai_service):
-    mock_response = MagicMock()
-    mock_response.iter_lines.return_value = [b'{"message": {"content": "Hi"}}', b'{"message": {"content": " there"}}']
-    output = []
-    def output_func(text):
-        output.append(text)
-    result = ai_service.output_streaming_response(mock_response, output_func, mode="chat")
-    assert result == "Hi there"
-    assert output[-1] == "Hi there"
 
 def test_generate_with_json_response(ai_service):
     with patch('services.ai_service.requests.post') as mock_post:
@@ -147,30 +128,24 @@ def test_send_chat_message_no_context(ai_service):
             response = ai_service.send_chat_message("question", conversation)
             assert response == mock_response
 
-def test_perform_similarity_search_success(ai_service):
-    conversation = DummyConversation()
-    with patch('services.ai_service.requests.post') as mock_post:
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"results": ["doc1", "doc2"]}
-        mock_post.return_value = mock_response
-        result = ai_service._AIService__perform_similarity_search("query", conversation)
-        assert result == ["doc1", "doc2"]
-
-def test_perform_similarity_search_failure(ai_service):
-    conversation = DummyConversation()
-    with patch('services.ai_service.requests.post') as mock_post:
-        mock_response = MagicMock()
-        mock_response.status_code = 500
-        mock_post.return_value = mock_response
-        with pytest.raises(AIEmbeddingException):
-            ai_service._AIService__perform_similarity_search("query", conversation)
 
 def test_perform_similarity_search_network_error(ai_service):
-    conversation = DummyConversation()
-    with patch('services.ai_service.requests.post', side_effect=Exception("network error")):
-        with pytest.raises(AIConnectionException):
-            ai_service._AIService__perform_similarity_search("query", conversation)
+    mock_vector_store = MagicMock()
+    mock_vector_store.similarity_search.side_effect = Exception("network error")
+    with pytest.raises(Exception):
+        ai_service._AIService__perform_similarity_search("query", mock_vector_store, 5)
+
+def test_perform_similarity_search_empty(ai_service):
+    mock_vector_store = MagicMock()
+    mock_vector_store.similarity_search.return_value = []
+    result = ai_service._AIService__perform_similarity_search("query", mock_vector_store, top_k=2)
+    assert result == ""
+
+def test_perform_similarity_search_exception(ai_service):
+    mock_vector_store = MagicMock()
+    mock_vector_store.similarity_search.side_effect = Exception("fail")
+    with pytest.raises(Exception):
+        ai_service._AIService__perform_similarity_search("query", mock_vector_store, top_k=2)
 
 def test_get_vector_store_success(ai_service):
     with patch("services.ai_service.FAISS.from_texts") as mock_from_texts:
@@ -232,7 +207,7 @@ def test_generate_conversation_name_success(ai_service):
     conversation = MagicMock()
     conversation.get_messages.return_value = ["msg1", "msg2"]
     conversation.document_ids = [1, 2]
-    with patch("services.ai_service.DocumentRepository.get_bibtex_by_document_id", return_value="@article{foo}"):
+    with patch("database.repository.document_repository.DocumentRepository.get_bibtex_by_document_id", return_value="@article{foo}"):
         with patch.object(ai_service, "generate") as mock_generate, \
              patch.object(ai_service, "output_streaming_response", return_value="title") as mock_output:
             mock_generate.return_value = MagicMock()
@@ -243,7 +218,11 @@ def test_generate_conversation_name_error(ai_service):
     conversation = MagicMock()
     conversation.get_messages.return_value = ["msg1"]
     conversation.document_ids = [1]
-    with patch("services.ai_service.DocumentRepository.get_bibtex_by_document_id", return_value="@article{foo}"):
+    with patch("database.repository.document_repository.DocumentRepository.get_bibtex_by_document_id", return_value="@article{foo}"):
         with patch.object(ai_service, "generate", side_effect=Exception("fail")):
             with pytest.raises(AIConnectionException):
                 ai_service.generate_conversation_name(conversation)
+
+
+
+

@@ -56,16 +56,13 @@ class BibTeX_Service:
         :return: None
         :rtype: None
         """
-        try:
-            self.__bibtex_library = bibtexparser.loads(
-                bibtex_string, 
-                parser=bibtexparser.bparser.BibTexParser()
-            )
-            self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
-        except Exception:
-            self.__bibtex_library = None
-            self.formatted_bibtex_string = None
-            raise BibTeXParseException()
+    
+        self.__bibtex_library = bibtexparser.loads(
+            bibtex_string, 
+            parser=bibtexparser.bparser.BibTexParser()
+        )
+        self.formatted_bibtex_string = bibtexparser.dumps(bib_database=self.__bibtex_library)
+        
 
     @classmethod
     def from_bibtex(cls, bibtex_string: str, pdf_hash: Optional[str] = None):
@@ -146,9 +143,8 @@ class BibTeX_Service:
         :return: The first BibTeX entry as a dictionary if available, None otherwise.
         :rtype: dict or None
         """
-        if not self._has_valid_data() or not self.__bibtex_library:
-            return None
-        return self.__bibtex_library.entries[0]
+        if self._has_valid_data() and self.__bibtex_library:
+            return self.__bibtex_library.entries[0]
 
     def get_authors(self) -> Optional[list]:
         """
@@ -157,16 +153,13 @@ class BibTeX_Service:
         :return: List of author names if available, None otherwise.
         :rtype: list or None
         """
-        try:
-            bib_dict = self.get_bibtex_library_dict()
-            if not bib_dict or 'author' not in bib_dict:
-                return None
+    
+        bib_dict = self.get_bibtex_library_dict()
+        if  bib_dict and 'author' in bib_dict:
             author_string = bib_dict['author']
             authors = author_string.split(" and ")
             return [author.strip() for author in authors]
-        except Exception:
-            return None
-
+        
     def get_first_author(self) -> Optional[str]:
         """
         Get first author name.
@@ -184,17 +177,15 @@ class BibTeX_Service:
         :return: The publication source if available, None otherwise.
         :rtype: str or None
         """
-        try:
-            bib_dict = self.get_bibtex_library_dict()
-            if not bib_dict:
-                return None
+    
+        bib_dict = self.get_bibtex_library_dict()
+        if bib_dict:       
             source_fields = ['booktitle', 'journal', 'series', 'school']
             for field in source_fields:
                 if field in bib_dict and bib_dict[field]:
                     return bib_dict[field]
-            return None
-        except Exception:
-            return None
+
+
 
     def get_year(self) -> Optional[str]:
         """
@@ -203,12 +194,9 @@ class BibTeX_Service:
         :return: The publication year if available, None otherwise.
         :rtype: str or None
         """
-        try:
-            bib_dict = self.get_bibtex_library_dict()
-            return bib_dict.get('year') if bib_dict else None
-        except Exception as e:
-            print(f"Error getting year: {e}")
-            return None
+        bib_dict = self.get_bibtex_library_dict()
+        return bib_dict.get('year') if bib_dict else None
+    
 
 
 
@@ -233,8 +221,7 @@ class BibTeX_Service:
         :return: The title of the paper if available, None otherwise.
         :rtype: str or None
         """
-        if self.__bibtex_library is None or not self.__bibtex_library.entries or not self._has_valid_data():
-            return None
-        return self.__bibtex_library.entries[0].get('title', None)
+        if self.__bibtex_library and self.__bibtex_library.entries and self._has_valid_data():    
+            return self.__bibtex_library.entries[0].get('title', None)
 
 

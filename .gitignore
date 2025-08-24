@@ -15,3 +15,10 @@ database/utils/mongo_configuration.py
 .env
 pipipupu.py
 validators/conversation_validator.py
+.coverage
+htmlcov
+venv
+.venv
+.venv
+.coverage
+services/user_management/__pycache__

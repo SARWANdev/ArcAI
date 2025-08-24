@@ -7,6 +7,7 @@ from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import Project as ProjectRepository
 from exceptions.document_exceptions import InvalidServerConnectionException
+from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -115,7 +116,7 @@ class DocumentService:
 
         tag_name = document_data.get('tag_name')
         tag_color = document_data.get('tag_color')
-        if tag_name is not None and tag_color is not None:
+        if tag_name is not None and tag_color is not None and tag_name.strip() and tag_color.strip():
             tag_obj = TagModel(tag_name, tag_color)
             document_model.set_tag(tag_obj)
 
@@ -147,23 +148,34 @@ class DocumentService:
         :param tag_name: Name of the tag to be added
         :param tag_color: Color code for the tag (hex or named color)
         :return: True if tag was successfully added, False otherwise
+        :raises InvalidTagName: If the tag name is invalid
+        :raises MissingTagColor: If the tag color is missing or invalid
+        :raises TagException: If there's a conflict with existing tag colors
         """
-        tag_obj = TagModel(tag_name, tag_color)
-        tag_name = tag_obj.get_name()
-        tag_color = tag_obj.get_color()
+        try:
+            tag_obj = TagModel(tag_name, tag_color)
+            tag_name = tag_obj.get_name()
+            tag_color = tag_obj.get_color()
 
-        existing_tag = TagRegistryRepository.get_tag(tag_name)
-        if existing_tag:
-            if existing_tag["color"] != tag_color:
-                print(f"Tag with name '{tag_name}' already exists with a different color.")
-                return False
+            existing_tag = TagRegistryRepository.get_tag(tag_name)
+            if existing_tag:
+                if existing_tag["color"] != tag_color:
+                    raise TagException(f"Tag with name '{tag_name}' already exists with a different color.")
 
-        else:
-            TagRegistryRepository.create_or_verify_tag(tag_name, tag_color)
+            else:
+                TagRegistryRepository.create_or_verify_tag(tag_name, tag_color)
 
-        success_name = self.document_properties_repo.update_tag(document_id, tag_name)
-        success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
-        return success_name and success_color
+            success_name = self.document_properties_repo.update_tag(document_id, tag_name)
+            success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
+            return success_name and success_color
+            
+        except (InvalidTagName, MissingTagColor, TagException):
+            # Re-raise these exceptions as they are already properly formatted
+            raise
+        except Exception as e:
+            # Handle any other unexpected errors
+            print(f"Unexpected error while adding tag: {e}")
+            return False
 
     def __create_document(self, document_name, project_id, pdf_master_id) -> str:
         """
@@ -463,7 +475,7 @@ class DocumentService:
             return None
         tag_name = document_data.get('tag_name')
         tag_color = document_data.get('tag_color')
-        if tag_name and tag_color:
+        if tag_name and tag_color and tag_name.strip() and tag_color.strip():
             return TagModel(tag_name=tag_name, tag_color=tag_color)
         return None
 
