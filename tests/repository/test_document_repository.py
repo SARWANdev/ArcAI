@@ -37,8 +37,9 @@ def test_save_elastic_failure():
     with patch("database.repository.document_repository.DocumentRepository.get_name", side_effect=Exception("fail")), \
          patch("database.repository.document_repository.es") as mock_es:
         mock_es.index.side_effect = Exception("fail")
-        result = DocumentRepository.save_elastic("docid", "text")
-        assert result is False
+        with pytest.raises(Exception) as excinfo:
+            DocumentRepository.save_elastic("docid", "text")
+        assert str(excinfo.value) == "fail"
 
 
 def test_get_path_success():
@@ -62,20 +63,23 @@ def test_get_metadata_delegations():
 def test_get_name(mock_db):
     with patch("database.repository.document_repository.mongo_connection", return_value=MagicMock(__enter__=lambda s: mock_db, __exit__=lambda *a: None)):
         mock_db.documents.find_one.return_value = {"name": "docname"}
-        name = DocumentRepository.get_name("docid")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        name = DocumentRepository.get_name(valid_object_id)
         assert name == "docname"
 
 
 def test_set_pdf_master_id(mock_db):
     with patch("database.repository.document_repository.mongo_connection", return_value=MagicMock(__enter__=lambda s: mock_db, __exit__=lambda *a: None)):
-        DocumentRepository.set_pdf_master_id("docid", "pdfid")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        DocumentRepository.set_pdf_master_id(valid_object_id, "pdfid")
         mock_db.documents.update_one.assert_called_once()
 
 
 def test_get_pdf_master_id(mock_db):
     with patch("database.repository.document_repository.mongo_connection", return_value=MagicMock(__enter__=lambda s: mock_db, __exit__=lambda *a: None)):
         mock_db.documents.find_one.return_value = {"pdf_master_id": "pdfid"}
-        pdfid = DocumentRepository.get_pdf_master_id("docid")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        pdfid = DocumentRepository.get_pdf_master_id(valid_object_id)
         assert pdfid == "pdfid"
 
 
@@ -89,7 +93,8 @@ def test_get_documents_by_project(mock_db):
 def test_get_by_document_id(mock_db):
     with patch("database.repository.document_repository.mongo_connection", return_value=MagicMock(__enter__=lambda s: mock_db, __exit__=lambda *a: None)):
         mock_db.documents.find_one.return_value = {"_id": "1", "name": "doc"}
-        doc = DocumentRepository.get_by_document_id("docid")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        doc = DocumentRepository.get_by_document_id(valid_object_id)
         assert doc["name"] == "doc"
 
 
@@ -98,7 +103,8 @@ def test_update_document_name_success(mock_db):
          patch("database.repository.document_repository.es") as mock_es, \
          patch("database.repository.document_repository.get_utc_zulu_timestamp", return_value="ts"):
         mock_db.documents.update_one.return_value.modified_count = 1
-        result = DocumentRepository.update_document_name("docid", "newname")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        result = DocumentRepository.update_document_name(valid_object_id, "newname")
         assert result is True
         mock_es.update.assert_called_once()
 
@@ -112,7 +118,8 @@ def test_update_document_name_failure(mock_db):
 def test_delete_document_success(mock_db):
     with patch("database.repository.document_repository.mongo_connection", return_value=MagicMock(__enter__=lambda s: mock_db, __exit__=lambda *a: None)):
         mock_db.documents.delete_one.return_value.deleted_count = 1
-        result = DocumentRepository.delete_document("docid")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        result = DocumentRepository.delete_document(valid_object_id)
         assert result is True
 
 
@@ -139,7 +146,8 @@ def test_delete_elastic_failure():
 def test_get_note_success(mock_db):
     with patch("database.repository.document_repository.mongo_connection", return_value=MagicMock(__enter__=lambda s: mock_db, __exit__=lambda *a: None)):
         mock_db.documents.find_one.return_value = {"note": "note text"}
-        note = DocumentRepository.get_note("docid")
+        valid_object_id = "507f1f77bcf86cd799439011"  # 24-char hex string
+        note = DocumentRepository.get_note(valid_object_id)
         assert note == "note text"
 
 
