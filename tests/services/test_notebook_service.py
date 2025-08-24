@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch
 from services.notebook_service import NotebookService
 import io
+from exceptions.notebook_exceptions import InvalidNoteContent
 
 @pytest.fixture
 def notebook_service():
@@ -39,7 +40,7 @@ def test_download_documents_notebook(notebook_service):
 
 def test_download_projects_notebook(notebook_service):
     with patch.object(notebook_service, 'get_projects_notebook', return_value='proj notes'), \
-         patch('services.notebook_service.ProjectRepository.get_by_project_id', return_value={'title': 'ProjTitle'}):
+         patch('services.notebook_service.ProjectRepository.get_project_by_id', return_value={'title': 'ProjTitle'}):
         buffer, filename = notebook_service.download_projects_notebook('proj1')
         assert isinstance(buffer, io.BytesIO)
         assert buffer.getvalue() == b'proj notes'
@@ -50,11 +51,9 @@ def test_validate_note_content_empty(notebook_service):
     notebook_service._validate_note_content("")
 
 def test_validate_note_content_max_length(notebook_service):
-    class DummyInvalid(Exception):
-        MAX_NOTE_LENGTH = 5
-    with patch('exceptions.notebook_exceptions.InvalidNoteContent', DummyInvalid):
-        with pytest.raises(DummyInvalid):
-            notebook_service._validate_note_content('123456')
+    InvalidNoteContent.MAX_NOTE_LENGTH = 5
+    with pytest.raises(InvalidNoteContent):
+        notebook_service._validate_note_content('123456')
 
 def test_get_projects_notebook_notebook_not_found(notebook_service):
     from exceptions.notebook_exceptions import NotebookNotFoundError
@@ -100,6 +99,6 @@ def test_download_documents_notebook_no_title(notebook_service):
 
 def test_download_projects_notebook_no_title(notebook_service):
     with patch.object(notebook_service, 'get_projects_notebook', return_value='proj notes'), \
-         patch('services.notebook_service.ProjectRepository.get_by_project_id', return_value={}):
+         patch('services.notebook_service.ProjectRepository.get_project_by_id', return_value={}):
         buffer, filename = notebook_service.download_projects_notebook('proj1')
         assert filename == 'notes.txt'

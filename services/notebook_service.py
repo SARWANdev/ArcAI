@@ -147,8 +147,8 @@ class NotebookService:
         :rtype: (io.BytesIO, str)
         """
         notebook = self.get_documents_notebook(document_id)
-        document_title = DocumentRepository.get_by_document_id(document_id).get('title')
-        notes_title = document_title + 'notes.txt'
+        document_title = DocumentRepository.get_by_document_id(document_id).get('title') or ""
+        notes_title = f"{document_title}notes.txt"
         buffer = io.BytesIO()
         buffer.write(notebook.encode('utf-8'))
         return buffer, notes_title
@@ -163,8 +163,8 @@ class NotebookService:
         :rtype: (io.BytesIO, str)
         """
         notebook = self.get_projects_notebook(project_id)
-        project_title = ProjectRepository.get_by_project_id(project_id).get('title')
-        notes_title = project_title + 'notes.txt'
+        project_title = ProjectRepository.get_project_by_id(project_id).get('title') or ""
+        notes_title = f"{project_title}notes.txt"
         buffer = io.BytesIO()
         buffer.write(notebook.encode('utf-8'))
         return buffer, notes_title
