@@ -7,7 +7,7 @@ from model.user_profile.user import User
 from dotenv import load_dotenv
 
 load_dotenv()
-
+ 
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
 
