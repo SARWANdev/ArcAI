@@ -61,6 +61,7 @@ def test_delete_project_with_documents(project_service):
 
 def test_delete_project_no_documents(project_service):
     with patch.object(project_service.document_repository, 'get_documents_by_project', return_value=None), \
+         patch.object(project_service.project_repository, 'get_project_by_id', return_value={'_id': 'proj1'}), \
          patch.object(project_service.project_repository, 'delete_project', return_value=True):
         result = project_service.delete_project('proj1')
         assert result is None
@@ -78,8 +79,15 @@ def test_rename_project_not_found(project_service):
             project_service.rename_project('proj1', 'Beta')
 
 def test_sort_project_documents(project_service):
-    doc1 = MagicMock(name='B', created_at='2025-08-23T00:00:00Z', document_id='doc1')
-    doc2 = MagicMock(name='A', created_at='2025-08-22T00:00:00Z', document_id='doc2')
+    doc1 = MagicMock()
+    doc1.name = 'B'
+    doc1.created_at = '2025-08-23T00:00:00Z'
+    doc1.document_id = 'doc1'
+
+    doc2 = MagicMock()
+    doc2.name = 'A'
+    doc2.created_at = '2025-08-22T00:00:00Z'
+    doc2.document_id = 'doc2'
     with patch.object(project_service.document_service, 'get_project_documents', return_value=[doc1, doc2]), \
          patch.object(project_service.document_repository, 'get_authors', return_value='author'), \
          patch.object(project_service.document_repository, 'get_year', return_value='2025'), \
