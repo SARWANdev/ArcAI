@@ -13,6 +13,7 @@ from database.repository.pdf_master_repository import PdfMasterRepository
 from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
+from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
 
 
 class DocumentController:
@@ -60,6 +61,12 @@ class DocumentController:
                 "message": "The tag has been added to the document successfully",
             }), 200
 
+        except InvalidTagName as e:
+            return jsonify({"error": str(e)}), 400
+        except MissingTagColor as e:
+            return jsonify({"error": str(e)}), 400
+        except TagException as e:
+            return jsonify({"error": str(e)}), 409
         except Exception as e:
             print(f"Error in making a tag for the document: {str(e)}")
             return jsonify({"error": str(e)}), 500
