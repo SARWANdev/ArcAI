@@ -4,6 +4,7 @@ from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.project_repository import Project
 from database.utils.mongo_connector import mongo_connection
+from exceptions.tag_exceptions import InvalidTagName, MissingTagColor
 
 class DocumentPropertiesRepository:
 
@@ -109,7 +110,20 @@ class DocumentPropertiesRepository:
 
         :returns: True if the update was successful, False otherwise.
         :rtype: bool
+        :raises InvalidTagName: If the tag name is invalid
         """
+        # Validate tag name if provided (None is allowed for removing tags)
+        if tag_name is not None:
+            if not isinstance(tag_name, str):
+                raise InvalidTagName("Tag name must be a string")
+            
+            tag_name = tag_name.strip()
+            if len(tag_name) < InvalidTagName.MIN_NAME_LENGTH:
+                raise InvalidTagName(f"Tag name must be at least {InvalidTagName.MIN_NAME_LENGTH} character long")
+            
+            if len(tag_name) > InvalidTagName.MAX_NAME_LENGTH:
+                raise InvalidTagName(f"Tag name cannot exceed {InvalidTagName.MAX_NAME_LENGTH} characters")
+        
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"tag_name": tag_name}})
@@ -130,13 +144,23 @@ class DocumentPropertiesRepository:
 
         :returns: True if the update was successful, False otherwise.
         :rtype: bool
+        :raises MissingTagColor: If the tag color is missing or invalid
         """
+        # Validate tag color if provided (None is allowed for removing tags)
+        if tag_color is not None:
+            if not isinstance(tag_color, str):
+                raise MissingTagColor("Tag color must be a string")
+            
+            tag_color = tag_color.strip()
+            if not tag_color:
+                raise MissingTagColor("Tag color cannot be empty")
+        
         try:
             with mongo_connection() as db:
                 result = db.documents.update_one({"_id": ObjectId(document_id)}, {"$set": {"tag_color": tag_color}})
                 return result.modified_count > 0
         except Exception as e:
-            print(f"Tag name could not be update: {e}")
+            print(f"Tag color could not be update: {e}")
             return False
 
     @staticmethod

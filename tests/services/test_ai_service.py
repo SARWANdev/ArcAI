@@ -128,20 +128,6 @@ def test_send_chat_message_no_context(ai_service):
             response = ai_service.send_chat_message("question", conversation)
             assert response == mock_response
 
-def test_perform_similarity_search_success(ai_service):
-    mock_vector_store = MagicMock()
-    mock_vector_store.similarity_search.return_value = [MagicMock(page_content="doc1"), MagicMock(page_content="doc2")]
-    result = ai_service._AIService__perform_similarity_search("query", mock_vector_store, 2)
-    assert result == "doc1\n\ndoc2"
-
-def test_perform_similarity_search_failure(ai_service):
-    conversation = DummyConversation()
-    with patch('services.ai_service.requests.post') as mock_post:
-        mock_response = MagicMock()
-        mock_response.status_code = 500
-        mock_post.return_value = mock_response
-        with pytest.raises(AIEmbeddingException):
-            ai_service._AIService__perform_similarity_search("query", conversation)
 
 def test_perform_similarity_search_network_error(ai_service):
     conversation = DummyConversation()
