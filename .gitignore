@@ -16,3 +16,4 @@ database/utils/mongo_configuration.py
 pipipupu.py
 validators/conversation_validator.py
 .coverage
+htmlcov
