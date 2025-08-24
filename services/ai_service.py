@@ -110,9 +110,6 @@ class AIService:
             raise AIGenerationException("Couldn't perform Similarity Search, LLM maybe offline.")        
         except requests.Timeout:
             raise AIConnectionException("The request to the language model timed out.")
-        except requests.RequestException as e:
-            print(f"AIService network error in send_chat_message: {str(e)}")
-            raise AIConnectionException("Network error while contacting chat service.")
         except Exception as e:
             print(e)
             print(f"AIService unexpected error in send_chat_message: {str(e)}")
@@ -152,7 +149,7 @@ class AIService:
                 else:
                     chunk_content = ""
                 response_text += chunk_content
-                output_function(response_text + "▌")
+                output_function(response_text)
         output_function(response_text)
         return response_text
 

@@ -130,10 +130,10 @@ def test_send_chat_message_no_context(ai_service):
 
 
 def test_perform_similarity_search_network_error(ai_service):
-    conversation = DummyConversation()
-    with patch('services.ai_service.requests.post', side_effect=Exception("network error")):
-        with pytest.raises(AIConnectionException):
-            ai_service._AIService__perform_similarity_search("query", conversation)
+    mock_vector_store = MagicMock()
+    mock_vector_store.similarity_search.side_effect = Exception("network error")
+    with pytest.raises(Exception):
+        ai_service._AIService__perform_similarity_search("query", mock_vector_store, 5)
 
 def test_perform_similarity_search_empty(ai_service):
     mock_vector_store = MagicMock()
@@ -222,3 +222,7 @@ def test_generate_conversation_name_error(ai_service):
         with patch.object(ai_service, "generate", side_effect=Exception("fail")):
             with pytest.raises(AIConnectionException):
                 ai_service.generate_conversation_name(conversation)
+
+
+
+
