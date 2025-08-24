@@ -25,6 +25,8 @@ from services.upload_manager.server_conection import upload_document, delete_rem
 from services.notebook_service import NotebookService
 from validators.document_validator import DocumentValidator
 
+from database.utils.mongo_connector import mongo_connection
+
 
 class DocumentService:
 
@@ -160,7 +162,8 @@ class DocumentService:
             existing_tag = TagRegistryRepository.get_tag(tag_name)
             if existing_tag:
                 if existing_tag["color"] != tag_color:
-                    raise TagException(f"Tag with name '{tag_name}' already exists with a different color.")
+                    return False
+                    #raise TagException(f"Tag with name '{tag_name}' already exists with a different color.")
 
             else:
                 TagRegistryRepository.create_or_verify_tag(tag_name, tag_color)
@@ -443,18 +446,27 @@ class DocumentService:
         :return: bool - True if tag was successfully removed, False otherwise
         """
 
-        document_data = self.document_repository.get_by_document_id(document_id)
+        try:
+            document_data = self.document_repository.get_by_document_id(document_id)
+        except Exception:
+            return False
         if not document_data:
             return False
 
         tag_name = document_data.get("tag_name")
 
-        success_name = self.document_properties_repo.update_tag(document_id, None)
-        success_color = self.document_properties_repo.update_tag_color(document_id, None)
-        success = success_name and success_color
+        try:
+            success_name = self.document_properties_repo.update_tag(document_id, None)
+            success_color = self.document_properties_repo.update_tag_color(document_id, None)
+        except Exception:
+            return False
+
+        success = bool(success_name and success_color)
+        if not success:
+            return False
 
         if success and tag_name:
-            from database.utils.mongo_connector import mongo_connection
+
             with mongo_connection() as db:
                 count = db.documents.count_documents({"tag_name": tag_name})
                 if count == 0:
@@ -470,7 +482,11 @@ class DocumentService:
         :param document_id: ID of the document to fetch the tag for
         :return: TagModel if tag exists, None otherwise
         """
-        document_data = self.document_repository.get_by_document_id(document_id)
+        try:
+            document_data = self.document_repository.get_by_document_id(document_id)
+        except Exception:
+            return None
+
         if not document_data:
             return None
         tag_name = document_data.get('tag_name')
@@ -486,7 +502,10 @@ class DocumentService:
         :param project_id: ID of the project to fetch tags for
     :   :return: Dictionary of tag names mapped to their colors (empty if no tags found)
         """
-        documents = self.get_project_documents(project_id)
+        try:
+            documents = self.get_project_documents(project_id)
+        except Exception:
+            return {}
         if not documents:
             return {}
 
@@ -498,8 +517,7 @@ class DocumentService:
                 continue
 
             tag_data = TagRegistryRepository.get_tag(tag_name)
-            if tag_data:
-                tag_set[tag_name] = tag_data["color"]
+            tag_set[tag_name] = tag_data["color"] if tag_data else None
 
         return tag_set
 
@@ -599,11 +617,18 @@ class DocumentService:
         :return: None
         """
 
-        pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
-        pdf_name = self.document_repository.get_name(document_id)
-        new_document_id = self.__create_document(document_name=pdf_name, project_id=project_id, pdf_master_id=pdf_master_id)
-        text = self.document_repository.get_document_text(document_id)
-        self.document_repository.save_elastic(new_document_id, text)
+        try:
+            pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
+            pdf_name = self.document_repository.get_name(document_id)
+            new_document_id = self.__create_document(document_name=pdf_name, project_id=project_id, pdf_master_id=pdf_master_id)
+        except Exception:
+            return None
+        try:
+            text = self.document_repository.get_document_text(document_id)
+            self.document_repository.save_elastic(new_document_id, text)
+        except Exception:
+            pass
+        return new_document_id
 
     def move_document(self, document_id, new_project_id):
         """
