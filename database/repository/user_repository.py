@@ -106,7 +106,7 @@ class UserRepository:
     @staticmethod
     def user_exists(user_id) -> bool:
         try:
-            with mongo_connection as db:
+            with mongo_connection() as db:
                 result = db.users.find_one(str(user_id))
                 return result is not None
         except Exception as e:

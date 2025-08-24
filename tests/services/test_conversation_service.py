@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from services.conversation_service import ConversationService
+from types import SimpleNamespace
 from model.ai_chat.conversation import Conversation as ConversationModel
 from exceptions.conversation_exceptions import ConversationNotFoundError
 
@@ -43,16 +44,23 @@ def test_rename_chat_not_found(conversation_service):
             conversation_service.rename_chat('badid', 'newname')
 
 def test_create_document_conversation_found(conversation_service):
-    with patch('services.conversation_service.DocumentService.get_document', return_value=MagicMock(name='DocName')):
+    doc = MagicMock()
+    doc.name = "DocName"
+    with patch('services.document_service.DocumentService.get_document', return_value=doc):
         with patch.object(conversation_service.conversation_repository, 'save') as mock_save:
             result = conversation_service.create_document_conversation('user1', 'doc1')
-            assert result is not None
-            mock_save.assert_called_once()
+
+    assert result is not None
+    assert result.name == "Conversation on DocName"
+    mock_save.assert_called_once()
 
 def test_create_document_conversation_not_found(conversation_service):
-    with patch('services.conversation_service.DocumentService.get_document', return_value=None):
-        result = conversation_service.create_document_conversation('user1', 'doc1')
-        assert result is None
+    with patch('services.document_service.DocumentService.get_document', return_value=None):
+        with patch.object(conversation_service.conversation_repository, 'save') as mock_save:
+            result = conversation_service.create_document_conversation('user1', 'doc1')
+
+    assert result is None
+    mock_save.assert_not_called()
 
 def test_sort_history_by_name(conversation_service):
     data = [{'name': 'B'}, {'name': 'A'}]
@@ -144,8 +152,27 @@ def test_validate_conversation_name_duplicate(conversation_service):
         MIN_NAME_LENGTH = 1
     class DummyDuplicate(Exception):
         pass
+
+    dup = SimpleNamespace(name="DupName", conversation_id="id1")
+
     with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid), \
          patch('exceptions.conversation_exceptions.DuplicateConversationName', DummyDuplicate):
-        conversation_service.get_conversation_history = lambda user_id: [MagicMock(name='DupName', conversation_id='id1')]
+        conversation_service.get_conversation_history = lambda user_id: [dup]
+
         with pytest.raises(DummyDuplicate):
-            conversation_service._validate_conversation_name('DupName', 'user1', 'id2')
+            conversation_service._validate_conversation_name("DupName", "user1", "id2")
+
+def test_validate_conversation_name_allows_same_id(conversation_service):
+    class DummyInvalid(Exception):
+        MAX_NAME_LENGTH = 100
+        MIN_NAME_LENGTH = 1
+    class DummyDuplicate(Exception):
+        pass
+
+    dup = SimpleNamespace(name="DupName", conversation_id="id1")
+
+    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid), \
+         patch('exceptions.conversation_exceptions.DuplicateConversationName', DummyDuplicate):
+        conversation_service.get_conversation_history = lambda user_id: [dup]
+
+        conversation_service._validate_conversation_name("DupName", "user1", "id1")
