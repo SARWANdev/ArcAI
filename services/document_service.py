@@ -279,6 +279,7 @@ class DocumentService:
 
         if existing_pdf_master:
             pdf_master_id = str(existing_pdf_master.get("_id"))
+            success_embeddings = True
         else:
 
             try:
