@@ -318,3 +318,15 @@ class ConversationRepository:
             {"id": hit["_id"], "name": hit["_source"].get("name", "")}
             for hit in hits
         ]
+    
+    #TODO maybe this goes
+    @staticmethod
+    def conversation_exists(conversation_id):
+        try:
+            with mongo_connection as db:
+                id = str(conversation_id)
+                result = db.conversations.find_one(id=id)
+                return result is not None & es.exists(index="conveversations", id=id)
+        except Exception as e:
+            print("Conversation could not be retrieved")
+            return False

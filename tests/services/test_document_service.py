@@ -192,7 +192,7 @@ def test_get_document_ids_from_project_id_empty(document_service):
         assert ids == []
 
 def test_get_document_ids_from_project_id_exception(document_service):
-    with patch.object(document_service, 'get_project_documents', side_effect=Exception('fail')):
+    with patch.object(type(document_service), 'get_project_documents', side_effect=Exception('fail')):
         ids = document_service.get_document_ids_from_project_id('proj1')
         assert ids == []
 
