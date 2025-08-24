@@ -339,8 +339,13 @@ class DocumentService:
         :param project_id: The ID of the project to query
         :return: list[str]: List of document IDs found in the project
         """
+        try:
+            documents = self.get_project_documents(project_id)
+        except Exception:
+            # optionally log the exception here
+            return []
         document_ids = []
-        documents = self.get_project_documents(project_id)
+        #documents = self.get_project_documents(project_id)
         for document in documents or []:
             document_ids.append(document.document_id)
         return document_ids
