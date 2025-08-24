@@ -116,7 +116,7 @@ class DocumentService:
 
         tag_name = document_data.get('tag_name')
         tag_color = document_data.get('tag_color')
-        if tag_name is not None and tag_color is not None:
+        if tag_name is not None and tag_color is not None and tag_name.strip() and tag_color.strip():
             tag_obj = TagModel(tag_name, tag_color)
             document_model.set_tag(tag_obj)
 
@@ -471,7 +471,7 @@ class DocumentService:
             return None
         tag_name = document_data.get('tag_name')
         tag_color = document_data.get('tag_color')
-        if tag_name and tag_color:
+        if tag_name and tag_color and tag_name.strip() and tag_color.strip():
             return TagModel(tag_name=tag_name, tag_color=tag_color)
         return None
 

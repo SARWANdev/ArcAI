@@ -21,6 +21,9 @@ class Tag:
             raise InvalidTagName("Tag name must be a non-empty string")
         
         tag_name = tag_name.strip()
+        if not tag_name:  # Check if empty after stripping
+            raise InvalidTagName("Tag name cannot be empty or whitespace only")
+        
         if len(tag_name) < InvalidTagName.MIN_NAME_LENGTH:
             raise InvalidTagName(f"Tag name must be at least {InvalidTagName.MIN_NAME_LENGTH} character long")
         
@@ -32,8 +35,8 @@ class Tag:
             raise MissingTagColor("Tag color must be a non-empty string")
         
         tag_color = tag_color.strip()
-        if not tag_color:
-            raise MissingTagColor("Tag color cannot be empty")
+        if not tag_color:  # Check if empty after stripping
+            raise MissingTagColor("Tag color cannot be empty or whitespace only")
         
         self.tag_name = tag_name
         self.tag_color = tag_color
