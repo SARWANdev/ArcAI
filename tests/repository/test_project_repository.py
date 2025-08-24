@@ -111,9 +111,6 @@ def test_update_name_failure(mock_db):
         assert result is False
 
 
-# -------------------------------
-# DELETE PROJECT
-# -------------------------------
 def test_delete_project_success(mock_db):
     with patch("database.repository.project_repository.mongo_connection") as mock_conn:
         mock_conn.return_value.__enter__.return_value = mock_db
@@ -130,9 +127,6 @@ def test_delete_project_failure(mock_db):
         assert result is False
 
 
-# -------------------------------
-# GET USER ID
-# -------------------------------
 def test_get_user_id_success(mock_db):
     with patch("database.repository.project_repository.mongo_connection") as mock_conn:
         mock_conn.return_value.__enter__.return_value = mock_db
@@ -149,9 +143,6 @@ def test_get_user_id_failure(mock_db):
         assert result == ""
 
 
-# -------------------------------
-# GET PROJECT NAME
-# -------------------------------
 def test_get_project_name_success(mock_db):
     with patch("database.repository.project_repository.mongo_connection") as mock_conn:
         mock_conn.return_value.__enter__.return_value = mock_db
@@ -168,9 +159,6 @@ def test_get_project_name_failure(mock_db):
         assert result == ""
 
 
-# -------------------------------
-# PROJECT EXISTS
-# -------------------------------
 def test_project_exists_true(mock_db):
     with patch("database.repository.project_repository.mongo_connection") as mock_conn:
         mock_conn.return_value.__enter__.return_value = mock_db
