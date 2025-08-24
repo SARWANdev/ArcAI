@@ -7,7 +7,7 @@ from exceptions.user_exceptions import UserNotFound
 class ConvesationValidator:
     
     @staticmethod
-    def validate_conversation_name(self, conversation_name: str, user_id: str, exclude_conversation_id: str):
+    def validate_conversation_rename(self, conversation_name: str, user_id: str, exclude_conversation_id: str):
         """
         Validate conversation name according to business rules.
 
@@ -24,7 +24,6 @@ class ConvesationValidator:
         
         try:
             self._validate_name_length(conversation_name)
-            return True
             self._validate_user_existence(user_id)
             user_conversations = self.get_conversation_history(user_id)
             if user_conversations:
@@ -40,7 +39,9 @@ class ConvesationValidator:
             return False
         except UserNotFound:
             return False
-                    
+    
+    def validate_delete_conversation(self, conversation_id, user_id):
+        pass
              
     def _validate_name_length(self, name: str):
         if not name or not name.strip():

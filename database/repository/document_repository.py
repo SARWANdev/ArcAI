@@ -157,6 +157,16 @@ class DocumentRepository:
     def get_documents_by_project(project_id) -> list[Dict]:
         with mongo_connection() as db:
             return list(db.documents.find({"project_id": project_id}))
+    
+    @staticmethod 
+    def get_document_text(document_id):
+        document_id = str(document_id)
+        try:
+            response = es.get(index="documents", id=document_id)
+            return response["_source"].get("text", None)
+        except (ConnectionError, TransportError) as e:
+            print(f"Error during indexing to Elasticsearch: {e}")
+            return False
 
 
     @staticmethod
@@ -356,7 +366,6 @@ class DocumentRepository:
             {"id": hit["_id"], "name": hit["_source"].get("name", ""), "author": hit["_source"].get("author", ""), "text": hit["_source"].get("text", "")}
             for hit in hits
         ]
-    
     
     @staticmethod
     def get_user_id(document_id):
