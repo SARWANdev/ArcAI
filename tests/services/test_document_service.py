@@ -118,8 +118,7 @@ def test_remove_tag_update_tag_fail(document_service, fake_document_data):
     with patch.object(document_service.document_repository, 'get_by_document_id', return_value=fake_document_data), \
          patch.object(document_service.document_properties_repo, 'update_tag', return_value=False), \
          patch.object(document_service.document_properties_repo, 'update_tag_color', return_value=True), \
-         patch('services.document_service.mongo_connection'), \
-         patch('services.document_service.TagRegistryRepository.get_tag', return_value=None):
+         patch('database.utils.mongo_connector.mongo_connection'):
         assert document_service.remove_tag('docid') is False
 
 def test_remove_tag_update_tag_color_fail(document_service, fake_document_data):
