@@ -1,9 +1,12 @@
+import os
+
 from database.repository.document_repository import DocumentRepository
 from database.repository.user_repository import UserRepository
 from database.repository.project_repository import Project
 from exceptions.document_exceptions import InvalidDocumentNamingException, InvalidUserIdException, \
     InvalidProjectIdException, InvalidDocumentName
 
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB in bytes
 
 class DocumentValidator:
 
@@ -17,6 +20,26 @@ class DocumentValidator:
 
         if not file.filename.endswith(".pdf"):
             raise InvalidDocumentNamingException("filename must end with '.pdf'")
+
+    @staticmethod
+    def size_validator(file):
+        """
+        Validates that the file does not exceed the max size limit.
+        :param file: file-like object (e.g. werkzeug.FileStorage, io.BytesIO, etc.)
+        :raises ValueError: if file exceeds 50 MB
+        """
+
+        # Move to end of file to get size
+        file.seek(0, os.SEEK_END)
+        file_size = file.tell()
+
+        # Reset pointer to start so caller can read file as usual
+        file.seek(0)
+
+        if file_size > MAX_FILE_SIZE:
+            raise ValueError(
+                f"File size {file_size / (1024 * 1024):.2f} MB exceeds maximum of 50 MB"
+            )
 
     @staticmethod
     def validate_user_id(user_id):

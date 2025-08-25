@@ -71,6 +71,13 @@ class DocumentService:
         DocumentValidator.validate_user_id(user_id)
         DocumentValidator.validate_project_id(project_id)
 
+        try:
+            DocumentValidator.size_validator(file)
+        except ValueError:
+            raise ValueError(
+                "File size exceeds maximum of 50 MB"
+            )
+
         original_name = file.filename
         suffix = "." + file.filename.split(".")[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
