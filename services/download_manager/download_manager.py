@@ -7,6 +7,7 @@ from database.repository.project_repository import Project as ProjectDataBase
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 from utils.utils import format_filename
+from exceptions.bibtex_exceptions import BibTeXNotFoundException
 
 
 def download_project(project_id):
@@ -81,9 +82,12 @@ def get_document_bibtex(document_id):
     :rtype: bytes
     """
     pdf_master_id = DocumentRepository.get_pdf_master_id(document_id)
-    bibtex = PdfMasterRepository.get_bibtex(pdf_master_id)
-    bibtex = bibtex.encode("utf8")
-    return bibtex
+    try:
+        bibtex = PdfMasterRepository.get_bibtex(pdf_master_id)
+        bibtex = bibtex.encode("utf8")
+        return bibtex
+    except Exception as e:
+        raise BibTeXNotFoundException()
 
 
 def download_file(document_id):
