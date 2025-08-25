@@ -14,7 +14,7 @@ from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
 from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
-
+from exceptions.bibtex_exceptions import BibTeXNotFoundException
 
 class DocumentController:
     """
@@ -473,8 +473,7 @@ class DocumentController:
             )
 
         except Exception as e:
-            print(f"Error in get_document_bibtex: {e}")
-            return jsonify({"error": str(e)}), 500
+            raise BibTeXNotFoundException()
 
     def set_document_bibtex(self):
         """
@@ -526,8 +525,7 @@ class DocumentController:
                             }), 200
 
         except Exception as e:
-            print(f"Error in get_document_bibtex_string: {e}")
-            return jsonify({"error": str(e)}), 500
+            raise BibTeXNotFoundException()
 
     def get_project_from_document(self):
         try:
