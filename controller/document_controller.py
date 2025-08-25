@@ -470,7 +470,7 @@ class DocumentController:
             )
 
         except Exception as e:
-            raise BIB
+            raise BibTeXNotFoundException()
 
     def set_document_bibtex(self):
         """
