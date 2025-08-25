@@ -386,11 +386,26 @@ class DocumentRepository:
         """
 
         try:
-            print(user_id)
-            print(type(user_id))
             with mongo_connection() as db:
                 result = db.users.find_one({"_id": user_id})
                 return result is not None
         except Exception as e:
             print(f"User could not be retrieved: {e}")
             return False
+
+    @staticmethod
+    def get_project_id(document_id):
+        """
+        Returns project ID for the given document.
+
+        :param document_id: ID of a document.
+
+        :return: ID of project.
+        """
+        try:
+            with mongo_connection() as db:
+                result = db.documents.find_one({"_id": document_id}, {"project_id": 1}).get("project_id")
+                return result
+        except Exception as e:
+            print(f"Project ID could not be retrieved: {e}")
+            return None

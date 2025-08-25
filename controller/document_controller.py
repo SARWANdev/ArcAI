@@ -51,10 +51,13 @@ class DocumentController:
             tag_name = data.get("tag_name")
             selected_colour = data.get("selected_colour")
             document_id = ObjectId(data.get("document_id"))
+            print("document_id: ", document_id)
+            project_id = DocumentRepository.get_project_id(document_id)
+            print("project_id: ", project_id)
 
             if not user_id:
                 return jsonify({"error": "user_id is required"}), 400
-            self.document_service.add_tag(document_id, tag_name, selected_colour)
+            self.document_service.add_tag(document_id, tag_name, selected_colour, user_id, project_id)
 
             return jsonify({
                 "status": "success",

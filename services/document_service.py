@@ -142,7 +142,7 @@ class DocumentService:
                 documents_list.append(document_model)
         return documents_list
 
-    def add_tag(self, document_id, tag_name, tag_color):
+    def add_tag(self, document_id, tag_name, tag_color, user_id, project_id):
         """
         Adds a tag to the specified document.
 
@@ -159,14 +159,14 @@ class DocumentService:
             tag_name = tag_obj.get_name()
             tag_color = tag_obj.get_color()
 
-            existing_tag = TagRegistryRepository.get_tag(tag_name)
+            existing_tag = TagRegistryRepository.get_tag(tag_name, user_id, project_id)
             if existing_tag:
                 if existing_tag["color"] != tag_color:
                     return False
                     #raise TagException(f"Tag with name '{tag_name}' already exists with a different color.")
 
             else:
-                TagRegistryRepository.create_or_verify_tag(tag_name, tag_color)
+                TagRegistryRepository.create_or_verify_tag(tag_name, tag_color, user_id, project_id)
 
             success_name = self.document_properties_repo.update_tag(document_id, tag_name)
             success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
@@ -378,6 +378,8 @@ class DocumentService:
             pdf_master_id = self.document_repository.get_pdf_master_id(document_id)
         except Exception:
             return False
+
+        self.remove_tag(document_id)
         document_data = self.document_repository.delete_document(document_id)
         self.document_repository.delete_elastic(document_id)
 
@@ -454,6 +456,9 @@ class DocumentService:
             return False
 
         tag_name = document_data.get("tag_name")
+        user_id = self.document_repository.get_user_id(document_id)
+        project_id = document_data.get("project_id")
+
 
         try:
             success_name = self.document_properties_repo.update_tag(document_id, None)
@@ -468,9 +473,9 @@ class DocumentService:
         if success and tag_name:
 
             with mongo_connection() as db:
-                count = db.documents.count_documents({"tag_name": tag_name})
+                count = db.documents.count_documents({"tag_name": tag_name, "project_id": project_id, "user_id": user_id})
                 if count == 0:
-                    db.tag_registry.delete_one({"name": tag_name})
+                    db.tag_registry.delete_one({"name": tag_name, "user_id": user_id, "project_id": project_id})
                     print(f"Tag '{tag_name}' deleted from tag_registry (no longer used).")
 
         return success
@@ -495,7 +500,7 @@ class DocumentService:
             return TagModel(tag_name=tag_name, tag_color=tag_color)
         return None
 
-    def get_project_tags(self, project_id: str):
+    def get_project_tags(self, project_id: str, user_id: str):
         """
         Fetches tags with their colors for all documents in a project.
 
@@ -516,7 +521,7 @@ class DocumentService:
             if not tag_name:
                 continue
 
-            tag_data = TagRegistryRepository.get_tag(tag_name)
+            tag_data = TagRegistryRepository.get_tag(tag_name, user_id, project_id)
             tag_set[tag_name] = tag_data["color"] if tag_data else None
 
         return tag_set

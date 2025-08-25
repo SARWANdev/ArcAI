@@ -23,7 +23,7 @@ class TagRegistryRepository:
             db.tag_registry.create_index([("name", ASCENDING)], unique=True)
 
     @staticmethod
-    def get_tag(tag_name: str):
+    def get_tag(tag_name: str, user_id: str, project_id: str):
         """
         Retrieves a tag from the 'tag_registry' collection by its name.
 
@@ -34,10 +34,10 @@ class TagRegistryRepository:
         :rtype: dict | None
         """
         with mongo_connection() as db:
-            return db.tag_registry.find_one({"name": tag_name})
+            return db.tag_registry.find_one({"name": tag_name, "user_id": user_id, "project_id": project_id})
 
     @staticmethod
-    def create_or_verify_tag(tag_name: str, tag_color: str):
+    def create_or_verify_tag(tag_name: str, tag_color: str, user_id: str, project_id: str):
         """
         Creates a new tag or verifies an existing one in the 'tag_registry' collection.
 
@@ -46,6 +46,7 @@ class TagRegistryRepository:
         - If the tag exists with a different color, it raises a `TagException`.
         - If the tag does not exist, it creates the tag and returns the newly created tag.
 
+        :param user_id: foreign key to the user who owns the tag.
         :param tag_name: The name of the tag to create or verify.
         :type tag_name: str
         :param tag_color: The color associated with the tag.
@@ -75,14 +76,14 @@ class TagRegistryRepository:
             raise MissingTagColor("Tag color cannot be empty")
         
         with mongo_connection() as db:
-            existing = db.tag_registry.find_one({"name": tag_name})
+            existing = db.tag_registry.find_one({"name": tag_name, "user_id": user_id, "project_id": project_id})
             if existing:
                 if existing.get("color") != tag_color:
                     raise TagException(f"Tag '{tag_name}' already exists with different color '{existing.get('color')}'")
                 return existing
             try:
-                result = db.tag_registry.insert_one({"name": tag_name, "color": tag_color})
-                return {"_id": result.inserted_id, "name": tag_name, "color": tag_color}
+                result = db.tag_registry.insert_one({"user_id": user_id, "project_id": project_id, "name": tag_name, "color": tag_color})
+                return {"_id": result.inserted_id, "name": tag_name, "color": tag_color, "user_id": user_id}
             except DuplicateKeyError:
                 # Race condition fallback
                 return db.tag_registry.find_one({"name": tag_name})

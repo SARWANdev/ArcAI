@@ -142,7 +142,7 @@ class ProjectController:
             if not user_id or not project_id:
                 return jsonify({"error": "Missing user_id or project_id"}), 400
 
-            tags_list = self.document_service.get_project_tags(project_id)
+            tags_list = self.document_service.get_project_tags(project_id, user_id)
             return jsonify({
                 "status": "success",
                 "tags": tags_list,
