@@ -479,7 +479,7 @@ class TestGetProjectIdAndName:
     def test_get_project_id_and_name_success(self, mock_db):
         """Test successful project ID and name retrieval."""
         with patch("database.repository.document_properties_repository.DocumentPropertiesRepository.get_project_id") as mock_get_id, \
-             patch("database.repository.document_properties_repository.Project.get_project_name") as mock_get_name:
+             patch("database.repository.document_properties_repository.ProjectRepository.get_project_name") as mock_get_name:
             mock_get_id.return_value = FAKE_PROJECT_ID
             mock_get_name.return_value = "Research Project"
 
@@ -492,7 +492,7 @@ class TestGetProjectIdAndName:
     def test_get_project_id_and_name_no_project_id(self, mock_db):
         """Test project ID and name retrieval when no project ID exists."""
         with patch("database.repository.document_properties_repository.DocumentPropertiesRepository.get_project_id") as mock_get_id, \
-             patch("database.repository.document_properties_repository.Project.get_project_name") as mock_get_name:
+             patch("database.repository.document_properties_repository.ProjectRepository.get_project_name") as mock_get_name:
             mock_get_id.return_value = ""
             # get_project_name should not be called when project_id is empty
             mock_get_name.return_value = "Research Project"
@@ -506,7 +506,7 @@ class TestGetProjectIdAndName:
     def test_get_project_id_and_name_none_project_id(self, mock_db):
         """Test project ID and name retrieval when project ID is None."""
         with patch("database.repository.document_properties_repository.DocumentPropertiesRepository.get_project_id") as mock_get_id, \
-             patch("database.repository.document_properties_repository.Project.get_project_name") as mock_get_name:
+             patch("database.repository.document_properties_repository.ProjectRepository.get_project_name") as mock_get_name:
             mock_get_id.return_value = None
             # get_project_name should not be called when project_id is None
             mock_get_name.return_value = "Research Project"

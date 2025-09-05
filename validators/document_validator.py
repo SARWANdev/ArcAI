@@ -2,7 +2,7 @@ import os
 
 from database.repository.document_repository import DocumentRepository
 from database.repository.user_repository import UserRepository
-from database.repository.project_repository import Project
+from database.repository.project_repository import ProjectRepository
 from exceptions.document_exceptions import InvalidDocumentNamingException, InvalidUserIdException, \
     InvalidProjectIdException, InvalidDocumentName
 
@@ -55,7 +55,7 @@ class DocumentValidator:
         if not project_id or project_id.strip() == "":
             raise InvalidUserIdException("no user id provided. ")
 
-        project_exists = Project.project_exists(project_id)
+        project_exists = ProjectRepository.project_exists(project_id)
         if not project_exists:
             raise InvalidProjectIdException("project id does not exist")
 

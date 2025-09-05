@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
-from database.repository.project_repository import Project
+from database.repository.project_repository import ProjectRepository
 from database.utils.mongo_connector import mongo_connection
 from exceptions.tag_exceptions import InvalidTagName, MissingTagColor
 
@@ -230,5 +230,5 @@ class DocumentPropertiesRepository:
         project_id = DocumentPropertiesRepository.get_project_id(document_id)
         if not project_id:
             return "", ""
-        project_name = Project.get_project_name(project_id)
+        project_name = ProjectRepository.get_project_name(project_id)
         return project_id, project_name
