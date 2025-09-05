@@ -5,7 +5,7 @@ from database.repository.document_properties_repository import DocumentPropertie
 from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
-from database.repository.project_repository import Project as ProjectRepository
+from database.repository.project_repository import ProjectRepository
 from exceptions.document_exceptions import InvalidServerConnectionException
 from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
 

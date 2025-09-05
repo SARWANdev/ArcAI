@@ -9,7 +9,7 @@ from bson import ObjectId
 
 
 
-class Project:
+class ProjectRepository:
     """
     Repository class for handling Project-related database operations.
 

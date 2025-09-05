@@ -1,6 +1,6 @@
 from database.repository.notebook_repository import Notebook as NotebookRepository
 from database.repository.document_repository import DocumentRepository
-from database.repository.project_repository import Project as ProjectRepository
+from database.repository.project_repository import ProjectRepository
 from exceptions.notebook_exceptions import InvalidNoteContent, NotebookSaveException, NotebookNotFoundError
 import io 
 

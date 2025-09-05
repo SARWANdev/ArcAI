@@ -3,7 +3,7 @@ import zipfile
 
 from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
-from database.repository.project_repository import Project as ProjectDataBase
+from database.repository.project_repository import ProjectRepository
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 from utils.utils import format_filename
@@ -54,7 +54,7 @@ def get_project_note(project_id):
     :returns: The project note encoded in UTF-8.
     :rtype: bytes
     """
-    project_note = ProjectDataBase.get_note(project_id).encode("utf8")
+    project_note = ProjectRepository.get_note(project_id).encode("utf8")
     return project_note
 
 def get_document_note(document_id):
