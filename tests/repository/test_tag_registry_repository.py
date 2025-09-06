@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from database.repository.tag_registry_repository import TagRegistryRepository
-from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.tag_exceptions import MissingTagColor
 from exceptions.base_exceptions import InvalidNameError
 
 FAKE_TAG_ID = "64b2fae99a8b5c5f12345678"
@@ -136,7 +136,7 @@ class TestCreateOrVerifyTag:
             mock_db.tag_registry.insert_one.assert_not_called()
 
     def test_create_or_verify_tag_existing_different_color(self, mock_db):
-        """Test error when existing tag has different color."""
+        """Test when existing tag has different color returns False."""
         existing_tag = {
             "_id": ObjectId(FAKE_TAG_ID),
             "name": FAKE_TAG_NAME,
@@ -146,8 +146,8 @@ class TestCreateOrVerifyTag:
             mock_conn.return_value.__enter__.return_value = mock_db
             mock_db.tag_registry.find_one.return_value = existing_tag
 
-            with pytest.raises(DuplicateTagColor, match=f"Tag '{FAKE_TAG_NAME}' already exists with different color"):
-                TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, FAKE_TAG_COLOR)
+            result = TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, FAKE_TAG_COLOR)
+            assert result is False
 
     def test_create_or_verify_tag_duplicate_key_error(self, mock_db):
         """Test handling of duplicate key error (race condition)."""
@@ -238,7 +238,7 @@ class TestCreateOrVerifyTag:
             TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, "   ")
 
     def test_create_or_verify_tag_existing_no_color_field(self, mock_db):
-        """Test existing tag without color field."""
+        """Test existing tag without color field returns False."""
         existing_tag = {
             "_id": ObjectId(FAKE_TAG_ID),
             "name": FAKE_TAG_NAME
@@ -248,8 +248,8 @@ class TestCreateOrVerifyTag:
             mock_conn.return_value.__enter__.return_value = mock_db
             mock_db.tag_registry.find_one.return_value = existing_tag
 
-            with pytest.raises(DuplicateTagColor, match=f"Tag '{FAKE_TAG_NAME}' already exists with different color"):
-                TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, FAKE_TAG_COLOR)
+            result = TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, FAKE_TAG_COLOR)
+            assert result is False
 
     def test_create_or_verify_tag_database_exception(self, mock_db):
         """Test handling of database exceptions during tag creation."""

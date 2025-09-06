@@ -7,7 +7,7 @@ from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import ProjectRepository
 from exceptions.document_exceptions import InvalidServerConnectionException
-from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.tag_exceptions import MissingTagColor
 from exceptions.base_exceptions import InvalidNameError
 
 from model.document_reader.document import Document as DocumentModel
@@ -160,27 +160,21 @@ class DocumentService:
         :return: True if tag was successfully added, False otherwise
         :raises InvalidNameError: If the tag name is invalid
         :raises MissingTagColor: If the tag color is missing or invalid
-        :raises DuplicateTagColor: If there's a conflict with existing tag colors
         """
         try:
             tag_obj = TagModel(tag_name, tag_color)
             tag_name = tag_obj.get_name()
             tag_color = tag_obj.get_color()
 
-            existing_tag = TagRegistryRepository.get_tag(tag_name, user_id, project_id)
-            if existing_tag:
-                if existing_tag["color"] != tag_color:
-                    return False
-                    #raise DuplicateTagColor(tag_name, existing_tag["color"], tag_color)
-
-            else:
-                TagRegistryRepository.create_or_verify_tag(tag_name, tag_color, user_id, project_id)
+            tag_result = TagRegistryRepository.create_or_verify_tag(tag_name, tag_color, user_id, project_id)
+            if not tag_result:
+                return False
 
             success_name = self.document_properties_repo.update_tag(document_id, tag_name)
             success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
             return success_name and success_color
             
-        except (InvalidNameError, MissingTagColor, DuplicateTagColor):
+        except (InvalidNameError, MissingTagColor):
             # Re-raise these exceptions as they are already properly formatted
             raise
         except Exception as e:

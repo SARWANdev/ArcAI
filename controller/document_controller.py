@@ -14,7 +14,7 @@ from database.repository.pdf_master_repository import PdfMasterRepository
 from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
-from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.tag_exceptions import MissingTagColor
 from exceptions.base_exceptions import NotFoundException
 
 class DocumentController:
@@ -69,8 +69,6 @@ class DocumentController:
             return jsonify({"error": str(e)}), 400
         except MissingTagColor as e:
             return jsonify({"error": str(e)}), 400
-        except DuplicateTagColor as e:
-            return jsonify({"error": str(e)}), 409
         except Exception as e:
             print(f"Error in making a tag for the document: {str(e)}")
             return jsonify({"error": str(e)}), 500

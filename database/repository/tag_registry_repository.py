@@ -1,7 +1,7 @@
 from database.utils.mongo_connector import mongo_connection
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
-from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.tag_exceptions import MissingTagColor
 from exceptions.base_exceptions import InvalidNameError
 
 class TagRegistryRepository:
@@ -44,7 +44,7 @@ class TagRegistryRepository:
 
         This method checks if the tag already exists in the collection:
         - If the tag exists with the same color, it returns the existing tag.
-        - If the tag exists with a different color, it raises a `DuplicateTagColor`.
+        - If the tag exists with a different color, it returns False.
         - If the tag does not exist, it creates the tag and returns the newly created tag.
 
         :param user_id: foreign key to the user who owns the tag.
@@ -56,7 +56,6 @@ class TagRegistryRepository:
         :returns: The tag document if it already exists or has been created.
         :rtype: dict
         
-        :raises DuplicateTagColor: If the tag already exists with a different color.
         """
         # Validate inputs
         if not tag_name or not isinstance(tag_name, str):
@@ -80,7 +79,7 @@ class TagRegistryRepository:
             existing = db.tag_registry.find_one({"name": tag_name, "user_id": user_id, "project_id": project_id})
             if existing:
                 if existing.get("color") != tag_color:
-                    raise DuplicateTagColor(tag_name, existing.get('color'), tag_color)
+                    return False
                 return existing
             try:
                 result = db.tag_registry.insert_one({"user_id": user_id, "project_id": project_id, "name": tag_name, "color": tag_color})
