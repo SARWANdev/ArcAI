@@ -4,7 +4,8 @@ from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.project_repository import ProjectRepository
 from database.utils.mongo_connector import mongo_connection
-from exceptions.tag_exceptions import InvalidTagName, MissingTagColor
+from exceptions.tag_exceptions import MissingTagColor
+from exceptions.base_exceptions import InvalidNameError
 
 class DocumentPropertiesRepository:
 
@@ -110,19 +111,19 @@ class DocumentPropertiesRepository:
 
         :returns: True if the update was successful, False otherwise.
         :rtype: bool
-        :raises InvalidTagName: If the tag name is invalid
+        :raises InvalidNameError: If the tag name is invalid
         """
         # Validate tag name if provided (None is allowed for removing tags)
         if tag_name is not None:
             if not isinstance(tag_name, str):
-                raise InvalidTagName("Tag name must be a string")
+                raise InvalidNameError("Tag", "Tag name must be a string")
             
             tag_name = tag_name.strip()
-            if len(tag_name) < InvalidTagName.MIN_NAME_LENGTH:
-                raise InvalidTagName(f"Tag name must be at least {InvalidTagName.MIN_NAME_LENGTH} character long")
+            if len(tag_name) < InvalidNameError.MIN_TAG_NAME_LENGTH:
+                raise InvalidNameError("Tag", f"Tag name must be at least {InvalidNameError.MIN_TAG_NAME_LENGTH} character long")
             
-            if len(tag_name) > InvalidTagName.MAX_NAME_LENGTH:
-                raise InvalidTagName(f"Tag name cannot exceed {InvalidTagName.MAX_NAME_LENGTH} characters")
+            if len(tag_name) > InvalidNameError.MAX_TAG_NAME_LENGTH:
+                raise InvalidNameError("Tag", f"Tag name cannot exceed {InvalidNameError.MAX_TAG_NAME_LENGTH} characters")
         
         try:
             with mongo_connection() as db:

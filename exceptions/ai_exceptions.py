@@ -1,28 +1,24 @@
-from exceptions.base_exceptions import BusinessLogicException
-from exceptions.base_exceptions import InfrastructureException
-class AIConnectionException(BusinessLogicException):
+class AIConnectionException(Exception):
     """Raised when AI Connection fails"""
     def __init__(self, details: str = "Unspecified LLM connection error"):
-        root_message = "Couldn't connect to LLM: "
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
         self.details = details
-        self.root_message = root_message
+        self.root_message = "Couldn't connect to LLM"
+        message = f"{self.root_message}: {details}"
+        super().__init__(message)
 
-class AIGenerationException(BusinessLogicException):
+class AIGenerationException(Exception):
     """Raised when the AI fails to generate a response."""
     def __init__(self, details: str = "Failed to generate response from LLM"):
-        root_message = "AI generation error"
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
         self.details = details
-        self.root_message = root_message
+        self.root_message = "AI generation error"
+        message = f"{self.root_message}: {details}"
+        super().__init__(message)
 
-class AIEmbeddingException(InfrastructureException):
+class AIEmbeddingException(Exception):
     """Raised when saving embeddings fails."""
     def __init__(self, details: str = "Embedding Error"):
-        root_message = "AI embedding save error"
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
         self.details = details
+        self.root_message = "AI embedding save error"
+        message = f"{self.root_message}: {details}"
+        super().__init__(message)
 

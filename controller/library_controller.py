@@ -5,7 +5,7 @@ from services.library_service import LibraryService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
 from flask import Blueprint, Flask, jsonify, request, send_file
-from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName, ProjectNotFoundError
+from exceptions.base_exceptions import NotFoundException, InvalidNameError, DuplicateNameError
 
 
 class LibraryController:
@@ -59,9 +59,9 @@ class LibraryController:
                 }
             }), 201
 
-        except InvalidProjectName as e:
+        except InvalidNameError as e:
             return jsonify({"error": str(e)}), 400
-        except DuplicateProjectName as e:
+        except DuplicateNameError as e:
             return jsonify({"error": str(e)}), 409
         except Exception as e:
             return jsonify({"error": f"Failed to create project: {str(e)}"}), 500
@@ -217,11 +217,11 @@ class LibraryController:
                     "message": "Failed to rename the project"
                 }), 500
 
-        except InvalidProjectName as e:
+        except InvalidNameError as e:
             return jsonify({"error": str(e)}), 400
-        except DuplicateProjectName as e:
+        except DuplicateNameError as e:
             return jsonify({"error": str(e)}), 409
-        except ProjectNotFoundError as e:
+        except NotFoundException as e:
             return jsonify({"error": str(e)}), 404
         except Exception as e:
             return jsonify({"error": f"Failed to rename project: {str(e)}"}), 500

@@ -1,5 +1,5 @@
 from typing import List, Optional, Any
-from exceptions.conversation_exceptions import ConversationNotFoundError 
+from exceptions.base_exceptions import NotFoundException 
 from database.repository.conversation_repository import ConversationRepository
 from model.ai_chat.conversation import Conversation as ConversationModel
 from bson import ObjectId
@@ -200,7 +200,7 @@ class ConversationService:
         # Get the current conversation to check its existence and get user_id
         current_conversation = self.get_conversation(conversation_id)
         if not current_conversation:
-            raise ConversationNotFoundError(f"Conversation with ID {conversation_id} not found")
+            raise NotFoundException("Conversation", conversation_id)
         
         # Validate new project name
         self._validate_conversation_name(new_name, current_conversation.user_id, exclude_conversation_id=conversation_id)
@@ -270,20 +270,20 @@ class ConversationService:
         :type user_id: str
         :param exclude_conversation_id: Conversation ID to exclude from duplicate check (for updates).
         :type exclude_conversation_id: str, optional
-        :raises InvalidConversationName: If the conversation name is invalid.
-        :raises DuplicateConversationName: If a conversation with the same name already exists.
+        :raises InvalidNameError: If the conversation name is invalid.
+        :raises DuplicateNameError: If a conversation with the same name already exists.
         """
 
-        from exceptions.conversation_exceptions import InvalidConversationName, DuplicateConversationName
+        from exceptions.base_exceptions import InvalidNameError, DuplicateNameError
 
         if not conversation_name or not conversation_name.strip():
-            raise InvalidConversationName("Conversation name cannot me empty")
+            raise InvalidNameError("Conversation", "Conversation name cannot be empty")
         
-        if len(conversation_name.strip()) > InvalidConversationName.MAX_NAME_LENGTH:
-            raise InvalidConversationName(f"Conversation name cannot exceed {InvalidConversationName.MAX_NAME_LENGTH} characters")
+        if len(conversation_name.strip()) > InvalidNameError.MAX_CONVERSATION_NAME_LENGTH:
+            raise InvalidNameError("Conversation", f"Conversation name cannot exceed {InvalidNameError.MAX_CONVERSATION_NAME_LENGTH} characters")
         
-        if len(conversation_name.strip()) < InvalidConversationName.MIN_NAME_LENGTH:
-            raise InvalidConversationName(f"Conversation name must be at least {InvalidConversationName.MIN_NAME_LENGTH} character long")
+        if len(conversation_name.strip()) < InvalidNameError.MIN_CONVERSATION_NAME_LENGTH:
+            raise InvalidNameError("Conversation", f"Conversation name must be at least {InvalidNameError.MIN_CONVERSATION_NAME_LENGTH} character long")
         
         user_conversations = self.get_conversation_history(user_id)
         if user_conversations:
@@ -291,5 +291,5 @@ class ConversationService:
                 if exclude_conversation_id and str(conversation.conversation_id) == exclude_conversation_id:
                     continue
                 if conversation.name.lower() == conversation_name.lower():
-                    raise DuplicateConversationName(conversation_name)
+                    raise DuplicateNameError("Conversation", conversation_name)
 

@@ -3,7 +3,8 @@ from unittest.mock import MagicMock, patch
 from bson import ObjectId
 from pymongo.errors import DuplicateKeyError
 from database.repository.tag_registry_repository import TagRegistryRepository
-from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
+from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.base_exceptions import InvalidNameError
 
 FAKE_TAG_ID = "64b2fae99a8b5c5f12345678"
 FAKE_TAG_NAME = "research"
@@ -145,7 +146,7 @@ class TestCreateOrVerifyTag:
             mock_conn.return_value.__enter__.return_value = mock_db
             mock_db.tag_registry.find_one.return_value = existing_tag
 
-            with pytest.raises(TagException, match=f"Tag '{FAKE_TAG_NAME}' already exists with different color"):
+            with pytest.raises(DuplicateTagColor, match=f"Tag '{FAKE_TAG_NAME}' already exists with different color"):
                 TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_duplicate_key_error(self, mock_db):
@@ -187,33 +188,33 @@ class TestCreateOrVerifyTag:
 
     def test_create_or_verify_tag_invalid_name_none(self):
         """Test validation with None tag name."""
-        with pytest.raises(InvalidTagName, match="Tag name must be a non-empty string"):
+        with pytest.raises(InvalidNameError, match="Tag name must be a non-empty string"):
             TagRegistryRepository.create_or_verify_tag(None, FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_invalid_name_empty(self):
         """Test validation with empty tag name."""
-        with pytest.raises(InvalidTagName, match="Tag name must be a non-empty string"):
+        with pytest.raises(InvalidNameError, match="Tag name must be a non-empty string"):
             TagRegistryRepository.create_or_verify_tag("", FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_invalid_name_type(self):
         """Test validation with non-string tag name."""
-        with pytest.raises(InvalidTagName, match="Tag name must be a non-empty string"):
+        with pytest.raises(InvalidNameError, match="Tag name must be a non-empty string"):
             TagRegistryRepository.create_or_verify_tag(123, FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_name_too_short(self):
         """Test validation with too short tag name."""
-        with pytest.raises(InvalidTagName, match="Tag name must be a non-empty string"):
+        with pytest.raises(InvalidNameError, match="Tag name must be a non-empty string"):
             TagRegistryRepository.create_or_verify_tag("", FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_name_too_short_after_trim(self):
         """Test validation with whitespace-only tag name that becomes too short after trimming."""
-        with pytest.raises(InvalidTagName, match="Tag name must be at least 1 character long"):
+        with pytest.raises(InvalidNameError, match="Tag name must be at least 1 character long"):
             TagRegistryRepository.create_or_verify_tag(" ", FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_name_too_long(self):
         """Test validation with too long tag name."""
         long_name = "a" * 41  # Exceeds MAX_NAME_LENGTH of 40
-        with pytest.raises(InvalidTagName, match="Tag name cannot exceed 40 characters"):
+        with pytest.raises(InvalidNameError, match="Tag name cannot exceed 40 characters"):
             TagRegistryRepository.create_or_verify_tag(long_name, FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_invalid_color_none(self):
@@ -247,7 +248,7 @@ class TestCreateOrVerifyTag:
             mock_conn.return_value.__enter__.return_value = mock_db
             mock_db.tag_registry.find_one.return_value = existing_tag
 
-            with pytest.raises(TagException, match=f"Tag '{FAKE_TAG_NAME}' already exists with different color"):
+            with pytest.raises(DuplicateTagColor, match=f"Tag '{FAKE_TAG_NAME}' already exists with different color"):
                 TagRegistryRepository.create_or_verify_tag(FAKE_TAG_NAME, FAKE_TAG_COLOR)
 
     def test_create_or_verify_tag_database_exception(self, mock_db):

@@ -5,7 +5,7 @@ from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel
 from services.document_service import DocumentService
 from services.notebook_service import NotebookService
-from exceptions.project_exceptions import InvalidProjectName, DuplicateProjectName, ProjectNotFoundError
+from exceptions.base_exceptions import NotFoundException, InvalidNameError, DuplicateNameError
 
 
 class ProjectService:
@@ -117,7 +117,7 @@ class ProjectService:
         # Get the current project to check if it exists and get user_id
         current_project = self.get_project(project_id)
         if not current_project:
-            raise ProjectNotFoundError(f"Project with ID {project_id} not found")
+            raise NotFoundException("Project", project_id)
         
         # Validate the new project name
         self._validate_project_name(project_name, current_project.user_id, exclude_project_id=project_id)
@@ -170,21 +170,21 @@ class ProjectService:
         :type user_id: str
         :param exclude_project_id: Project ID to exclude from duplicate check (for updates).
         :type exclude_project_id: str, optional
-        :raises InvalidProjectName: If the project name is invalid.
-        :raises DuplicateProjectName: If a project with the same name already exists.
+        :raises InvalidNameError: If the project name is invalid.
+        :raises DuplicateNameError: If a project with the same name already exists.
         """
         
         # Check if project name is empty or too short
         if not project_name or not project_name.strip():
-            raise InvalidProjectName("Project name cannot be empty")
+            raise InvalidNameError("Project", "Project name cannot be empty")
         
         # Check if project name is too long
-        if len(project_name.strip()) > InvalidProjectName.MAX_NAME_LENGTH:
-            raise InvalidProjectName(f"Project name cannot exceed {InvalidProjectName.MAX_NAME_LENGTH} characters")
+        if len(project_name.strip()) > InvalidNameError.MAX_PROJECT_NAME_LENGTH:
+            raise InvalidNameError("Project", f"Project name cannot exceed {InvalidNameError.MAX_PROJECT_NAME_LENGTH} characters")
         
         # Check if project name is too short
-        if len(project_name.strip()) < InvalidProjectName.MIN_NAME_LENGTH:
-            raise InvalidProjectName(f"Project name must be at least {InvalidProjectName.MIN_NAME_LENGTH} character long")
+        if len(project_name.strip()) < InvalidNameError.MIN_PROJECT_NAME_LENGTH:
+            raise InvalidNameError("Project", f"Project name must be at least {InvalidNameError.MIN_PROJECT_NAME_LENGTH} character long")
         
         # Check for duplicate names within the same user's library
         user_projects = self.get_user_projects(user_id)
@@ -195,4 +195,4 @@ class ProjectService:
                     continue
                     
                 if project.project_name.lower() == project_name.lower():
-                    raise DuplicateProjectName(project_name)
+                    raise DuplicateNameError("Project", project_name)

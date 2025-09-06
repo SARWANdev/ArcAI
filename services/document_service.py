@@ -7,7 +7,8 @@ from database.repository.tag_registry_repository import TagRegistryRepository
 from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import ProjectRepository
 from exceptions.document_exceptions import InvalidServerConnectionException
-from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
+from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.base_exceptions import InvalidNameError
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -157,9 +158,9 @@ class DocumentService:
         :param tag_name: Name of the tag to be added
         :param tag_color: Color code for the tag (hex or named color)
         :return: True if tag was successfully added, False otherwise
-        :raises InvalidTagName: If the tag name is invalid
+        :raises InvalidNameError: If the tag name is invalid
         :raises MissingTagColor: If the tag color is missing or invalid
-        :raises TagException: If there's a conflict with existing tag colors
+        :raises DuplicateTagColor: If there's a conflict with existing tag colors
         """
         try:
             tag_obj = TagModel(tag_name, tag_color)
@@ -170,7 +171,7 @@ class DocumentService:
             if existing_tag:
                 if existing_tag["color"] != tag_color:
                     return False
-                    #raise TagException(f"Tag with name '{tag_name}' already exists with a different color.")
+                    #raise DuplicateTagColor(tag_name, existing_tag["color"], tag_color)
 
             else:
                 TagRegistryRepository.create_or_verify_tag(tag_name, tag_color, user_id, project_id)
@@ -179,7 +180,7 @@ class DocumentService:
             success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
             return success_name and success_color
             
-        except (InvalidTagName, MissingTagColor, TagException):
+        except (InvalidNameError, MissingTagColor, DuplicateTagColor):
             # Re-raise these exceptions as they are already properly formatted
             raise
         except Exception as e:

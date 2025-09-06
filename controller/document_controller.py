@@ -1,8 +1,9 @@
 from io import BytesIO
 
 from database.repository.document_properties_repository import DocumentPropertiesRepository
-from exceptions.document_exceptions import InvalidDocumentNamingException, InvalidServerConnectionException, \
+from exceptions.document_exceptions import InvalidServerConnectionException, \
     InvalidProjectIdException, InvalidUserIdException
+from exceptions.base_exceptions import InvalidNameError
 from services.document_service import DocumentService
 from services.download_manager.download_manager import download_file, get_document_bibtex
 from services.notebook_service import NotebookService
@@ -13,8 +14,8 @@ from database.repository.pdf_master_repository import PdfMasterRepository
 from bson import ObjectId
 
 from services.upload_manager.server_conection import retrieve_document_content, save_document_content
-from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
-from exceptions.bibtex_exceptions import BibTeXNotFoundException
+from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.base_exceptions import NotFoundException
 
 class DocumentController:
     """
@@ -64,11 +65,11 @@ class DocumentController:
                 "message": "The tag has been added to the document successfully",
             }), 200
 
-        except InvalidTagName as e:
+        except InvalidNameError as e:
             return jsonify({"error": str(e)}), 400
         except MissingTagColor as e:
             return jsonify({"error": str(e)}), 400
-        except TagException as e:
+        except DuplicateTagColor as e:
             return jsonify({"error": str(e)}), 409
         except Exception as e:
             print(f"Error in making a tag for the document: {str(e)}")
@@ -127,7 +128,7 @@ class DocumentController:
                 "message": "The document has been uploaded successfully",
             }), 200
 
-        except InvalidDocumentNamingException as e:
+        except InvalidNameError as e:
             return jsonify({"error": str(e)}), 400
         except InvalidUserIdException as e:
             return jsonify({"error": str(e)}), 409
@@ -473,7 +474,7 @@ class DocumentController:
             )
 
         except Exception as e:
-            raise BibTeXNotFoundException()
+            raise NotFoundException("BibTeX", "requested entry")
 
     def set_document_bibtex(self):
         """
@@ -525,7 +526,7 @@ class DocumentController:
                             }), 200
 
         except Exception as e:
-            raise BibTeXNotFoundException()
+            raise NotFoundException("BibTeX", "requested entry")
 
     def get_project_from_document(self):
         try:

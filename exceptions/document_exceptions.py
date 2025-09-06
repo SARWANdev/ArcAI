@@ -1,54 +1,29 @@
-from exceptions.base_exceptions import ValidationException, BusinessLogicException, InfrastructureException
+# Document-specific NotFound and naming exceptions removed - use NotFoundException, InvalidNameError directly
 
 
-class InvalidDocumentNamingException(ValidationException):
-    """Raised when a document name is invalid"""
-    def __init__(self, details: str = "Unspecified naming violation"):
-        root_message = "Invalid document name: "
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
-        self.details = details
-        self.root_message = root_message
-
-class InvalidUserIdException(BusinessLogicException):
-    """Raised when a document name is invalid"""
+class InvalidUserIdException(Exception):
+    """Raised when a user id is invalid"""
     def __init__(self, details: str = "Unexpected user id violation"):
-        root_message = "Invalid user id: "
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
         self.details = details
-        self.root_message = root_message
+        self.root_message = "Invalid user id"
+        message = f"{self.root_message}: {details}"
+        super().__init__(message)
 
-class InvalidProjectIdException(BusinessLogicException):
-    """Raised when a document name is invalid"""
+
+class InvalidProjectIdException(Exception):
+    """Raised when a project id is invalid"""
     def __init__(self, details: str = "Unexpected project id violation"):
-        root_message = "Invalid project id: "
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
         self.details = details
-        self.root_message = root_message
+        self.root_message = "Invalid project id"
+        message = f"{self.root_message}: {details}"
+        super().__init__(message)
 
-class InvalidServerConnectionException(InfrastructureException):
+
+class InvalidServerConnectionException(Exception):
     """Raised when the server connection failed"""
-
     def __init__(self, details: str = "Unexpected server connection failed"):
-        root_message = "Invalid server connection: "
-        full_message = f"{root_message}: {details}"
-        super().__init__(full_message)
         self.details = details
-        self.root_message = root_message
-
-
-class InvalidDocumentName(ValidationException):
-    """Invalid project name (validation error)"""
-
-    # Validation constants
-    MAX_NAME_LENGTH = 2000
-    MIN_NAME_LENGTH = 1
-
-    def __init__(self, details: str = "Unspecified naming violation"):
-        root_message = "Invalid document name"
-        super().__init__(root_message, details)
-        self.details = details
-        self.root_message = root_message
+        self.root_message = "Invalid server connection"
+        message = f"{self.root_message}: {details}"
+        super().__init__(message)
 

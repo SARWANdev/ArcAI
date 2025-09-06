@@ -3,8 +3,9 @@ import os
 from database.repository.document_repository import DocumentRepository
 from database.repository.user_repository import UserRepository
 from database.repository.project_repository import ProjectRepository
-from exceptions.document_exceptions import InvalidDocumentNamingException, InvalidUserIdException, \
-    InvalidProjectIdException, InvalidDocumentName
+from exceptions.document_exceptions import InvalidUserIdException, \
+    InvalidProjectIdException
+from exceptions.base_exceptions import InvalidNameError
 
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB in bytes
 
@@ -13,13 +14,13 @@ class DocumentValidator:
     @staticmethod
     def validate_file(file):
         if not file.filename or file.filename.strip() == " ":
-            raise InvalidDocumentNamingException("no filename provided.")
+            raise InvalidNameError("Document", "no filename provided.")
 
         if len(file.filename) > 1000:
-            raise InvalidDocumentNamingException("filename is too long.")
+            raise InvalidNameError("Document", "filename is too long.")
 
         if not file.filename.endswith(".pdf"):
-            raise InvalidDocumentNamingException("filename must end with '.pdf'")
+            raise InvalidNameError("Document", "filename must end with '.pdf'")
 
     @staticmethod
     def size_validator(file):
@@ -62,14 +63,14 @@ class DocumentValidator:
     @staticmethod
     def validate_rename(new_name):
         if not new_name or new_name.strip() == "":
-            raise InvalidDocumentName("No project name provided.")
+            raise InvalidNameError("Document", "No project name provided.")
         # Check if project name is too long
-        if len(new_name.strip()) > InvalidDocumentName.MAX_NAME_LENGTH:
-            raise InvalidDocumentName(f"Project name cannot exceed {InvalidDocumentName.MAX_NAME_LENGTH} characters")
+        if len(new_name.strip()) > InvalidNameError.MAX_DOCUMENT_NAME_LENGTH:
+            raise InvalidNameError("Document", f"Document name cannot exceed {InvalidNameError.MAX_DOCUMENT_NAME_LENGTH} characters")
 
         # Check if project name is too short
-        if len(new_name.strip()) < InvalidDocumentName.MIN_NAME_LENGTH:
-            raise InvalidDocumentName(
-                f"Project name must be at least {InvalidDocumentName.MIN_NAME_LENGTH} character long")
+        if len(new_name.strip()) < InvalidNameError.MIN_DOCUMENT_NAME_LENGTH:
+            raise InvalidNameError("Document",
+                f"Document name must be at least {InvalidNameError.MIN_DOCUMENT_NAME_LENGTH} character long")
 
 

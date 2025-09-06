@@ -7,7 +7,7 @@ from database.repository.project_repository import ProjectRepository
 from services.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 from utils.utils import format_filename
-from exceptions.bibtex_exceptions import BibTeXNotFoundException
+from exceptions.base_exceptions import NotFoundException
 
 
 def download_project(project_id):
@@ -87,7 +87,7 @@ def get_document_bibtex(document_id):
         bibtex = bibtex.encode("utf8")
         return bibtex
     except Exception as e:
-        raise BibTeXNotFoundException()
+        raise NotFoundException("BibTeX", "requested entry")
 
 
 def download_file(document_id):

@@ -1,7 +1,8 @@
 from database.utils.mongo_connector import mongo_connection
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
-from exceptions.tag_exceptions import TagException, InvalidTagName, MissingTagColor
+from exceptions.tag_exceptions import DuplicateTagColor, MissingTagColor
+from exceptions.base_exceptions import InvalidNameError
 
 class TagRegistryRepository:
     """
@@ -43,7 +44,7 @@ class TagRegistryRepository:
 
         This method checks if the tag already exists in the collection:
         - If the tag exists with the same color, it returns the existing tag.
-        - If the tag exists with a different color, it raises a `TagException`.
+        - If the tag exists with a different color, it raises a `DuplicateTagColor`.
         - If the tag does not exist, it creates the tag and returns the newly created tag.
 
         :param user_id: foreign key to the user who owns the tag.
@@ -55,18 +56,18 @@ class TagRegistryRepository:
         :returns: The tag document if it already exists or has been created.
         :rtype: dict
         
-        :raises TagException: If the tag already exists with a different color.
+        :raises DuplicateTagColor: If the tag already exists with a different color.
         """
         # Validate inputs
         if not tag_name or not isinstance(tag_name, str):
-            raise InvalidTagName("Tag name must be a non-empty string")
+            raise InvalidNameError("Tag", "Tag name must be a non-empty string")
         
         tag_name = tag_name.strip()
-        if len(tag_name) < InvalidTagName.MIN_NAME_LENGTH:
-            raise InvalidTagName(f"Tag name must be at least {InvalidTagName.MIN_NAME_LENGTH} character long")
+        if len(tag_name) < InvalidNameError.MIN_TAG_NAME_LENGTH:
+            raise InvalidNameError("Tag", f"Tag name must be at least {InvalidNameError.MIN_TAG_NAME_LENGTH} character long")
         
-        if len(tag_name) > InvalidTagName.MAX_NAME_LENGTH:
-            raise InvalidTagName(f"Tag name cannot exceed {InvalidTagName.MAX_NAME_LENGTH} characters")
+        if len(tag_name) > InvalidNameError.MAX_TAG_NAME_LENGTH:
+            raise InvalidNameError("Tag", f"Tag name cannot exceed {InvalidNameError.MAX_TAG_NAME_LENGTH} characters")
         
         if not tag_color or not isinstance(tag_color, str):
             raise MissingTagColor("Tag color must be a non-empty string")
@@ -79,7 +80,7 @@ class TagRegistryRepository:
             existing = db.tag_registry.find_one({"name": tag_name, "user_id": user_id, "project_id": project_id})
             if existing:
                 if existing.get("color") != tag_color:
-                    raise TagException(f"Tag '{tag_name}' already exists with different color '{existing.get('color')}'")
+                    raise DuplicateTagColor(tag_name, existing.get('color'), tag_color)
                 return existing
             try:
                 result = db.tag_registry.insert_one({"user_id": user_id, "project_id": project_id, "name": tag_name, "color": tag_color})

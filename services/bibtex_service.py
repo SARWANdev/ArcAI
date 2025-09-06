@@ -2,7 +2,8 @@ from habanero import Crossref
 import bibtexparser
 import requests
 from typing import Optional, Dict, Any
-from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException, BibTeXNotFoundException
+from exceptions.bibtex_exceptions import BibTeXParseException, BibTeXSaveException
+from exceptions.base_exceptions import NotFoundException
 
 class BibTeX_Service:
     """

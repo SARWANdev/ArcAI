@@ -1,7 +1,8 @@
 from database.repository.notebook_repository import Notebook as NotebookRepository
 from database.repository.document_repository import DocumentRepository
 from database.repository.project_repository import ProjectRepository
-from exceptions.notebook_exceptions import InvalidNoteContent, NotebookSaveException, NotebookNotFoundError
+from exceptions.notebook_exceptions import InvalidNoteContent, NotebookSaveException
+from exceptions.base_exceptions import NotFoundException
 import io 
 
 class NotebookService:
@@ -45,15 +46,15 @@ class NotebookService:
         :type project_id: str
         :return: Notebook content as a string
         :rtype: str
-        :raises NotebookNotFoundError: If the project notebook is not found
+        :raises NotFoundException: If the project notebook is not found
         """
         try:
             note = self.notebook_repository.get_project_notebook(project_id)
             if note is None:
-                raise NotebookNotFoundError("project", project_id)
+                raise NotFoundException("Project Notebook", project_id)
             return note
         except Exception as e:
-            if isinstance(e, NotebookNotFoundError):
+            if isinstance(e, NotFoundException):
                 raise
             raise NotebookSaveException(f"Failed to retrieve project notebook: {str(e)}")
 
@@ -65,15 +66,15 @@ class NotebookService:
         :type document_id: str
         :return: Notebook content as a string
         :rtype: str
-        :raises NotebookNotFoundError: If the document notebook is not found
+        :raises NotFoundException: If the document notebook is not found
         """
         try:
             note = self.notebook_repository.get_document_notebook(document_id)
             if note is None:
-                raise NotebookNotFoundError("document", document_id)
+                raise NotFoundException("Document Notebook", document_id)
             return note
         except Exception as e:
-            if isinstance(e, NotebookNotFoundError):
+            if isinstance(e, NotFoundException):
                 raise
             raise NotebookSaveException(f"Failed to retrieve document notebook: {str(e)}")
     

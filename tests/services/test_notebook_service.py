@@ -56,15 +56,15 @@ def test_validate_note_content_max_length(notebook_service):
         notebook_service._validate_note_content('123456')
 
 def test_get_projects_notebook_notebook_not_found(notebook_service):
-    from exceptions.notebook_exceptions import NotebookNotFoundError
+    from exceptions.base_exceptions import NotFoundException
     with patch.object(notebook_service.notebook_repository, 'get_project_notebook', return_value=None):
-        with pytest.raises(NotebookNotFoundError):
+        with pytest.raises(NotFoundException):
             notebook_service.get_projects_notebook('proj1')
 
 def test_get_documents_notebook_notebook_not_found(notebook_service):
-    from exceptions.notebook_exceptions import NotebookNotFoundError
+    from exceptions.base_exceptions import NotFoundException
     with patch.object(notebook_service.notebook_repository, 'get_document_notebook', return_value=None):
-        with pytest.raises(NotebookNotFoundError):
+        with pytest.raises(NotFoundException):
             notebook_service.get_documents_notebook('doc1')
 
 def test_update_document_notebook_invalid_note(notebook_service):

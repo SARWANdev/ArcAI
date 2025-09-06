@@ -7,7 +7,7 @@ patcher = patch('services.conversation_service.ConversationRepository', MagicMoc
 patcher.start()
 
 from services.conversation_service import ConversationService
-from exceptions.conversation_exceptions import ConversationNotFoundError
+from exceptions.base_exceptions import NotFoundException
 
 @pytest.fixture
 def service():
@@ -106,7 +106,7 @@ def test_rename_chat_success(service):
 
 def test_rename_chat_not_found(service):
     with patch.object(service, 'get_conversation', return_value=None):
-        with pytest.raises(ConversationNotFoundError):
+        with pytest.raises(NotFoundException):
             service.rename_chat('badid', 'newname')
 
 def test_delete_chat(service):
@@ -138,7 +138,7 @@ def test_validate_conversation_name_empty(service):
     class DummyInvalid(Exception):
         MAX_NAME_LENGTH = 100
         MIN_NAME_LENGTH = 1
-    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid):
+    with patch('exceptions.base_exceptions.InvalidNameError', DummyInvalid):
         with pytest.raises(DummyInvalid):
             service._validate_conversation_name('', 'user1', None)
 
@@ -146,7 +146,7 @@ def test_validate_conversation_name_too_long(service):
     class DummyInvalid(Exception):
         MAX_NAME_LENGTH = 5
         MIN_NAME_LENGTH = 1
-    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid):
+    with patch('exceptions.base_exceptions.InvalidNameError', DummyInvalid):
         with pytest.raises(DummyInvalid):
             service._validate_conversation_name('toolongname', 'user1', None)
 
@@ -154,7 +154,7 @@ def test_validate_conversation_name_too_short(service):
     class DummyInvalid(Exception):
         MAX_NAME_LENGTH = 100
         MIN_NAME_LENGTH = 5
-    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid):
+    with patch('exceptions.base_exceptions.InvalidNameError', DummyInvalid):
         with pytest.raises(DummyInvalid):
             service._validate_conversation_name('abc', 'user1', None)
 
@@ -165,8 +165,8 @@ def test_validate_conversation_name_duplicate(service):
     class DummyDuplicate(Exception):
         pass
     dup = SimpleNamespace(name="DupName", conversation_id="id1")
-    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid), \
-         patch('exceptions.conversation_exceptions.DuplicateConversationName', DummyDuplicate):
+    with patch('exceptions.base_exceptions.InvalidNameError', DummyInvalid), \
+         patch('exceptions.base_exceptions.DuplicateNameError', DummyDuplicate):
         service.get_conversation_history = lambda user_id: [dup]
         with pytest.raises(DummyDuplicate):
             service._validate_conversation_name("DupName", "user1", "id2")
@@ -178,7 +178,7 @@ def test_validate_conversation_name_allows_same_id(service):
     class DummyDuplicate(Exception):
         pass
     dup = SimpleNamespace(name="DupName", conversation_id="id1")
-    with patch('exceptions.conversation_exceptions.InvalidConversationName', DummyInvalid), \
-         patch('exceptions.conversation_exceptions.DuplicateConversationName', DummyDuplicate):
+    with patch('exceptions.base_exceptions.InvalidNameError', DummyInvalid), \
+         patch('exceptions.base_exceptions.DuplicateNameError', DummyDuplicate):
         service.get_conversation_history = lambda user_id: [dup]
         service._validate_conversation_name("DupName", "user1", "id1")
