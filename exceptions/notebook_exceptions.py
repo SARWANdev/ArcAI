@@ -18,5 +18,3 @@ class InvalidNoteContent(Exception):
         self.root_message = "Invalid note content"
         message = f"{self.root_message}: {details}"
         super().__init__(message)
-
-# Notebook-specific NotFound exceptions removed - use NotFoundException directly

@@ -2,7 +2,7 @@ from io import BytesIO
 
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from exceptions.document_exceptions import InvalidServerConnectionException, \
-    InvalidProjectIdException, InvalidUserIdException
+    InvalidIdException
 from exceptions.base_exceptions import InvalidNameException
 from services.document_service import DocumentService
 from services.download_manager.download_manager import download_file, get_document_bibtex
@@ -128,9 +128,7 @@ class DocumentController:
 
         except InvalidNameException as e:
             return jsonify({"error": str(e)}), 400
-        except InvalidUserIdException as e:
-            return jsonify({"error": str(e)}), 409
-        except InvalidProjectIdException as e:
+        except InvalidIdException as e:
             return jsonify({"error": str(e)}), 409
         except InvalidServerConnectionException as e:
             return jsonify({"error": str(e)}), 404

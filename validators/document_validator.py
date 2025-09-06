@@ -3,8 +3,7 @@ import os
 from database.repository.document_repository import DocumentRepository
 from database.repository.user_repository import UserRepository
 from database.repository.project_repository import ProjectRepository
-from exceptions.document_exceptions import InvalidUserIdException, \
-    InvalidProjectIdException
+from exceptions.document_exceptions import InvalidIdException
 from exceptions.base_exceptions import InvalidNameException
 
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB in bytes
@@ -45,20 +44,20 @@ class DocumentValidator:
     @staticmethod
     def validate_user_id(user_id):
         if not user_id or user_id.strip() == "":
-            raise InvalidUserIdException("no user id provided. ")
+            raise InvalidIdException("User", "no user id provided. ")
 
         user_exists = UserRepository.user_exists(user_id)
         if not user_exists:
-            raise InvalidUserIdException("user id does not exist")
+            raise InvalidIdException("User", "user id does not exist")
 
     @staticmethod
     def validate_project_id(project_id):
         if not project_id or project_id.strip() == "":
-            raise InvalidUserIdException("no user id provided. ")
+            raise InvalidIdException("Project", "no project id provided. ")
 
         project_exists = ProjectRepository.project_exists(project_id)
         if not project_exists:
-            raise InvalidProjectIdException("project id does not exist")
+            raise InvalidIdException("Project", "project id does not exist")
 
     @staticmethod
     def validate_rename(new_name):

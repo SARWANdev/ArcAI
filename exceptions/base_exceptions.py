@@ -29,8 +29,6 @@ class InvalidNameException(Exception):
     MAX_TAG_NAME_LENGTH = 40
     MIN_TAG_NAME_LENGTH = 1
 
-    MAX_NOTE_LENGTH = 30000  # 30KB limit for notes
-
     def __init__(self, entity_type: str, details: str = "Unspecified naming violation"):
         self.entity_type = entity_type
         self.details = details

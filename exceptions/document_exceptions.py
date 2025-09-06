@@ -1,19 +1,11 @@
 
 
-class InvalidUserIdException(Exception):
-    """Raised when a user id is invalid"""
-    def __init__(self, details: str = "Unexpected user id violation"):
+class InvalidIdException(Exception):
+    """Raised when an ID is invalid for any entity type"""
+    def __init__(self, entity_type: str, details: str = "Unexpected ID violation"):
+        self.entity_type = entity_type
         self.details = details
-        self.root_message = "Invalid user id"
-        message = f"{self.root_message}: {details}"
-        super().__init__(message)
-
-
-class InvalidProjectIdException(Exception):
-    """Raised when a project id is invalid"""
-    def __init__(self, details: str = "Unexpected project id violation"):
-        self.details = details
-        self.root_message = "Invalid project id"
+        self.root_message = f"Invalid {entity_type.lower()} id"
         message = f"{self.root_message}: {details}"
         super().__init__(message)
 
