@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 from services.project_service import ProjectService
 from model.document_reader.project import Project as ProjectModel
-from exceptions.base_exceptions import NotFoundException, InvalidNameError, DuplicateNameError
+from exceptions.base_exceptions import NotFoundException, InvalidNameException, DuplicateNameException
 
 @pytest.fixture
 def project_service():
@@ -104,11 +104,11 @@ def test_sort_project_documents_invalid_field(project_service):
             project_service.sort_project_documents('proj1', 'invalid', 'asc')
 
 def test_validate_project_name_empty(project_service):
-        with pytest.raises(InvalidNameError):
+        with pytest.raises(InvalidNameException):
         project_service._validate_project_name('', 'user1')
 
 def test_validate_project_name_duplicate(project_service, fake_project_dict):
     project = ProjectModel.from_dict(fake_project_dict)
     with patch.object(project_service, 'get_user_projects', return_value=[project]):
-        with pytest.raises(DuplicateNameError):
+        with pytest.raises(DuplicateNameException):
             project_service._validate_project_name('Alpha', 'user1')

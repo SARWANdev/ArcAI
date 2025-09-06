@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 from bson import ObjectId
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from exceptions.tag_exceptions import MissingTagColor
-from exceptions.base_exceptions import InvalidNameError
+from exceptions.base_exceptions import InvalidNameException
 
 FAKE_DOCUMENT_ID = "64b2fae99a8b5c5f12345678"
 FAKE_PROJECT_ID = "64b2fae99a8b5c5f87654321"
@@ -245,7 +245,7 @@ class TestUpdateTag:
 
     def test_update_tag_empty_string(self, mock_db):
         """Test tag update with empty string."""
-        with pytest.raises(InvalidNameError, match="Tag name must be at least 1 character long"):
+        with pytest.raises(InvalidNameException, match="Tag name must be at least 1 character long"):
             DocumentPropertiesRepository.update_tag(FAKE_DOCUMENT_ID, "")
 
     def test_update_tag_whitespace_trimming(self, mock_db):
@@ -264,18 +264,18 @@ class TestUpdateTag:
 
     def test_update_tag_invalid_type(self):
         """Test tag update with invalid type."""
-        with pytest.raises(InvalidNameError, match="Tag name must be a string"):
+        with pytest.raises(InvalidNameException, match="Tag name must be a string"):
             DocumentPropertiesRepository.update_tag(FAKE_DOCUMENT_ID, 123)
 
     def test_update_tag_too_short(self):
         """Test tag update with too short name."""
-        with pytest.raises(InvalidNameError, match="Tag name must be at least 1 character long"):
+        with pytest.raises(InvalidNameException, match="Tag name must be at least 1 character long"):
             DocumentPropertiesRepository.update_tag(FAKE_DOCUMENT_ID, "")
 
     def test_update_tag_too_long(self):
         """Test tag update with too long name."""
         long_tag = "a" * 41  # Exceeds MAX_NAME_LENGTH of 40
-        with pytest.raises(InvalidNameError, match="Tag name cannot exceed 40 characters"):
+        with pytest.raises(InvalidNameException, match="Tag name cannot exceed 40 characters"):
             DocumentPropertiesRepository.update_tag(FAKE_DOCUMENT_ID, long_tag)
 
     def test_update_tag_exception(self, mock_db):

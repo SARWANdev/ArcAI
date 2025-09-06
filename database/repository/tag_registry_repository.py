@@ -2,7 +2,7 @@ from database.utils.mongo_connector import mongo_connection
 from pymongo import ASCENDING
 from pymongo.errors import DuplicateKeyError
 from exceptions.tag_exceptions import MissingTagColor
-from exceptions.base_exceptions import InvalidNameError
+from exceptions.base_exceptions import InvalidNameException
 
 class TagRegistryRepository:
     """
@@ -59,14 +59,14 @@ class TagRegistryRepository:
         """
         # Validate inputs
         if not tag_name or not isinstance(tag_name, str):
-            raise InvalidNameError("Tag", "Tag name must be a non-empty string")
+            raise InvalidNameException("Tag", "Tag name must be a non-empty string")
         
         tag_name = tag_name.strip()
-        if len(tag_name) < InvalidNameError.MIN_TAG_NAME_LENGTH:
-            raise InvalidNameError("Tag", f"Tag name must be at least {InvalidNameError.MIN_TAG_NAME_LENGTH} character long")
+        if len(tag_name) < InvalidNameException.MIN_TAG_NAME_LENGTH:
+            raise InvalidNameException("Tag", f"Tag name must be at least {InvalidNameException.MIN_TAG_NAME_LENGTH} character long")
         
-        if len(tag_name) > InvalidNameError.MAX_TAG_NAME_LENGTH:
-            raise InvalidNameError("Tag", f"Tag name cannot exceed {InvalidNameError.MAX_TAG_NAME_LENGTH} characters")
+        if len(tag_name) > InvalidNameException.MAX_TAG_NAME_LENGTH:
+            raise InvalidNameException("Tag", f"Tag name cannot exceed {InvalidNameException.MAX_TAG_NAME_LENGTH} characters")
         
         if not tag_color or not isinstance(tag_color, str):
             raise MissingTagColor("Tag color must be a non-empty string")

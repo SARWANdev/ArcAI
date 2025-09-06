@@ -8,7 +8,7 @@ from database.repository.conversation_repository import ConversationRepository
 from database.repository.project_repository import ProjectRepository
 from exceptions.document_exceptions import InvalidServerConnectionException
 from exceptions.tag_exceptions import MissingTagColor
-from exceptions.base_exceptions import InvalidNameError
+from exceptions.base_exceptions import InvalidNameException
 
 from model.document_reader.document import Document as DocumentModel
 from model.document_reader.pdf_master import PdfMaster as PdfMasterModel
@@ -158,7 +158,7 @@ class DocumentService:
         :param tag_name: Name of the tag to be added
         :param tag_color: Color code for the tag (hex or named color)
         :return: True if tag was successfully added, False otherwise
-        :raises InvalidNameError: If the tag name is invalid
+        :raises InvalidNameException: If the tag name is invalid
         :raises MissingTagColor: If the tag color is missing or invalid
         """
         try:
@@ -174,7 +174,7 @@ class DocumentService:
             success_color = self.document_properties_repo.update_tag_color(document_id, tag_color)
             return success_name and success_color
             
-        except (InvalidNameError, MissingTagColor):
+        except (InvalidNameException, MissingTagColor):
             # Re-raise these exceptions as they are already properly formatted
             raise
         except Exception as e:

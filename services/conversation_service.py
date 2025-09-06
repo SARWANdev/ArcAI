@@ -270,20 +270,20 @@ class ConversationService:
         :type user_id: str
         :param exclude_conversation_id: Conversation ID to exclude from duplicate check (for updates).
         :type exclude_conversation_id: str, optional
-        :raises InvalidNameError: If the conversation name is invalid.
-        :raises DuplicateNameError: If a conversation with the same name already exists.
+        :raises InvalidNameException: If the conversation name is invalid.
+        :raises DuplicateNameException: If a conversation with the same name already exists.
         """
 
-        from exceptions.base_exceptions import InvalidNameError, DuplicateNameError
+        from exceptions.base_exceptions import InvalidNameException, DuplicateNameException
 
         if not conversation_name or not conversation_name.strip():
-            raise InvalidNameError("Conversation", "Conversation name cannot be empty")
+            raise InvalidNameException("Conversation", "Conversation name cannot be empty")
         
-        if len(conversation_name.strip()) > InvalidNameError.MAX_CONVERSATION_NAME_LENGTH:
-            raise InvalidNameError("Conversation", f"Conversation name cannot exceed {InvalidNameError.MAX_CONVERSATION_NAME_LENGTH} characters")
+        if len(conversation_name.strip()) > InvalidNameException.MAX_CONVERSATION_NAME_LENGTH:
+            raise InvalidNameException("Conversation", f"Conversation name cannot exceed {InvalidNameException.MAX_CONVERSATION_NAME_LENGTH} characters")
         
-        if len(conversation_name.strip()) < InvalidNameError.MIN_CONVERSATION_NAME_LENGTH:
-            raise InvalidNameError("Conversation", f"Conversation name must be at least {InvalidNameError.MIN_CONVERSATION_NAME_LENGTH} character long")
+        if len(conversation_name.strip()) < InvalidNameException.MIN_CONVERSATION_NAME_LENGTH:
+            raise InvalidNameException("Conversation", f"Conversation name must be at least {InvalidNameException.MIN_CONVERSATION_NAME_LENGTH} character long")
         
         user_conversations = self.get_conversation_history(user_id)
         if user_conversations:
@@ -291,5 +291,5 @@ class ConversationService:
                 if exclude_conversation_id and str(conversation.conversation_id) == exclude_conversation_id:
                     continue
                 if conversation.name.lower() == conversation_name.lower():
-                    raise DuplicateNameError("Conversation", conversation_name)
+                    raise DuplicateNameException("Conversation", conversation_name)
 

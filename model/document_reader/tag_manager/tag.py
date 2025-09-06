@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from exceptions.tag_exceptions import MissingTagColor
-from exceptions.base_exceptions import InvalidNameError
+from exceptions.base_exceptions import InvalidNameException
 
 class Tag:
     """
@@ -14,22 +14,22 @@ class Tag:
         :type tag_name: str
         :param tag_color: The color of the tag in hex format.
         :type tag_color: str
-        :raises InvalidNameError: If the tag name is invalid
+        :raises InvalidNameException: If the tag name is invalid
         :raises MissingTagColor: If the tag color is missing or invalid
         """
         # Validate tag name
         if not tag_name or not isinstance(tag_name, str):
-            raise InvalidNameError("Tag", "Tag name must be a non-empty string")
+            raise InvalidNameException("Tag", "Tag name must be a non-empty string")
         
         tag_name = tag_name.strip()
         if not tag_name:  # Check if empty after stripping
-            raise InvalidNameError("Tag", "Tag name cannot be empty or whitespace only")
+            raise InvalidNameException("Tag", "Tag name cannot be empty or whitespace only")
         
-        if len(tag_name) < InvalidNameError.MIN_TAG_NAME_LENGTH:
-            raise InvalidNameError("Tag", f"Tag name must be at least {InvalidNameError.MIN_TAG_NAME_LENGTH} character long")
+        if len(tag_name) < InvalidNameException.MIN_TAG_NAME_LENGTH:
+            raise InvalidNameException("Tag", f"Tag name must be at least {InvalidNameException.MIN_TAG_NAME_LENGTH} character long")
         
-        if len(tag_name) > InvalidNameError.MAX_TAG_NAME_LENGTH:
-            raise InvalidNameError("Tag", f"Tag name cannot exceed {InvalidNameError.MAX_TAG_NAME_LENGTH} characters")
+        if len(tag_name) > InvalidNameException.MAX_TAG_NAME_LENGTH:
+            raise InvalidNameException("Tag", f"Tag name cannot exceed {InvalidNameException.MAX_TAG_NAME_LENGTH} characters")
         
         # Validate tag color
         if not tag_color or not isinstance(tag_color, str):
@@ -48,17 +48,17 @@ class Tag:
 
         :param name: The new name for the tag.
         :type name: str
-        :raises InvalidNameError: If the new name is invalid
+        :raises InvalidNameException: If the new name is invalid
         """
         if not name or not isinstance(name, str):
-            raise InvalidNameError("Tag", "Tag name must be a non-empty string")
+            raise InvalidNameException("Tag", "Tag name must be a non-empty string")
         
         name = name.strip()
-        if len(name) < InvalidNameError.MIN_TAG_NAME_LENGTH:
-            raise InvalidNameError("Tag", f"Tag name must be at least {InvalidNameError.MIN_TAG_NAME_LENGTH} character long")
+        if len(name) < InvalidNameException.MIN_TAG_NAME_LENGTH:
+            raise InvalidNameException("Tag", f"Tag name must be at least {InvalidNameException.MIN_TAG_NAME_LENGTH} character long")
         
-        if len(name) > InvalidNameError.MAX_TAG_NAME_LENGTH:
-            raise InvalidNameError("Tag", f"Tag name cannot exceed {InvalidNameError.MAX_TAG_NAME_LENGTH} characters")
+        if len(name) > InvalidNameException.MAX_TAG_NAME_LENGTH:
+            raise InvalidNameException("Tag", f"Tag name cannot exceed {InvalidNameException.MAX_TAG_NAME_LENGTH} characters")
         
         self.tag_name = name
 

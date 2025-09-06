@@ -13,24 +13,24 @@ class NotFoundException(Exception):
         self.details = f"{entity_type} with ID '{entity_id}' does not exist"
 
 
-class InvalidNameError(Exception):
+class InvalidNameException(Exception):
     """Generic exception for invalid names with validation constants"""
-    
+
     # Validation constants for different entity types
     MAX_CONVERSATION_NAME_LENGTH = 100
     MIN_CONVERSATION_NAME_LENGTH = 1
-    
+
     MAX_PROJECT_NAME_LENGTH = 80
     MIN_PROJECT_NAME_LENGTH = 1
-    
+
     MAX_DOCUMENT_NAME_LENGTH = 2000
     MIN_DOCUMENT_NAME_LENGTH = 1
-    
+
     MAX_TAG_NAME_LENGTH = 40
     MIN_TAG_NAME_LENGTH = 1
-    
+
     MAX_NOTE_LENGTH = 30000  # 30KB limit for notes
-    
+
     def __init__(self, entity_type: str, details: str = "Unspecified naming violation"):
         self.entity_type = entity_type
         self.details = details
@@ -39,9 +39,9 @@ class InvalidNameError(Exception):
         super().__init__(message)
 
 
-class DuplicateNameError(Exception):
+class DuplicateNameException(Exception):
     """Generic exception for duplicate names"""
-    
+
     def __init__(self, entity_type: str, entity_name: str):
         self.entity_type = entity_type
         self.entity_name = entity_name

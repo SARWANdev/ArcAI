@@ -3,7 +3,7 @@ from io import BytesIO
 from database.repository.document_properties_repository import DocumentPropertiesRepository
 from exceptions.document_exceptions import InvalidServerConnectionException, \
     InvalidProjectIdException, InvalidUserIdException
-from exceptions.base_exceptions import InvalidNameError
+from exceptions.base_exceptions import InvalidNameException
 from services.document_service import DocumentService
 from services.download_manager.download_manager import download_file, get_document_bibtex
 from services.notebook_service import NotebookService
@@ -65,7 +65,7 @@ class DocumentController:
                 "message": "The tag has been added to the document successfully",
             }), 200
 
-        except InvalidNameError as e:
+        except InvalidNameException as e:
             return jsonify({"error": str(e)}), 400
         except MissingTagColor as e:
             return jsonify({"error": str(e)}), 400
@@ -126,7 +126,7 @@ class DocumentController:
                 "message": "The document has been uploaded successfully",
             }), 200
 
-        except InvalidNameError as e:
+        except InvalidNameException as e:
             return jsonify({"error": str(e)}), 400
         except InvalidUserIdException as e:
             return jsonify({"error": str(e)}), 409

@@ -1,4 +1,3 @@
-# Document-specific NotFound and naming exceptions removed - use NotFoundException, InvalidNameError directly
 
 
 class InvalidUserIdException(Exception):

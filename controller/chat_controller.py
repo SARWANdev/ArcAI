@@ -1,6 +1,6 @@
 from services.ai_service import AIService
 from services.conversation_service import ConversationService
-from exceptions.base_exceptions import NotFoundException, InvalidNameError, DuplicateNameError
+from exceptions.base_exceptions import NotFoundException, InvalidNameException, DuplicateNameException
 from flask import Blueprint, Flask, jsonify, request
 
 
@@ -301,9 +301,9 @@ class ChatController:
                 "status": "success",
                 "message": "Conversation renamed successfully"
             }), 200
-        except InvalidNameError as e:
+        except InvalidNameException as e:
             return jsonify({"error": str(e)}), 400
-        except DuplicateNameError as e:
+        except DuplicateNameException as e:
             return jsonify({"error": str(e)}), 409
         except NotFoundException as e:
             return jsonify({"error": str(e)}), 404

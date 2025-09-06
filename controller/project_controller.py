@@ -1,5 +1,5 @@
 from database.repository.document_repository import DocumentRepository
-from exceptions.base_exceptions import InvalidNameError
+from exceptions.base_exceptions import InvalidNameException
 from services.notebook_service import NotebookService
 from services.project_service import ProjectService
 from services.document_service import DocumentService
@@ -52,7 +52,7 @@ class ProjectController:
                     "message": "Failed to rename the document"
                 }), 500
 
-        except InvalidNameError as e:
+        except InvalidNameException as e:
             return jsonify({'error': str(e)}), 400
         except Exception as e:
             return jsonify({"error": str(e)}), 500
