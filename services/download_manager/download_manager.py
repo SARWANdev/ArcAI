@@ -4,7 +4,7 @@ import zipfile
 from database.repository.document_repository import DocumentRepository
 from database.repository.pdf_master_repository import PdfMasterRepository
 from database.repository.project_repository import ProjectRepository
-from services.document_service import DocumentService
+from services.document_manager.document_service import DocumentService
 from services.upload_manager.server_conection import ssh_connection
 from utils.utils import format_filename
 from exceptions.base_exceptions import NotFoundException

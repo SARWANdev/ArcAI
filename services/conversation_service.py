@@ -65,7 +65,7 @@ class ConversationService:
         :rtype: ConversationModel or None
         """
         conversation_id = ObjectId()
-        from services.document_service import DocumentService
+        from services.document_manager.document_service import DocumentService
         document = DocumentService().get_document(document_id=document_id)
         if document: 
             name = document.name

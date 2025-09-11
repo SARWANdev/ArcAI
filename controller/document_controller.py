@@ -4,7 +4,7 @@ from database.repository.document_properties_repository import DocumentPropertie
 from exceptions.document_exceptions import InvalidServerConnectionException, \
     InvalidIdException
 from exceptions.base_exceptions import InvalidNameException
-from services.document_service import DocumentService
+from services.document_manager.document_service import DocumentService
 from services.download_manager.download_manager import download_file, get_document_bibtex
 from services.notebook_service import NotebookService
 from database.repository.document_repository import DocumentRepository

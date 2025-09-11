@@ -3,7 +3,7 @@ from io import BytesIO
 from services.download_manager.download_manager import download_project
 from services.library_service import LibraryService
 from services.project_service import ProjectService
-from services.document_service import DocumentService
+from services.document_manager.document_service import DocumentService
 from flask import Blueprint, Flask, jsonify, request, send_file
 from exceptions.base_exceptions import NotFoundException, InvalidNameException, DuplicateNameException
 

@@ -3,7 +3,7 @@ from database.repository.document_repository import DocumentRepository
 from model.document_reader.project import Project as ProjectModel
 from database.repository.library_repository import Library as LibraryRepository
 from model.document_reader.document import Document as DocumentModel
-from services.document_service import DocumentService
+from services.document_manager.document_service import DocumentService
 from services.notebook_service import NotebookService
 from exceptions.base_exceptions import NotFoundException, InvalidNameException, DuplicateNameException
 

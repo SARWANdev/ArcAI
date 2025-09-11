@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from services.document_service import DocumentService
+from services.document_manager.document_service import DocumentService
 
 @pytest.fixture
 def document_service():

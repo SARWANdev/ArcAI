@@ -204,7 +204,7 @@ class Conversation:
         :return: List of document IDs.
         :rtype: list[str]
         """
-        from services.document_service import DocumentService
+        from services.document_manager.document_service import DocumentService
         document_ids = []
         if project_ids:
             for project_id in project_ids:
@@ -229,7 +229,7 @@ class Conversation:
         """
         Gets all titles of the documents related to a conversation.
         """
-        from services.document_service import DocumentService
+        from services.document_manager.document_service import DocumentService
         document_titles = []
         service = DocumentService()
         if self.document_ids:

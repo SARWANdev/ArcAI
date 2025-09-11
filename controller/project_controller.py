@@ -2,7 +2,7 @@ from database.repository.document_repository import DocumentRepository
 from exceptions.base_exceptions import InvalidNameException
 from services.notebook_service import NotebookService
 from services.project_service import ProjectService
-from services.document_service import DocumentService
+from services.document_manager.document_service import DocumentService
 from bson import ObjectId
 from flask import Blueprint, Flask, jsonify, request, json
 

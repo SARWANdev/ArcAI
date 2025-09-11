@@ -24,7 +24,7 @@ from services.upload_manager.hash_manager import get_pdf_sha256, relative_path_g
 from services.upload_manager.embeddings_manager import EmbeddingsManager
 from services.upload_manager.server_conection import upload_document, delete_remote_directory, save_embeddings
 from services.notebook_service import NotebookService
-from validators.document_validator import DocumentValidator
+from services.document_manager.document_validator import DocumentValidator
 
 from database.utils.mongo_connector import mongo_connection
 
