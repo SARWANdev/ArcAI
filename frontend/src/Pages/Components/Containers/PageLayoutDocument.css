@@ -1,0 +1,27 @@
+/* This is the container for the entire header */
+.header-container {
+    overflow: hidden;
+    transition: max-height 0.5s ease-out, padding 0.5s ease-out; /* Add a smooth transition */
+  }
+  
+  /* State when the header is visible */
+  .header-container.is-visible {
+    max-height: 200px; /* A value larger than the header's actual height */
+    padding-bottom: 1.7rem; /* Match the py-3 from your JSX */
+    border-bottom: solid #525260 0.0001cm;
+  }
+  
+  /* State when the header is hidden */
+  .header-container.is-hidden {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  
+  /* You might need to adjust the py-3 utility class in your JSX
+     to a custom class to avoid conflicts with Bootstrap.
+     For example, you can create a custom utility: */
+  /* .my-py-3 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  } */

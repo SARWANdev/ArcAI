@@ -1,0 +1,17 @@
+#note-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-right: 30px;
+    margin-left: 460px;
+}
+
+#note-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#input-text::placeholder{
+    color: var(--text-color);
+}

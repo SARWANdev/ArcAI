@@ -1,0 +1,10 @@
+#create-project-button {
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#create-project-button:hover{
+    background-color: var(--bg-button-hover-color);
+}

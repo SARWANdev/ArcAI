@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.16.0/pdf-lib.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; height: 100vh; overflow: hidden;} /* Ensure body fills viewport */
+        #pdf-container { 
+            width: 100%; 
+            height: calc(100% - 50px); 
+            position: relative; 
+            overflow: auto; /* This makes the container scrollable */
+            display: flex; /* Use flexbox to center canvas */
+            justify-content: center;
+            align-items: flex-start; /* Align to top of container */
+            padding-top: 20px; /* Add some space from toolbar */
+            box-sizing: border-box; /* Include padding in height */
+        }
+        #toolbar {
+            height: 50px; background: #f0f0f0; display: flex; align-items: center;
+            padding: 0 10px; gap: 10px; border-bottom: 1px solid #ccc;
+            flex-shrink: 0; /* Prevent toolbar from shrinking */
+        }
+        .highlight {
+            position: absolute;
+            background-color: rgba(255, 255, 0, 0.3);
+            border-radius: 2px;
+            pointer-events: none;
+            box-sizing: border-box; /* Important for consistent sizing */
+        }
+        canvas { 
+            display: block; 
+            box-shadow: 0 0 5px rgba(0,0,0,0.2); 
+            background-color: white; /* Ensure canvas background is white */
+        }
+        button {
+            padding: 5px 10px; background: #4a6baf; color: white;
+            border: none; border-radius: 3px; cursor: pointer;
+        }
+        button:hover { background: #3a5a9f; }
+        button:disabled { background: #cccccc; cursor: not-allowed; }
+        #highlight-btn {
+            background-color: #ffeb3b;
+            color: #000;
+        }
+        #highlight-btn.active {
+            background-color: #ffc107;
+        }
+        #page-info { margin: 0 10px; min-width: 100px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <button id="prev-page">Previous</button>
+        <span id="page-info">Page 1 of 1</span>
+        <button id="next-page">Next</button>
+        <button id="highlight-btn">Highlight</button>
+        <button id="save-pdf">Save PDF</button>
+    </div>
+    <div id="pdf-container"></div>
+
+    <script>
+        const { PDFDocument, rgb, StandardFonts } = PDFLib;
+        let pdfDoc = null; // Stores the PDF.js document instance
+        let currentPage = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let highlights = []; // Stores rectangle highlights
+        let canvas = null; // Reference to the current page's canvas
+        let viewport = null; // Reference to the current page's viewport (from PDF.js)
+        let isHighlightMode = false;
+        let isHighlighting = false;
+        let highlightStartX, highlightStartY; // For drawing temp highlight (relative to canvas)
+        let currentPdfJsPage = null; // To store the current PDF.js page object for conversions
+        let tempHighlightEl = null; // Store reference to the temporary highlight element
+
+        // Listen for messages from parent (DocumentViewerPage)
+        window.addEventListener("message", (event) => {
+            if (event.data.type === "LOAD_PDF") {
+                const pdfBytes = new Uint8Array(event.data.pdfBytes);
+                loadPDF(pdfBytes);
+            }
+        });
+
+        // Configure PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+        async function loadPDF(pdfBytes) {
+            pdfDoc = await pdfjsLib.getDocument({ data: pdfBytes }).promise;
+            document.getElementById('page-info').textContent = `Page 1 of ${pdfDoc.numPages}`;
+            renderPage(1);
+        }
+
+        async function renderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+                return;
+            }
+
+            currentPage = num;
+            pageRendering = true;
+            const container = document.getElementById('pdf-container');
+            container.innerHTML = ''; // Clear previous content
+
+            // Create and append canvas
+            canvas = document.createElement('canvas');
+            container.appendChild(canvas);
+
+            // Get the PDF page
+            const page = await pdfDoc.getPage(num);
+            currentPdfJsPage = page; // Store for coordinate conversions
+
+            const scale = 1.5; // This is the rendering scale for the viewer
+            viewport = page.getViewport({ scale }); // Store for coordinate conversions
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            const renderContext = {
+                canvasContext: canvas.getContext('2d'),
+                viewport: viewport
+            };
+
+            const renderTask = page.render(renderContext);
+            await renderTask.promise; // Wait for rendering to complete
+
+            pageRendering = false;
+            if (pageNumPending !== null) {
+                renderPage(pageNumPending);
+                pageNumPending = null;
+            }
+            // Now that the canvas is rendered and its position is stable, render overlays
+            renderHighlights(); 
+
+            // Update page info and button states
+            document.getElementById('page-info').textContent = `Page ${num} of ${pdfDoc.numPages}`;
+            document.getElementById('prev-page').disabled = num <= 1;
+            document.getElementById('next-page').disabled = num >= pdfDoc.numPages;
+        }
+
+        // Functions to render overlay highlights
+
+
+        function renderHighlights() {
+            // ORIGINAL renderHighlights() function, not modified
+            document.querySelectorAll('.highlight:not(.temp-highlight)').forEach(el => el.remove());
+
+            const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+            const container = document.getElementById('pdf-container');
+            const containerRect = container.getBoundingClientRect();
+
+            const canvasOffsetX = canvasRect ? (canvasRect.left - containerRect.left + container.scrollLeft) : 0;
+            const canvasOffsetY = canvasRect ? (canvasRect.top - containerRect.top + container.scrollTop) : 0;
+
+            highlights
+                .filter(h => h.page === currentPage - 1) // Filter for current page
+                .forEach(highlight => {
+                    const highlightEl = document.createElement('div');
+                    highlightEl.className = 'highlight';
+                    
+                    highlightEl.style.left = `${highlight.x + canvasOffsetX}px`;
+                    highlightEl.style.top = `${highlight.y + canvasOffsetY}px`;
+                    highlightEl.style.width = `${highlight.width}px`;
+                    highlightEl.style.height = `${highlight.height}px`;
+                    
+                    container.appendChild(highlightEl);
+                });
+        }
+
+        
+
+        // Save PDF with highlights
+        async function savePDFWithHighlight() {
+            try {
+                const originalPdfBytes = await new Promise((resolve) => {
+                    const listener = (event) => {
+                        if (event.data.type === "PDF_BYTES_RESPONSE") {
+                            window.removeEventListener("message", listener);
+                            resolve(new Uint8Array(event.data.pdfBytes));
+                        }
+                    };
+                    window.addEventListener("message", listener);
+                    window.parent.postMessage({ type: "REQUEST_PDF_BYTES" }, "*");
+                });
+
+                const pdfDocToModify = await PDFLib.PDFDocument.load(originalPdfBytes);
+                const pages = pdfDocToModify.getPages();
+                const font = await pdfDocToModify.embedFont(PDFLib.StandardFonts.Helvetica);
+
+
+                // --- Process Highlights (ORIGINAL CODE) ---
+                for (const highlight of highlights) {
+                    const pageIndex = highlight.page;
+                    if (pageIndex >= pages.length) continue;
+
+                    const page = pages[pageIndex];
+                    const pagePdfJs = await pdfDoc.getPage(pageIndex + 1); 
+                    const pageViewport = pagePdfJs.getViewport({ scale: 1 }); 
+
+                    const pixelX = highlight.x;
+                    const pixelY = highlight.y;
+                    const pixelWidth = highlight.width;
+                    const pixelHeight = highlight.height;
+
+                    const unscaledX1 = pixelX / viewport.scale;
+                    const unscaledY1 = pixelY / viewport.scale;
+                    const unscaledX2 = (pixelX + pixelWidth) / viewport.scale;
+                    const unscaledY2 = (pixelY + pixelHeight) / viewport.scale;
+
+                    const [pdfX1, pdfY1FromTop] = pageViewport.convertToPdfPoint(unscaledX1, unscaledY1);
+                    const [pdfX2, pdfY2FromTop] = pageViewport.convertToPdfPoint(unscaledX2, unscaledY2);
+
+                    page.drawRectangle({
+                        x: pdfX1,
+                        y: Math.min(pdfY1FromTop, pdfY2FromTop), // This was the original line that worked for you
+                        width: Math.abs(pdfX2 - pdfX1),
+                        height: Math.abs(pdfY1FromTop - pdfY2FromTop),
+                        color: rgb(1, 1, 0),
+                        opacity: 0.3
+                    });
+                }
+
+                const modifiedPdfBytes = await pdfDocToModify.save();
+
+                window.parent.postMessage({
+                    type: "MODIFIED_PDF_BYTES",
+                    pdfBytes: Array.from(modifiedPdfBytes)
+                }, "*");
+
+            } catch (error) {
+                console.error("Error saving PDF:", error);
+                window.parent.postMessage({
+                    type: "PDF_SAVE_ERROR",
+                    error: error.message
+                }, "*");
+            }
+        }
+
+        // --- Event Handlers ---
+        function setupEventHandlers() {
+            const pdfContainer = document.getElementById('pdf-container');
+
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (pdfDoc && currentPage > 1) renderPage(currentPage - 1);
+            });
+
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (pdfDoc && currentPage < pdfDoc.numPages) renderPage(currentPage + 1);
+            });
+
+            
+
+            document.getElementById('highlight-btn').addEventListener('click', function() {
+                isHighlightMode = !isHighlightMode;
+                this.classList.toggle('active', isHighlightMode);
+            });
+
+            // ORIGINAL highlight mousedown/mousemove/mouseup logic, with a slight adjustment
+            // for tempHighlightEl positioning to account for container scroll, aligning with
+            // how renderHighlights works.
+            pdfContainer.addEventListener('mousedown', (e) => {
+                if (e.target === canvas && isHighlightMode) {
+                    isHighlighting = true;
+                    const rect = canvas.getBoundingClientRect();
+                    highlightStartX = e.clientX - rect.left;
+                    highlightStartY = e.clientY - rect.top;
+                    e.preventDefault();
+
+                    tempHighlightEl = document.createElement('div');
+                    tempHighlightEl.className = 'highlight temp-highlight';
+                    const containerRect = pdfContainer.getBoundingClientRect();
+                    // Account for scroll when positioning temp highlight
+                    const canvasOffsetX = rect.left - containerRect.left + pdfContainer.scrollLeft;
+                    const canvasOffsetY = rect.top - containerRect.top + pdfContainer.scrollTop;
+                    tempHighlightEl.style.left = `${highlightStartX + canvasOffsetX}px`;
+                    tempHighlightEl.style.top = `${highlightStartY + canvasOffsetY}px`;
+                    tempHighlightEl.style.width = '0px';
+                    tempHighlightEl.style.height = '0px';
+                    pdfContainer.appendChild(tempHighlightEl);
+                }
+            });
+
+            pdfContainer.addEventListener('mousemove', (e) => {
+                if (isHighlighting && e.target === canvas && tempHighlightEl) {
+                    const rect = canvas.getBoundingClientRect();
+                    const currentX = e.clientX - rect.left;
+                    const currentY = e.clientY - rect.top;
+
+                    const containerRect = pdfContainer.getBoundingClientRect();
+                    // Account for scroll when positioning temp highlight
+                    const canvasOffsetX = rect.left - containerRect.left + pdfContainer.scrollLeft;
+                    const canvasOffsetY = rect.top - containerRect.top + pdfContainer.scrollTop;
+
+                    tempHighlightEl.style.left = `${Math.min(highlightStartX, currentX) + canvasOffsetX}px`;
+                    tempHighlightEl.style.top = `${Math.min(highlightStartY, currentY) + canvasOffsetY}px`;
+                    tempHighlightEl.style.width = `${Math.abs(currentX - highlightStartX)}px`;
+                    tempHighlightEl.style.height = `${Math.abs(currentY - highlightStartY)}px`;
+                    
+                    e.preventDefault();
+                }
+            });
+
+            pdfContainer.addEventListener('mouseup', (e) => {
+                if (isHighlighting) {
+                    isHighlighting = false;
+                    const rect = canvas.getBoundingClientRect();
+                    const endX = e.clientX - rect.left;
+                    const endY = e.clientY - rect.top;
+
+                    if (tempHighlightEl) {
+                        tempHighlightEl.remove();
+                        tempHighlightEl = null;
+                    }
+
+                    if (Math.abs(endX - highlightStartX) > 5 && Math.abs(endY - highlightStartY) > 5) {
+                        const highlight = {
+                            page: currentPage - 1,
+                            x: Math.min(highlightStartX, endX),
+                            y: Math.min(highlightStartY, endY),
+                            width: Math.abs(endX - highlightStartX),
+                            height: Math.abs(endY - highlightStartY)
+                        };
+                        highlights.push(highlight);
+                        renderHighlights();
+                    }
+                    e.preventDefault();
+                }
+            });
+
+
+            document.getElementById('save-pdf').addEventListener('click', async () => {
+                window.parent.postMessage({
+                    type: "HIGHLIGHTS_UPDATED",
+                    highlights: highlights
+                }, "*");
+                await savePDFWithHighlight();
+            });
+
+            // This is crucial for re-rendering positions on scroll
+            pdfContainer.addEventListener('scroll', () => {
+                if (canvas) {
+                    renderHighlights(); // Your original renderHighlights will also be called
+                }
+            });
+        }
+
+        setupEventHandlers();
+    </script>
+</body>
+</html>

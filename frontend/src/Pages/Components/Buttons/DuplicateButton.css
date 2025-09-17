@@ -1,0 +1,10 @@
+#duplicate-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#duplicate-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
