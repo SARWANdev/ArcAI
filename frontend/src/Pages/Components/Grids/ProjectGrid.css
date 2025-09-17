@@ -1,0 +1,128 @@
+#title-button {
+    width : 4.875rem; /* 78px -> 4.875rem */
+    margin-Right: 21.25rem; /* 340px -> 21.25rem */
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+
+#title-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#created-at-button {
+    width : 7.5rem; /* 120px -> 7.5rem */
+    margin-Right: 22.1875rem; /* 355px -> 22.1875rem */
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+
+#created-at-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#last-updated-button {
+    width : 6.875rem; /* 110px -> 6.875rem */
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+
+#last-updated-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#project-button {
+    border: none;
+    background-color: var(--bg-color);
+    margin-bottom: 0px;
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+    border-top: 1px solid #c4c4cc;
+    border-radius: 0px;
+}
+
+#project-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+.project-row, .project-header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+#project-title {
+  flex: 2 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color);
+}
+
+#project-created-at, #project-last-updated {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary-color);
+}
+
+#project-title:link{
+  color: var(--text-color);
+}
+
+.text-primary {
+    color: var(--bg-login-button-color) !important; /* Your custom blue, e.g., DodgerBlue */
+  }
+
+a:visited{
+    color: var(--text-color);
+}
+
+/* Three-dot menu button styles */
+.settings-button {
+    position: relative;
+    width: 1.5rem; /* 24px -> 1.5rem */
+    height: 1.5rem; /* 24px -> 1.5rem */
+    border: none;
+    background: none;
+    color: var(--text-secondary-color);
+    transition: color 0.3s ease;
+    padding: 0;
+    margin-left: 0.5rem; /* 8px -> 0.5rem */
+  }
+  
+  .settings-button:hover {
+    color: var(--text-color);
+    background: none !important; /* Important to override row hover */
+  }
+  
+  .settings-button::after {
+    content: "⋯"; /* Horizontal ellipsis */
+    font-size: 1.75rem; /* 28px -> 1.75rem */
+    font-weight: bold;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+
+/* Hover effect for project grid header columns */
+#title-button:hover, #created-at-button:hover, #last-updated-button:hover {
+    color: var(--bg-login-button-color) !important;
+    text-decoration: underline;
+  }
+  
+  /* Nudge created at and updated headers slightly to the left for alignment */
+  #created-at-button, #last-updated-button {
+    margin-left: -8px;
+  }

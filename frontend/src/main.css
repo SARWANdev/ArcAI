@@ -1,0 +1,116 @@
+/* ===== Tag Manager Styles ===== */
+/* Add this section with your other theme styles */
+
+/* Button styles */
+#add-tag-button, 
+#remove-tag-button, 
+#tag-added-button {
+  transition: background 0.3s ease, 
+              color 0.3s ease, 
+              border 0.3s ease;
+  margin-bottom: 5px;
+}
+
+#add-tag-button:hover, 
+#remove-tag-button:hover {
+  background-color: var(--bg-button-hover-color) !important;
+}
+
+/* Modal styles */
+.modal-content {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--text-secondary-color);
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--text-secondary-color) !important;
+}
+
+.modal-footer {
+  border-top: 1px solid var(--text-secondary-color) !important;
+}
+
+/* Bootstrap override for dark mode */
+.btn-close {
+  filter: invert(var(--dark-mode-invert)) !important;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.btn-close:hover {
+  opacity: 1;
+}
+
+/* Color picker buttons */
+.color-swatch {
+  border: 2px solid var(--text-secondary-color) !important;
+}
+
+.color-swatch.selected {
+  border: 2px solid var(--text-color) !important;
+  box-shadow: 0 0 0 2px var(--bg-login-button-color);
+}
+
+/* ===== Settings Dropdown Styles ===== */
+.card-body {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  border: 1px solid var(--text-secondary-color) !important;
+}
+
+/* Button styles in dropdown */
+.card-body .btn {
+  background-color: var(--bg-button-color);
+  color: var(--text-color);
+  border: none;
+  text-align: left;
+  padding: 6px 12px;
+  transition: background 0.3s ease;
+}
+
+.card-body .btn:hover {
+  background-color: var(--bg-button-hover-color);
+}
+
+/* Conversation Row Hover Effect */
+.history-container {
+  transition: background-color 0.2s ease;
+}
+
+.history-container:hover {
+  background-color: var(--bg-button-hover-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+:root {
+    --dark-mode-invert: 0;
+    --bg-color: #F9FAFB;
+    --bg-login-button-color: #4261d5;
+    --bg-login-button-hover-color: #2f4ab5;
+    --bg-sidebar-color: #F3F4F6;
+    --text-color: #1F2937;
+    --text-secondary-color: 	#6B7280;
+    --bg-button-color: #FFFFFF;
+    --bg-button-hover-color: #e2e6ea;
+    --placeholder-color: #212529;
+  }
+  
+  [data-theme='dark'] {
+    --dark-mode-invert: 1;
+    --bg-color: #1E1E2F;
+    --bg-login-button-color: #b0e0e6;
+    --bg-login-button-hover-color: #a0d3da;
+    --bg-sidebar-color: #0D0D15;
+    --text-color: #F0F0F5;
+    --text-secondary-color: #A0A0B0;
+    --bg-button-color: #2A2A3B;
+    --bg-button-hover-color: #1c1f23;
+    --placeholder-color : rgba(248, 249, 250, 1);
+  }
+  
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+  }

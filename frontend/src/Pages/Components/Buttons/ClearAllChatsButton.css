@@ -1,0 +1,12 @@
+#btn {
+    color: var(--text-color);
+    background-color: var(--bg-button-color);
+    border:none;
+    transition: background 0.3s ease, color 0.3s ease;
+    width: 120px;
+    font-weight: bold;
+}
+
+#btn:hover{
+    background-color: var(--bg-button-hover-color);
+}

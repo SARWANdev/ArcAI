@@ -1,0 +1,68 @@
+.ai-chat-container-input{
+    width: 800px;
+    height: 45px;
+    border-radius: 5px;
+    border: 1px solid hsl(0, 2%, 88%);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+#input-area::placeholder{
+    color: var(--text-color);
+}
+
+.message-bubble {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  
+  /* User messages */
+  .user-message {
+    background-color: var(--primary-color, #0d6efd); /* fallback to Bootstrap blue */
+    color: white;
+  }
+  
+  /* AI messages */
+  .ai-message {
+    background-color: var(--bg-color, #f8f9fa); /* fallback to light gray */
+    color: var(--text-color, #212529); /* fallback to Bootstrap text-dark */
+    border: 1px solid #ccc;
+  }
+  .error-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #f5c6cb;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-width: 400px;
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .error-popup p {
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Dark theme support */
+  [data-theme="dark"] .error-popup {
+    background-color: #3d2b2f;
+    color: #ffb8c6;
+    border-color: #5c3a43;
+  }

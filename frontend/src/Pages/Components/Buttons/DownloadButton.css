@@ -1,0 +1,9 @@
+#download-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+}
+
+#download-button:hover{
+    background-color: var(--bg-button-hover-color);
+}

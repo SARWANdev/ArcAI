@@ -1,0 +1,220 @@
+#document-title-button {
+    width : 80px;
+    border: none;
+    margin-right: 140px;
+    margin-left: 100px;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+#document-title-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+#author-button {
+    width : 80px;
+    border: none;
+    margin-right:40px;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+#author-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+#year-button {
+    width : 80px;
+    border: none;
+    margin-right: 180px;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+#year-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+#source-button {
+    width : 95px;
+    border: none;
+    margin-right: 310px;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+#source-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+#addedat-button {
+    width : 120px;
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease
+}
+#addedat-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#document-button {
+    border: none;
+    background-color: var(--bg-color);
+    margin-bottom: 0px;
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+    border-top: 1px solid #c4c4cc;
+    border-radius: 0px;
+}
+
+#document-button:hover{
+    background-color: var(--bg-button-hover-color) !important;
+}
+
+.document-row, .document-header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+#document-title {
+  flex: 2 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#document-author {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#document-year {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#document-source {
+  flex: 2 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#document-created-at {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary-color);
+}
+
+/* Hover effect for document grid header columns */
+#document-title-button:hover, #author-button:hover, #year-button:hover, #source-button:hover, #addedat-button:hover {
+  color: var(--bg-login-button-color) !important;
+  text-decoration: underline;
+}
+
+/* Nudge columns for alignment if needed */
+#author-button, #year-button, #source-button, #addedat-button {
+  margin-left: -12px;
+}
+
+
+.text-primary {
+    color: var(--bg-login-button-color) !important; /* Your custom blue, e.g., DodgerBlue */
+  }
+
+#mark-as-read-button{
+    background-color: var(--bg-button-color);
+    border: none;
+    margin-bottom: 5px;
+}
+#mark-as-read-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#add-tag-button{
+    background-color: var(--bg-button-color);
+    border: none;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+#remove-tag-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#remove-tag-button{
+    background-color: var(--bg-button-color);
+    border: none;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+#add-tag-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+.modal-backdrop {
+    z-index: 999;
+  }
+  
+.modal {
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Three-dot menu button styles */
+.settings-button {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    color: var(--text-secondary-color);
+    transition: color 0.3s ease;
+    padding: 0;
+    margin-left: 8px;
+}
+
+.settings-button:hover {
+    color: var(--text-color);
+    background: none !important;
+}
+  
+.settings-button::after {
+    content: "⋯";
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Document row styles */
+    
+#document-button {
+    border: none;
+    background-color: var(--bg-color);
+    margin-bottom: 0px;
+    color: var(--text-color);
+    transition: background 0.3s ease, color 0.3s ease;
+    border-top: 1px solid var(--text-secondary-color);
+    border-radius: 0px;
+}
+  
+#document-button:hover {
+    background-color: var(--bg-button-hover-color) !important;
+}
+
+.document-scroll-container {
+    max-height: 500px; /* adjust this height as needed */
+    overflow-y: auto;
+  }

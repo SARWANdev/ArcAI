@@ -1,0 +1,10 @@
+#rename-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+#rename-button:hover{
+    background-color: var(--bg-button-hover-color);
+}

@@ -1,93 +1,255 @@
-# ArcAI
+# ArcAI - AI-Powered Academic PDF Library
 
+ArcAI is an intelligent document management system designed to help university students, researchers, HiWi workers, and doctoral candidates effectively manage, understand, and interact with academic papers. The platform combines document organization with AI-powered assistance to simplify academic research workflows.
 
+## Vision
 
-## Getting started
+ArcAI makes academic reading, understanding, and organization simpler by providing:
+- **Structured Workspace**: Import and organize papers in a systematic manner
+- **Intelligent Highlighting**: Mark important passages and take contextual notes
+- **AI Assistant**: Built-in paper-aware AI for summarization, explanation, and clarification
+- **Unified Platform**: No need to switch between separate tools or generic chatbots
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Target Audience
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- University students and researchers
+- HiWi assistants and doctoral candidates
+- Professors and academic staff
+- Anyone working with academic literature who needs assistance understanding complex concepts
 
-## Add your files
+## System Architecture
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+ArcAI implements a **RAG (Retrieval-Augmented Generation) pipeline** that enables users to query their PDF collection and receive contextually grounded answers. The development consistently applied the MVCS structure, along with the exceptions and
+repository layers. The view is implemented using React, which made it possible to develop the
+frontend separately from the backend. It communicates with the backend through controller
+classes, which were kept minimal and free of business logic to keep the interface clean and
+focused.
+
+### Backend Technology Stack
+- **Framework**: Flask (Python) with REST API
+- **PDF Processing**: PyPDF2 for text extraction
+- **AI/ML**: 
+  - Embeddings: Nomic Embed Text via OLLAMA API
+  - Language Model: Gemma V3 via OLLAMA API
+  - Vector Search: FAISS (Facebook AI Similarity Search)
+- **Databases**:
+  - MongoDB: Document metadata and embeddings storage
+  - Elasticsearch: Fast full-text search across PDFs
+- **Authentication**: OAuth integration
+- **File Storage**: Remote server with SSH/SCP
+
+### Frontend Technology Stack
+- **Framework**: React with Vite
+- **UI Components**: Bootstrap 5 with React Bootstrap
+- **HTTP Client**: Axios
+- **Styling**: Styled Components
+
+## Project Structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.kit.edu/ujxbs/arcai.git
-git branch -M main
-git push -uf origin main
+arcai/
+├── main.py                          # Flask application entry point
+├── requirements.txt                 # Python dependencies
+├── package.json                     # Frontend dependencies
+├── controller/                      # API controllers
+│   ├── chat_controller.py          # AI chat endpoints
+│   ├── document_controller.py      # Document management
+│   ├── project_controller.py       # Project organization
+│   ├── library_controller.py       # Library management
+│   └── user_controller.py          # User authentication
+├── model/                          # Data models
+│   ├── ai_chat/
+│   │   └── conversation.py         # Conversation model
+│   ├── document_reader/
+│   │   ├── document.py            # Document model
+│   │   ├── project.py             # Project model
+│   │   ├── pdf_master.py          # PDF master model
+│   │   └── tag_manager/           # Tag system
+│   └── user_profile/
+│       └── user.py                # User model
+├── services/                       # Business logic
+│   ├── ai_service.py              # AI/LLM integration
+│   ├── document_manager/          # Document processing
+│   ├── upload_manager/            # File upload & embeddings
+│   ├── user_management/           # Authentication & users
+│   ├── bibtex_service.py         # Bibliography management
+│   ├── conversation_service.py   # Chat management
+│   └── notebook_service.py       # Note-taking
+├── database/                       # Data persistence
+│   ├── repository/                # Data access layer
+│   └── utils/                     # Database utilities
+├── exceptions/                     # Custom exception handling
+└── tests/                         # Comprehensive test suite
 ```
 
-## Integrate with your tools
+##  Key Features
 
-- [ ] [Set up project integrations](https://gitlab.kit.edu/ujxbs/arcai/-/settings/integrations)
+### Document Management
+- **Upload & Deduplication**: Hash-based file deduplication prevents duplicate uploads
+- **PDF Processing**: Automatic text extraction and metadata parsing
+- **Vector Embeddings**: FAISS-based semantic search capabilities
+- **Tag System**: Color-coded tagging for organization
+- **Status Tracking**: Read/unread and favorite markers
 
-## Collaborate with your team
+### AI-Powered Assistance
+- **Contextual Chat**: AI assistant with access to your document library
+- **RAG Pipeline**: Retrieval-augmented generation for accurate responses
+- **Multi-Document Queries**: Query across multiple papers simultaneously
+- **Conversation Management**: Persistent chat history with automatic naming
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Organization & Search
+- **Project-Based Organization**: Group documents by research topics
+- **Full-Text Search**: Elasticsearch-powered content search
+- **Semantic Search**: Vector similarity search for concept-based queries
+- **Filtering & Sorting**: By read status, favorites, tags, and metadata
 
-## Test and Deploy
+### Bibliography Management
+- **BibTeX Integration**: Automatic citation extraction and formatting
+- **Metadata Extraction**: Author, year, source, and publication details
+- **Citation Support**: Habanero integration for DOI-based metadata
 
-Use the built-in continuous integration in GitLab.
+## Installation & Setup
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+### Prerequisites
+- Python 3.8+
+- Node.js 16+
+- MongoDB
+- Elasticsearch
+- OLLAMA (for AI models)
 
-***
+### Backend Setup
 
-# Editing this README
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd arcai
+   ```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+2. **Install Python dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## Suggestions for a good README
+3. **Environment Configuration**:
+   Create a `.env` file with the following variables:
+   ```env
+   # Database Configuration
+   MONGO_URI=mongodb://localhost:27017/
+   DB_NAME=arcai1
+   ELASTIC_URI=https://127.0.0.1:9200
+   ELASTIC_USER=elastic
+   ELASTIC_PASSWORD=your_password
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+   # AI Model Configuration
+   OLLAMA_DEFAULT_BASE_URL=http://127.0.0.1:11435
+   OLLAMA_DEFAULT_EMBEDDING_MODEL=nomic-embed-text
+   OLLAMA_DEFAULT_LLM=gemma3
 
-## Name
-Choose a self-explaining name for your project.
+   # Application Configuration
+   APP_SECRET_KEY=your_secret_key
+   FRONTEND_URL=http://localhost:5173
+   PORT=3000
+   ```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+4. **Start the Flask server**:
+   ```bash
+   python main.py
+   ```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Frontend Setup
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+2. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## Configuration
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### AI Models
+The system supports swappable AI models (configurable by administrators):
+- **Embedding Model**: Nomic Embed Text (default)
+- **Language Model**: Gemma V3 (default)
+- **Base URL**: Configurable OLLAMA endpoint
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Database Setup
+- **MongoDB**: Stores user data, documents, projects, and conversations
+- **Elasticsearch**: Indexes PDF content for full-text search
+- **FAISS**: Vector storage for semantic search
+
+## API Endpoints
+
+### Document Management
+- `POST /document/upload` - Upload PDF documents
+- `GET /document/{id}` - Retrieve document details
+- `DELETE /document/{id}` - Delete document
+- `PUT /document/tag` - Add/update document tags
+- `GET /document/download/{id}` - Download PDF file
+
+### Project Organization
+- `GET /project/{id}/documents` - Get project documents
+- `PUT /project/document/rename` - Rename documents
+- `POST /project/document/move` - Move documents between projects
+
+### AI Chat
+- `POST /chat/query` - Send query to AI assistant
+- `GET /chat/conversations` - Get conversation history
+- `POST /chat/conversation/rename` - Rename conversations
+- `DELETE /chat/conversation/{id}` - Delete conversation
+
+### User Management
+- OAuth-based authentication
+- User profile management
+- Library and project access control
+
+## Testing
+
+The project includes comprehensive test coverage:
+- Repository layer tests
+- Service layer tests
+- API endpoint tests
+- Integration tests
+
+Run tests with:
+```bash
+pytest
+```
+
+## Security Features
+
+- OAuth authentication
+- User-scoped data access
+- File validation and size limits
+- Secure file storage
+- Input sanitization
+
+## Deployment
+
+The application is designed for deployment with:
+- Environment-based configuration
+- Docker support (configurable)
+- Remote file storage capabilities
+- Scalable database architecture
 
 ## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Submit a pull request
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Support
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+For support and questions:
+- Check the documentation
+- Review existing issues
+- Create a new issue with detailed information
 
-## License
-For open source projects, say how it is licensed.
+---
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+**ArcAI** - Making academic research more accessible through intelligent document management and AI assistance.

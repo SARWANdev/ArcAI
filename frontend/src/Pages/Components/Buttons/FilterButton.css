@@ -1,0 +1,41 @@
+#filter-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+    font-weight: bold;
+    height: 37px;
+}
+
+#filter-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#by-favourites-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+}
+
+#by-favourites-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#if-read-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+}
+
+#if-read-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+
+#by-tags-button{
+    border: none;
+    background-color: var(--bg-button-color);
+    color: var(--text-color);
+}
+#by-tags-button:hover{
+    background-color: var(--bg-button-hover-color);
+}
+

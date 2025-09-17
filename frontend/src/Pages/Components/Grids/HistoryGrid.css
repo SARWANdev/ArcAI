@@ -1,0 +1,81 @@
+.history-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-left: -16px;
+  padding-left: 16px;
+}
+
+.history-header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+#title-button {
+  flex: 2 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color);
+  font-size: 1.25rem;
+}
+#created-at-button {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-color); /* Match title color */
+  font-size: 1.25rem;      /* Match title font size */
+  margin-left: -32px;
+}
+
+/* Hover effect for conversation grid header columns */
+#title-button:hover, #created-at-button:hover {
+  color: var(--bg-login-button-color) !important;
+  text-decoration: underline;
+}
+
+/* Nudge created at header for alignment if needed */
+#created-at-button {
+  margin-left: -32px;
+}
+
+.text-primary {
+    color: var(--bg-login-button-color) !important; /* Your custom blue, e.g., DodgerBlue */
+  }
+
+a:visited{
+    color: var(--text-color);
+}
+
+/* Three-dot menu button styles */
+.settings-button {
+    position: relative;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: none;
+    color: var(--text-secondary-color);
+    transition: color 0.3s ease;
+    padding: 0;
+    margin-left: 8px; /* Add some spacing from last column */
+  }
+  
+  .settings-button:hover {
+    color: var(--text-color);
+    background: none !important; /* Important to override row hover */
+  }
+  
+  .settings-button::after {
+    content: "⋯"; /* Horizontal ellipsis */
+    font-size: 28px; /* Larger than default */
+    font-weight: bold;
+    line-height: 1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
