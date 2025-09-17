@@ -250,6 +250,57 @@ For support and questions:
 - Review existing issues
 - Create a new issue with detailed information
 
+
+## Deployment
+
+The application is designed for deployment with:
+- Environment-based configuration
+- Docker support (configurable)
+- Remote file storage capabilities
+- Scalable database architecture
+
+### Deployment Guide
+
+To start the ArcAI system and all required services, follow the steps below:
+
+1. **Access the Server**  
+   Log in to the server via SSH using your assigned credentials:  
+
+    ```bash
+    ssh pse04@i83compute4.dcn.itec.kit.edu
+    ```
+
+2. **Navigate to the Project Directory**  
+
+    ```bash
+    cd pse04/arcai
+    ```
+
+3. **Run the Deployment Script**  
+   Execute the provided startup script to launch all components of the system (frontend, backend, database, and AI services):  
+
+    ```bash
+    ./everything.sh
+    ```
+
+   The script starts all services and keeps them running in the background until explicitly terminated.
+
+---
+
+### Accessing the Application Externally
+
+If you wish to access the application from outside the server, create SSH tunnels from your local machine to the server as follows:
+
+```bash
+ssh -L 5173:localhost:5173 pse04@i83compute4.dcn.itec.kit.edu
+ssh -L 3000:localhost:3000 pse04@i83compute4.dcn.itec.kit.edu
+```
+
+
+After setting up the tunnels, the application will be accessible in your local browser at:
+
+http://localhost:5173
+
 ---
 
 **ArcAI** - Making academic research more accessible through intelligent document management and AI assistance.
