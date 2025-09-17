@@ -243,11 +243,7 @@ The application is designed for deployment with:
 4. Add tests for new functionality
 5. Submit a pull request
 
-## License
-
-[Add your license information here]
-
-## upport
+## Support
 
 For support and questions:
 - Check the documentation
