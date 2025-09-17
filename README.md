@@ -227,14 +227,6 @@ pytest
 - Secure file storage
 - Input sanitization
 
-## Deployment
-
-The application is designed for deployment with:
-- Environment-based configuration
-- Docker support (configurable)
-- Remote file storage capabilities
-- Scalable database architecture
-
 ## Contributing
 
 1. Fork the repository
